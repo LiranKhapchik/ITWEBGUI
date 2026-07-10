@@ -1,0 +1,1938 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מערכת שיבוצים מתקדמת - כיתות, משמרות ותורנויות</title>
+    <link rel="stylesheet" href="css/fonts.css">
+    <script src="js/tailwind.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3776AB',
+                        primaryHover: '#2b5d87',
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="js/common.js"></script>
+    <style id="dark-mode-styles">
+        html.dark body { background-color: #0f172a; color: #fafbfc; }
+        html.dark input, html.dark textarea, html.dark select, html.dark option { background-color: #1e293b !important; color: #fafbfc !important; border-color: #334155 !important; }
+        html.dark select option { background-color: #1e293b !important; color: #fafbfc !important; }
+        html.dark .bg-white { background-color: #1e293b !important; }
+        html.dark .bg-slate-50, html.dark .bg-gray-50 { background-color: #0f172a !important; }
+        html.dark .bg-slate-100, html.dark .bg-gray-100 { background-color: #334155 !important; }
+        html.dark .text-gray-900, html.dark .text-gray-800, html.dark .text-slate-900, html.dark .text-slate-800 { color: #fafbfc !important; }
+        html.dark .text-gray-700, html.dark .text-gray-600 { color: #cbd5e1 !important; }
+        html.dark .text-gray-500, html.dark .text-gray-400 { color: #94a3b8 !important; }
+        html.dark .border-gray-200, html.dark .border-gray-100, html.dark .border-gray-150 { border-color: #334155 !important; }
+        html.dark .bg-blue-50 { background-color: rgba(59, 130, 246, 0.15) !important; color: #60A5FA !important; }
+        html.dark .border-blue-100 { border-color: rgba(59, 130, 246, 0.3) !important; }
+        html.dark .text-blue-600, html.dark .text-blue-800 { color: #60A5FA !important; }
+        html.dark .bg-red-50 { background-color: rgba(239, 68, 68, 0.15) !important; color: #F87171 !important; }
+        html.dark .border-red-100, html.dark .border-red-200 { border-color: rgba(239, 68, 68, 0.3) !important; }
+        html.dark .text-red-500, html.dark .text-red-600, html.dark .text-red-800 { color: #F87171 !important; }
+        html.dark .bg-yellow-50 { background-color: rgba(234, 179, 8, 0.15) !important; color: #FACC15 !important; }
+        html.dark .border-yellow-400 { border-color: rgba(234, 179, 8, 0.4) !important; }
+        html.dark .text-yellow-800 { color: #FACC15 !important; }
+    </style>
+    <style>
+        body { 
+            font-family: 'Assistant', 'Segoe UI', Tahoma, sans-serif; 
+            background-color: #fafbfc; 
+            letter-spacing: -0.01em; 
+        }
+        h1, h2, h3, .font-extrabold {
+            font-weight: 800 !important;
+            letter-spacing: -0.025em;
+        }        
+        html { font-size: 18px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        
+        @media print {
+            .no-print, nav, header, button { display: none !important; }
+            body, html { background: white; padding: 0; margin: 0; font-size: 9pt; }
+            .print-wrapper { box-shadow: none !important; border: none !important; padding: 0 !important; }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50/50 flex flex-col p-4 md:p-6 select-none" dir="rtl">
+
+    <!-- Header -->
+    <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pb-4 border-b border-gray-200 flex-shrink-0 no-print">
+        <div class="flex items-center gap-3">
+            <a href="אתר מחשוב.html" class="bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-gray-700 dark:text-slate-300 p-2.5 rounded-xl transition-all flex items-center justify-center border border-gray-200 dark:border-slate-700">
+                <ui-icon name="arrow-back" class="w-5 h-5 rotate-180"></ui-icon>
+            </a>
+            <div>
+                <h1 class="text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white">לוח תורנויות ושיבוצים חכם</h1>
+                <p id="current-week-display" class="text-primary font-semibold mt-0.5 text-sm transition-all duration-300"></p>
+            </div>
+        </div>
+        
+        <!-- Multi-Board select & Segel Lock -->
+        <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+            <div class="flex items-center gap-2">
+                <label class="text-xs font-bold text-gray-550 dark:text-slate-400 whitespace-nowrap">סוג לוח:</label>
+                <select id="board-profile-select" onchange="changeActiveBoard()" class="p-2 border border-gray-200 rounded-xl outline-none font-bold text-sm bg-white dark:bg-slate-800 text-primary">
+                    <!-- Loaded dynamically -->
+                </select>
+                <button onclick="openNewBoardModal()" class="p-2 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-600 rounded-xl font-bold transition-all shadow-sm flex items-center justify-center" title="צור לוח חדש">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                </button>
+                <button id="delete-board-btn" onclick="deleteActiveBoard()" class="p-2 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 rounded-xl font-bold transition-all shadow-sm flex items-center justify-center" title="מחק לוח זה">
+                    <ui-icon name="trash-2" class="w-4 h-4"></ui-icon>
+                </button>
+            </div>
+
+            <button id="segel-lock-btn" onclick="toggleSegelLock()" class="flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl border text-xs font-bold transition-all shadow-sm bg-slate-50 border-slate-300 text-slate-700 hover:bg-slate-100 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300" title="אימות סגל">
+                <ui-icon name="alert-triangle" class="w-4 h-4 text-slate-500" id="segel-lock-icon"></ui-icon>
+                <span id="segel-lock-text">אימות סגל</span>
+            </button>
+
+            <button onclick="toggleDarkMode()" class="flex items-center justify-center p-2 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:border-slate-700 text-gray-700 dark:text-slate-300 border border-slate-300 transition-all no-print" title="מצב חשוך">
+                <ui-icon name="moon" class="w-4 h-4"></ui-icon>
+            </button>
+
+        </div>
+    </header>
+
+    <!-- Navigation Menu (Tabs) -->
+    <nav class="flex flex-wrap gap-2 mb-4 px-1 no-print">
+        <button id="btn-tab-board" class="tab-btn px-5 py-2 rounded-xl font-extrabold transition-all duration-300 bg-primary text-white shadow-sm" onclick="showTab('tab-board', this)">📋 לוח שיבוצים</button>
+        <button id="btn-tab-constraints" class="tab-btn px-5 py-2 rounded-xl font-bold transition-all duration-300 bg-white text-gray-600 hover:bg-gray-50 border border-gray-200 dark:bg-slate-850 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800" onclick="showTab('tab-constraints', this)">📅 ניהול אילוצים</button>
+        <button id="btn-tab-soldiers" class="tab-btn px-5 py-2 rounded-xl font-bold transition-all duration-300 bg-white text-gray-600 hover:bg-gray-50 border border-gray-200 dark:bg-slate-850 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800" onclick="showTab('tab-soldiers', this)">👥 ניהול חיילים</button>
+        <button id="btn-tab-shifts" class="tab-btn px-5 py-2 rounded-xl font-bold transition-all duration-300 bg-white text-gray-600 hover:bg-gray-50 border border-gray-200 dark:bg-slate-850 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800" onclick="showTab('tab-shifts', this)">⚙️ ניהול עמדות/תורנויות</button>
+        <button id="btn-tab-rules" class="tab-btn px-5 py-2 rounded-xl font-bold transition-all duration-300 bg-white text-gray-600 hover:bg-gray-50 border border-gray-200 dark:bg-slate-850 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800" onclick="showTab('tab-rules', this)">🛡️ חוקים ולוגיקה</button>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 bg-white dark:bg-slate-900 rounded-2xl p-4 md:p-6 relative shadow-sm border border-gray-100 dark:border-slate-800 print-wrapper">
+
+        <!-- 1. TAB: Board -->
+        <section id="tab-board" class="section block space-y-6">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-b border-gray-150 dark:border-slate-800 pb-4">
+                <div>
+                    <h2 class="text-xl font-extrabold text-gray-900 dark:text-white">גריד שיבוצים שבועי</h2>
+                    <p class="text-sm text-gray-500 dark:text-slate-400">ערוך שיבוצים ידנית או הפעל שיבוץ אוטומטי חכם.</p>
+                </div>
+                <div class="flex flex-wrap gap-2 w-full lg:w-auto">
+                    <button id="auto-schedule-btn" onclick="runAutoSchedule()" class="flex-1 lg:flex-initial bg-primary hover:bg-primaryHover text-white font-extrabold px-6 py-2.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-2 text-sm">
+                        <ui-icon name="check-circle" class="w-5 h-5"></ui-icon>
+                        <span>שבץ לי אוטומטית - בלחיצה אחת</span>
+                    </button>
+                    <button id="clear-board-btn" onclick="clearBoard()" class="bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/20 dark:hover:bg-rose-900/30 text-rose-600 border border-rose-200 dark:border-rose-900/40 font-bold px-4 py-2.5 rounded-xl transition-all text-sm flex items-center gap-1.5">
+                        <ui-icon name="trash-2" class="w-4 h-4"></ui-icon>
+                        <span>נקה לוח לשבוע חדש</span>
+                    </button>
+                    <button onclick="window.print()" class="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-gray-700 dark:text-slate-300 font-bold px-4 py-2.5 rounded-xl transition-all text-sm flex items-center gap-1.5">
+                        <span>🖨️ הדפס לוח</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dynamic Board Grid -->
+            <div class="overflow-x-auto rounded-2xl border border-gray-200 dark:border-slate-800 shadow-sm">
+                <table class="w-full border-collapse text-right text-sm">
+                    <thead>
+                        <tr class="bg-gray-50 dark:bg-slate-800/80 text-gray-700 dark:text-slate-200 border-b border-gray-200 dark:border-slate-700 font-extrabold text-base">
+                            <th class="p-3 w-48 border-l border-gray-200 dark:border-slate-700">עמדה / תורנות</th>
+                            <th class="p-3 w-36 border-l border-gray-200 dark:border-slate-700 text-center">
+                                <div class="flex flex-col gap-0.5 items-center justify-center">
+                                    <span class="font-extrabold text-sm text-gray-800 dark:text-slate-200">ראשון</span>
+                                    <div id="day-constraints-0" class="text-[9px] font-bold text-red-500 mt-1 max-w-[120px] truncate"></div>
+                                </div>
+                            </th>
+                            <th class="p-3 w-36 border-l border-gray-200 dark:border-slate-700 text-center">
+                                <div class="flex flex-col gap-0.5 items-center justify-center">
+                                    <span class="font-extrabold text-sm text-gray-800 dark:text-slate-200">שני</span>
+                                    <div id="day-constraints-1" class="text-[9px] font-bold text-red-500 mt-1 max-w-[120px] truncate"></div>
+                                </div>
+                            </th>
+                            <th class="p-3 w-36 border-l border-gray-200 dark:border-slate-700 text-center">
+                                <div class="flex flex-col gap-0.5 items-center justify-center">
+                                    <span class="font-extrabold text-sm text-gray-800 dark:text-slate-200">שלישי</span>
+                                    <div id="day-constraints-2" class="text-[9px] font-bold text-red-500 mt-1 max-w-[120px] truncate"></div>
+                                </div>
+                            </th>
+                            <th class="p-3 w-36 border-l border-gray-200 dark:border-slate-700 text-center">
+                                <div class="flex flex-col gap-0.5 items-center justify-center">
+                                    <span class="font-extrabold text-sm text-gray-800 dark:text-slate-200">רביעי</span>
+                                    <div id="day-constraints-3" class="text-[9px] font-bold text-red-500 mt-1 max-w-[120px] truncate"></div>
+                                </div>
+                            </th>
+                            <th class="p-3 w-36 border-l border-gray-200 dark:border-slate-700 text-center">
+                                <div class="flex flex-col gap-0.5 items-center justify-center">
+                                    <span class="font-extrabold text-sm text-red-500">חמישי</span>
+                                    <div id="day-constraints-4" class="text-[9px] font-bold text-red-500 mt-1 max-w-[120px] truncate"></div>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="board-grid-body">
+                        <!-- Loaded dynamically -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Equal Share / Justice Ledger -->
+            <div class="mt-8 border-t border-gray-200 dark:border-slate-800 pt-6">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="bg-primary/10 p-2.5 rounded-xl">
+                        <ui-icon name="users" class="w-5 h-5 text-primary"></ui-icon>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-extrabold text-gray-900 dark:text-white">טבלת צדק ותורנויות הוגנות (Justice Board)</h3>
+                        <p class="text-xs text-gray-500 dark:text-slate-400">מעקב אחר כמות הפעמים שחיילים ביצעו תורנויות הוגנות (כמו תורנות פח) החודש.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                    <!-- Table counts -->
+                    <div class="xl:col-span-2 overflow-x-auto rounded-xl border border-gray-150 dark:border-slate-800">
+                        <table class="w-full text-right text-xs">
+                            <thead>
+                                <tr class="bg-gray-50 dark:bg-slate-800 border-b border-gray-150 dark:border-slate-800 text-gray-700 dark:text-slate-300 font-extrabold">
+                                    <th class="p-2.5">חייל/ת</th>
+                                    <th class="p-2.5">תפקיד</th>
+                                    <th class="p-2.5 text-center">כמות תורנויות החודש</th>
+                                    <th class="p-2.5 text-center">החלפות שחייב למישהו (-)</th>
+                                    <th class="p-2.5 text-center">החלפות שמגיעות לו (+)</th>
+                                    <th class="p-2.5 text-center">ציון משוקלל לשיבוץ הבא</th>
+                                </tr>
+                            </thead>
+                            <tbody id="justice-table-body">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Swap actions -->
+                    <div class="bg-gray-50 dark:bg-slate-800/40 p-4 rounded-xl border border-gray-200 dark:border-slate-800 space-y-4">
+                        <h4 class="text-sm font-extrabold text-gray-800 dark:text-slate-200">תיעוד החלפה ידנית</h4>
+                        <div class="space-y-3 text-xs">
+                            <div>
+                                <label class="block text-gray-600 dark:text-slate-400 mb-1 font-bold">החייל שנעדר מהתורנות (בעל החוב):</label>
+                                <select id="swap-debtor" class="w-full p-2 border border-gray-200 rounded-lg outline-none bg-white dark:bg-slate-800 font-bold"></select>
+                            </div>
+                            <div>
+                                <label class="block text-gray-600 dark:text-slate-400 mb-1 font-bold">החייל ששימש כמחליף (הזכאי):</label>
+                                <select id="swap-creditor" class="w-full p-2 border border-gray-200 rounded-lg outline-none bg-white dark:bg-slate-800 font-bold"></select>
+                            </div>
+                            <button id="add-manual-swap-btn" onclick="addManualSwap()" class="w-full bg-[#3776AB] hover:bg-[#2b5d87] text-white font-extrabold py-2 rounded-lg transition-all shadow-sm">
+                                רשום חוב החלפה
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. TAB: Constraints -->
+        <section id="tab-constraints" class="section hidden flex-col space-y-6">
+            <div>
+                <h2 class="text-xl font-extrabold text-gray-900 dark:text-white">ניהול אילוצי חופשות ומשימות</h2>
+                <p class="text-sm text-gray-500 dark:text-slate-400">חסימת ימי שיבוץ עבור חיילים בחופש, פטורים, או משימות חיצוניות.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Add form -->
+                <div class="bg-gray-50 dark:bg-slate-800/40 border border-gray-200 dark:border-slate-800 rounded-2xl p-5 md:col-span-1 space-y-4">
+                    <h3 class="text-sm font-extrabold text-gray-800 dark:text-slate-200">הוספת אילוץ חדש</h3>
+                    
+                    <div class="space-y-3 text-xs">
+                        <div>
+                            <label class="block text-gray-700 dark:text-slate-300 font-bold mb-1">חייל/ת:</label>
+                            <select id="con-soldier" class="w-full p-2 border border-gray-200 rounded-lg outline-none bg-white dark:bg-slate-800 font-bold"></select>
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-700 dark:text-slate-300 font-bold mb-1">בחר יום:</label>
+                            <select id="con-day" class="w-full p-2 border border-gray-200 rounded-lg outline-none bg-white dark:bg-slate-800 font-bold">
+                                <option value="0">ראשון</option>
+                                <option value="1">שני</option>
+                                <option value="2">שלישי</option>
+                                <option value="3">רביעי</option>
+                                <option value="4">חמישי</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-700 dark:text-slate-300 font-bold mb-1">סוג אילוץ:</label>
+                            <select id="con-type" class="w-full p-2 border border-gray-200 rounded-lg outline-none bg-white dark:bg-slate-800 font-bold">
+                                <option value="absent">חופש / מחלה / גימלים (חוסם שיבוץ)</option>
+                                <option value="exempt">פטור תורנות (חוסם שיבוץ)</option>
+                                <option value="release">יום שחרור (חוסם שיבוץ)</option>
+                                <option value="guard">שמירה באותו יום</option>
+                                <option value="reception_pref">העדפה לתפקיד קבלה</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-700 dark:text-slate-300 font-bold mb-1">הערה / סיבה (יוצג בריחוף על הלוח):</label>
+                            <input type="text" id="con-reason" placeholder="למשל: סבב גימלים, טיול משפחתי..." class="w-full p-2 border border-gray-200 rounded-lg outline-none bg-white dark:bg-slate-800">
+                        </div>
+
+                        <button onclick="addConstraint()" class="w-full bg-[#3776AB] hover:bg-[#2b5d87] text-white font-extrabold py-2.5 rounded-lg transition-all shadow-sm">
+                            שמור אילוץ זה
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Constraints List -->
+                <div class="md:col-span-2">
+                    <h3 class="text-sm font-extrabold text-gray-800 dark:text-slate-200 mb-3">רשימת אילוצים רשומים לשבוע זה:</h3>
+                    <div id="constraints-list-area" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. TAB: Soldiers -->
+        <section id="tab-soldiers" class="section hidden flex-col space-y-6">
+            <div class="flex justify-between items-center border-b border-gray-150 dark:border-slate-800 pb-4">
+                <div>
+                    <h2 class="text-xl font-extrabold text-gray-900 dark:text-white">ניהול כוח אדם</h2>
+                    <p class="text-sm text-gray-500 dark:text-slate-400">הוספה, עריכה או מחיקה של חיילים והגדרת העמדות המורשות לכל אחד.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                <!-- Add/Edit form -->
+                <div id="soldier-editor-container" class="bg-gray-50 dark:bg-slate-800/40 border border-gray-200 dark:border-slate-800 rounded-2xl p-5 xl:col-span-1 space-y-4">
+                    <h3 id="soldier-editor-title" class="text-sm font-extrabold text-gray-800 dark:text-slate-200">הוספת חייל/ת חדש/ה</h3>
+                    
+                    <div class="space-y-4 text-xs">
+                        <div>
+                            <label class="block text-gray-700 dark:text-slate-300 font-bold mb-1">שם מלא:</label>
+                            <input type="text" id="sol-name" placeholder="הקלד שם..." class="w-full p-2.5 border border-gray-250 rounded-lg outline-none bg-white dark:bg-slate-800 font-bold text-sm">
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-700 dark:text-slate-300 font-bold mb-1">תפקיד / קטגוריה:</label>
+                            <input type="text" id="sol-role" oninput="updateSoldierAllowedShiftsList()" list="roles-list" placeholder="הקלד תפקיד (לדוגמה: משק, מאבחנת)..." class="w-full p-2.5 border border-gray-250 rounded-lg outline-none bg-white dark:bg-slate-800 font-extrabold text-sm text-[#3776AB]">
+                            <datalist id="roles-list">
+                                <option value="משק">
+                                <option value="מאבחנת">
+                            </datalist>
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-700 dark:text-slate-300 font-bold mb-1">צבע זיהוי בלוח:</label>
+                            <div class="flex items-center gap-2">
+                                <input type="color" id="sol-color" value="#7dd3fc" class="w-10 h-10 border border-gray-300 rounded-xl cursor-pointer bg-white">
+                                <span class="text-xxs text-gray-400">בחר צבע ייחודי כדי לזהות את החייל בקלות בלוח.</span>
+                            </div>
+                        </div>
+
+                        <!-- Shift qualifications (Checkboxes) -->
+                        <div>
+                            <label class="block text-gray-700 dark:text-slate-300 font-bold mb-1.5">עמדות/תורנויות מורשות לשיבוץ (הסר V לעמדות אסורות):</label>
+                            <div id="sol-allowed-shifts-container" class="max-h-40 overflow-y-auto p-2 border border-gray-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 space-y-1.5">
+                                <!-- Shift checkboxes will be loaded dynamically -->
+                            </div>
+                        </div>
+
+                        <div class="flex gap-2">
+                            <button id="save-soldier-btn" onclick="saveSoldier()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-2.5 rounded-lg transition-all shadow-sm">
+                                שמור חייל/ת
+                            </button>
+                            <button id="cancel-edit-soldier-btn" onclick="resetSoldierForm()" class="hidden px-4 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2.5 rounded-lg transition-all">
+                                ביטול
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Soldiers List -->
+                <div class="xl:col-span-2">
+                    <h3 class="text-sm font-extrabold text-gray-800 dark:text-slate-200 mb-3">חיילים רשומים בלוח:</h3>
+                    <div id="soldiers-list-area" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. TAB: Shift Types -->
+        <section id="tab-shifts" class="section hidden flex-col space-y-6">
+            <div class="flex justify-between items-center border-b border-gray-150 dark:border-slate-800 pb-4">
+                <div>
+                    <h2 class="text-xl font-extrabold text-gray-900 dark:text-white">ניהול סוגי עמדות ותורנויות</h2>
+                    <p class="text-sm text-gray-500 dark:text-slate-400">צור סוגי תורנויות או עמדות שמירה ומטבח בהתאם לצרכי השבוע.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                <!-- Add form -->
+                <div class="bg-gray-50 dark:bg-slate-800/40 border border-gray-200 dark:border-slate-800 rounded-2xl p-5 xl:col-span-1 space-y-4">
+                    <h3 class="text-sm font-extrabold text-gray-800 dark:text-slate-200">הוספת עמדה/תורנות חדשה</h3>
+                    
+                    <div class="space-y-3.5 text-xs">
+                        <div>
+                            <label class="block text-gray-700 dark:text-slate-300 font-bold mb-1">שם העמדה (לדוגמה: כיתה שמאלית, משמרת לילה, פח):</label>
+                            <input type="text" id="sh-name" placeholder="שם העמדה..." class="w-full p-2 border border-gray-200 rounded-lg outline-none bg-white dark:bg-slate-800 font-bold text-sm">
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-700 dark:text-slate-300 font-bold mb-1">תיאור קצר (יופיע בריחוף בלוח):</label>
+                            <input type="text" id="sh-desc" placeholder="הגעה 07:30, כיתת צהריים..." class="w-full p-2 border border-gray-200 rounded-lg outline-none bg-white dark:bg-slate-800">
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-700 dark:text-slate-300 font-bold mb-1">תפקיד מורשה להשתבץ כאן:</label>
+                            <input type="text" id="sh-role" list="shift-roles-list" placeholder="הקלד תפקיד (לדוגמה: משק, מאבחנת, הכל)..." class="w-full p-2.5 border border-gray-250 rounded-lg outline-none bg-white dark:bg-slate-800 font-bold text-primary">
+                            <datalist id="shift-roles-list">
+                                <option value="הכל">
+                                <option value="משק">
+                                <option value="מאבחנת">
+                            </datalist>
+                        </div>
+
+                        <!-- Active days selection -->
+                        <div>
+                            <label class="block text-gray-700 dark:text-slate-300 font-bold mb-1.5">ימי פעילות בשבוע:</label>
+                            <div class="grid grid-cols-5 gap-1 text-center font-bold text-xxs">
+                                <label class="p-1.5 border border-gray-250 dark:border-slate-700 rounded-lg cursor-pointer bg-white dark:bg-slate-800">
+                                    <input type="checkbox" id="sh-day-0" checked class="block mx-auto mb-1"> א'
+                                </label>
+                                <label class="p-1.5 border border-gray-250 dark:border-slate-700 rounded-lg cursor-pointer bg-white dark:bg-slate-800">
+                                    <input type="checkbox" id="sh-day-1" checked class="block mx-auto mb-1"> ב'
+                                </label>
+                                <label class="p-1.5 border border-gray-250 dark:border-slate-700 rounded-lg cursor-pointer bg-white dark:bg-slate-800">
+                                    <input type="checkbox" id="sh-day-2" checked class="block mx-auto mb-1"> ג'
+                                </label>
+                                <label class="p-1.5 border border-gray-250 dark:border-slate-700 rounded-lg cursor-pointer bg-white dark:bg-slate-800">
+                                    <input type="checkbox" id="sh-day-3" checked class="block mx-auto mb-1"> ד'
+                                </label>
+                                <label class="p-1.5 border border-gray-250 dark:border-slate-700 rounded-lg cursor-pointer bg-white dark:bg-slate-800 text-red-500">
+                                    <input type="checkbox" id="sh-day-4" checked class="block mx-auto mb-1"> ה'
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Trash toggle -->
+                        <div class="flex items-center gap-2 p-2 bg-yellow-50/50 dark:bg-yellow-950/10 rounded-lg border border-yellow-200/50">
+                            <input type="checkbox" id="sh-trash" class="w-4 h-4 rounded cursor-pointer">
+                            <div>
+                                <label for="sh-trash" class="block font-bold text-gray-800 dark:text-slate-200 cursor-pointer">תורנות הוגנת (Justice Board)</label>
+                                <span class="text-xxs text-gray-400 block">סמן זאת כדי לעקוב אחר השיבוצים בטבלת הצדק (למשל תורנות פח/מטבח).</span>
+                            </div>
+                        </div>
+
+                        <button onclick="addShiftType()" class="w-full bg-[#3776AB] hover:bg-[#2b5d87] text-white font-extrabold py-2.5 rounded-lg transition-all shadow-sm">
+                            צור והפעל עמדה זו
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Shifts List -->
+                <div class="xl:col-span-2">
+                    <h3 class="text-sm font-extrabold text-gray-800 dark:text-slate-200 mb-3">עמדות מוגדרות כעת:</h3>
+                    <div id="shifts-list-area" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. TAB: Rules Engine -->
+        <section id="tab-rules" class="section hidden flex-col space-y-6">
+            <div id="rules-lock-msg" class="hidden bg-slate-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 p-8 rounded-2xl text-center max-w-md mx-auto my-12 shadow-sm">
+                <div class="w-12 h-12 bg-red-100 dark:bg-red-950/20 rounded-full flex items-center justify-center mx-auto mb-4 text-red-500">
+                    <ui-icon name="alert-triangle" class="w-6 h-6"></ui-icon>
+                </div>
+                <h3 class="text-lg font-extrabold text-slate-800 dark:text-slate-100 mb-2">גישה חסומה</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">ניהול ועריכת חוקי לוגיקה מחייב הרשאת סגל מורשה.</p>
+                <button onclick="toggleSegelLock()" class="bg-[#3776AB] text-white px-5 py-2.5 rounded-xl font-bold hover:bg-[#2b5d87] transition-all text-sm">בצע אימות סגל</button>
+            </div>
+
+            <div id="rules-content" class="block space-y-6">
+                <div>
+                    <h2 class="text-xl font-extrabold text-gray-900 dark:text-white">ניהול חוקים ולוגיקה (Rules Engine)</h2>
+                    <p class="text-sm text-gray-500 dark:text-slate-400">הגדרת חוקים במילים פשוטות כדי למנוע טעויות בשיבוץ האוטומטי והידני.</p>
+                </div>
+
+                <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                    <!-- Rule Creator -->
+                    <div class="bg-gray-50 dark:bg-slate-800/40 border border-gray-200 dark:border-slate-800 rounded-2xl p-5 xl:col-span-1 space-y-4">
+                        <h3 class="text-sm font-extrabold text-gray-800 dark:text-slate-200">יצירת חוק חדש בקלות</h3>
+                        
+                        <div class="space-y-4 text-xs">
+                            <div>
+                                <label class="block text-gray-700 dark:text-slate-300 font-bold mb-1">תן שם קצר לחוק (למשל: סוגר לא פותח למחרת):</label>
+                                <input type="text" id="rule-name" placeholder="שם החוק..." class="w-full p-2 border border-gray-200 rounded-lg outline-none bg-white dark:bg-slate-800 font-bold">
+                            </div>
+
+                            <div>
+                                <label class="block text-gray-700 dark:text-slate-300 font-bold mb-1.5">בחר תבנית חוק:</label>
+                                <select id="rule-type-select" onchange="toggleRuleFields()" class="w-full p-2.5 border border-gray-250 rounded-lg outline-none bg-white dark:bg-slate-800 font-extrabold text-sm text-[#3776AB]">
+                                    <option value="sequence">1. מניעת רצף: חייל שמשובץ ב-X לא ישובץ כעבור N ימים ב-Y</option>
+                                    <option value="constraint_conflict">2. התנגשות אילוץ: חייל שיש לו אילוץ X לא ישובץ ב-Y</option>
+                                    <option value="max_limit">3. מגבלה שבועית: חייל ישובץ לכל היותר N פעמים ב-X</option>
+                                    <option value="conditional_dependency">4. שיבוץ מותנה/העדפה: חייל שמשתבץ ב-X ישובץ למחרת ב-Y</option>
+                                </select>
+                            </div>
+
+                            <!-- Dynamic fields depending on selected template -->
+                            <div id="rule-params-area" class="space-y-3.5 pt-3 border-t border-gray-150 dark:border-slate-700 font-bold text-gray-700 dark:text-slate-300">
+                                
+                                <!-- Template 1: Sequence -->
+                                <div id="params-sequence" class="space-y-2">
+                                    <span class="text-xxs text-gray-400 block mb-1">הרכבת המשפט:</span>
+                                    <span class="text-xs text-gray-600 dark:text-slate-400 block">אם חייל משובץ ב:</span>
+                                    <select id="seq-trigger" class="w-full p-2 border border-gray-200 rounded-lg outline-none bg-white dark:bg-slate-800 font-bold text-xs"></select>
+                                    
+                                    <span class="text-xs text-gray-600 dark:text-slate-400 block">אז הוא לא יוכל להשתבץ ב:</span>
+                                    <select id="seq-target" class="w-full p-2 border border-gray-200 rounded-lg outline-none bg-white dark:bg-slate-800 font-bold text-xs"></select>
+                                    
+                                    <div class="flex items-center gap-2 mt-1.5">
+                                        <span class="text-xs text-gray-600 dark:text-slate-400">כעבור:</span>
+                                        <select id="seq-offset" class="flex-1 p-2 border border-gray-200 rounded-lg outline-none bg-white dark:bg-slate-800 font-bold text-xs">
+                                            <option value="1">יום אחד (למחרת)</option>
+                                            <option value="0">באותו היום (0 ימים)</option>
+                                            <option value="2">יומיים אחרי</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Template 2: Constraint conflict -->
+                                <div id="params-constraint" class="space-y-2 hidden">
+                                    <span class="text-xxs text-gray-400 block mb-1">הרכבת המשפט:</span>
+                                    <span class="text-xs text-gray-600 dark:text-slate-400 block">אם לחייל יש אילוץ מסוג:</span>
+                                    <select id="con-conflict-type" class="w-full p-2 border border-gray-200 rounded-lg outline-none bg-white dark:bg-slate-800 font-bold text-xs">
+                                        <option value="absent">חופש / מחלה / גימלים</option>
+                                        <option value="exempt">פטור תורנות</option>
+                                        <option value="release">יום שחרור</option>
+                                        <option value="guard">שמירה באותו יום</option>
+                                    </select>
+                                    
+                                    <span class="text-xs text-gray-600 dark:text-slate-400 block">אז הוא לא יוכל להשתבץ ב:</span>
+                                    <select id="con-conflict-target" class="w-full p-2 border border-gray-200 rounded-lg outline-none bg-white dark:bg-slate-800 font-bold text-xs"></select>
+                                </div>
+
+                                <!-- Template 3: Max limit -->
+                                <div id="params-limit" class="space-y-2 hidden">
+                                    <span class="text-xxs text-gray-400 block mb-1">הרכבת המשפט:</span>
+                                    <span class="text-xs text-gray-600 dark:text-slate-400 block">חייל יוכל להשתבץ לכל היותר:</span>
+                                    <div class="flex items-center gap-2">
+                                        <input type="number" id="limit-count" value="1" min="1" max="5" class="w-16 p-2 border border-gray-250 rounded-lg text-center font-bold bg-white dark:bg-slate-800">
+                                        <span class="text-xs text-gray-600 dark:text-slate-400">פעמים בשבוע</span>
+                                    </div>
+                                    
+                                    <span class="text-xs text-gray-600 dark:text-slate-400 block">עבור עמדה זו:</span>
+                                    <select id="limit-target" class="w-full p-2 border border-gray-200 rounded-lg outline-none bg-white dark:bg-slate-800 font-bold text-xs"></select>
+                                </div>
+
+                                <!-- Template 4: Conditional dependency -->
+                                <div id="params-conditional" class="space-y-2 hidden">
+                                    <span class="text-xxs text-gray-400 block mb-1">הרכבת המשפט (העדפת שיבוץ):</span>
+                                    <span class="text-xs text-gray-600 dark:text-slate-400 block">אם חייל משתבץ ב:</span>
+                                    <select id="cond-trigger" class="w-full p-2 border border-gray-200 rounded-lg outline-none bg-white dark:bg-slate-800 font-bold text-xs"></select>
+                                    
+                                    <span class="text-xs text-gray-600 dark:text-slate-400 block">עדיף/רצוי לשבץ אותו למחרת ב:</span>
+                                    <select id="cond-target" class="w-full p-2 border border-gray-200 rounded-lg outline-none bg-white dark:bg-slate-800 font-bold text-xs"></select>
+                                </div>
+
+                            </div>
+
+                            <button onclick="addRule()" class="w-full bg-[#3776AB] hover:bg-[#2b5d87] text-white font-extrabold py-2.5 rounded-lg transition-all shadow-sm">
+                                + צור והפעל חוק זה
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Rules List -->
+                    <div class="xl:col-span-2">
+                        <h3 class="text-sm font-extrabold text-gray-800 dark:text-slate-200 mb-3">חוקים פעילים במערכת:</h3>
+                        <div class="space-y-2.5" id="rules-list-area">
+                            <!-- Loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Create New Board Modal -->
+    <div id="new-board-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center hidden z-50 no-print">
+        <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 p-6 rounded-2xl w-full max-w-md shadow-2xl space-y-4">
+            <h3 class="text-lg font-extrabold text-gray-900 dark:text-white">יצירת לוח שיבוצים חדש</h3>
+            <div class="space-y-3.5 text-xs">
+                <div>
+                    <label class="block text-gray-700 dark:text-slate-300 font-bold mb-1">שם הלוח (לדוגמה: לוח שמירות סופ"ש, תורנות מחלקה):</label>
+                    <input type="text" id="new-board-name" placeholder="שם הלוח..." class="w-full p-2.5 border border-gray-200 rounded-lg outline-none font-bold text-sm bg-gray-50 dark:bg-slate-800">
+                </div>
+                <div>
+                    <label class="block text-gray-700 dark:text-slate-300 font-bold mb-1.5">התחל על בסיס:</label>
+                    <select id="new-board-template" class="w-full p-2.5 border border-gray-200 rounded-lg outline-none font-bold bg-gray-50 dark:bg-slate-800 text-primary">
+                        <option value="copy_current">העתקת מבנה הלוח הנוכחי (חיילים ועמדות)</option>
+                        <option value="empty">לוח ריק לחלוטין</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex justify-end gap-2.5 pt-2">
+                <button onclick="submitNewBoard()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl transition-all text-xs">צור לוח</button>
+                <button onclick="closeNewBoardModal()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition-all text-xs">ביטול</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Segel Auth Modal -->
+    <div id="segel-auth-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center hidden z-50 no-print">
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl w-full max-w-xs shadow-2xl text-center space-y-4 border border-gray-200 dark:border-slate-800">
+            <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto text-primary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
+            </div>
+            <h3 class="text-base font-extrabold text-gray-900 dark:text-white">קוד אימות סגל</h3>
+            <input type="password" id="segel-auth-code" maxlength="6" placeholder="הזן קוד..." class="w-full p-2.5 border border-gray-200 rounded-lg text-center font-bold text-sm tracking-wider bg-gray-50 dark:bg-slate-800 outline-none">
+            <div class="flex gap-2">
+                <button onclick="submitSegelAuth()" class="flex-1 bg-primary hover:bg-primaryHover text-white font-extrabold py-2 rounded-lg transition-all text-xs">אימות</button>
+                <button onclick="closeSegelAuthModal()" class="px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2 rounded-lg transition-all text-xs">ביטול</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert / Toast Banner -->
+    <div id="toast-banner" class="fixed bottom-4 right-4 bg-emerald-600 text-white font-bold px-5 py-3 rounded-xl shadow-lg border border-emerald-500 flex items-center gap-2 transform translate-y-20 opacity-0 transition-all duration-300 z-50 text-sm no-print">
+        <ui-icon name="check" class="w-5 h-5"></ui-icon>
+        <span id="toast-message">פעולה בוצעה בהצלחה!</span>
+    </div>
+
+    <script>
+        // --- פונקציות עזר גלובליות ---
+        function parseKey(key) {
+            const lastIdx = key.lastIndexOf('_');
+            if (lastIdx === -1) return [key, ''];
+            return [key.substring(0, lastIdx), key.substring(lastIdx + 1)];
+        }
+
+        function rolesMatch(sRole, stRole) {
+            if (!stRole || stRole === 'הכל') return true;
+            if (!sRole) return false;
+            const clean = (r) => r.replace(/["'\s\-]/g, '').trim().toLowerCase();
+            const r1 = clean(sRole);
+            const r2 = clean(stRole);
+            if (r1 === r2) return true;
+            const mashakSynonyms = ['משק', 'משקמחשוב', 'משקמחשוב', 'mashak', 'משק'];
+            const meavchenetSynonyms = ['מאבחנת', 'meavchenet', 'מאבחנתמחשוב'];
+            if (mashakSynonyms.includes(r1) && mashakSynonyms.includes(r2)) return true;
+            if (meavchenetSynonyms.includes(r1) && meavchenetSynonyms.includes(r2)) return true;
+            return false;
+        }
+
+        function updateSoldierAllowedShiftsList(selectedShifts = null) {
+            const board = state.boards[state.activeBoardId];
+            const roleInput = document.getElementById('sol-role').value.trim();
+            const container = document.getElementById('sol-allowed-shifts-container');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            const compatibleShifts = board.shiftTypes.filter(st => rolesMatch(roleInput, st.role));
+            
+            if (compatibleShifts.length === 0) {
+                container.innerHTML = `<span class="text-xxs text-gray-400 block text-center py-2">אין עמדות מתאימות לתפקיד זה.</span>`;
+                return;
+            }
+            
+            compatibleShifts.forEach(st => {
+                const isChecked = selectedShifts === null || selectedShifts.includes(st.id);
+                container.innerHTML += `
+                    <label class="flex items-center gap-1.5 font-bold cursor-pointer hover:text-primary text-gray-700 dark:text-slate-350">
+                        <input type="checkbox" value="${st.id}" ${isChecked ? 'checked' : ''} class="sol-allowed-shift-checkbox w-3.5 h-3.5 rounded cursor-pointer text-primary">
+                        <span>${st.name} <span class="text-[9px] font-normal text-gray-400">(${st.role})</span></span>
+                    </label>
+                `;
+            });
+        }
+
+        // --- מצב התחלתי ברירת מחדל (Default State) ---
+        let state = {
+            activeBoardId: "default",
+            boards: {
+                "default": {
+                    name: "לוח כיתות שבועי",
+                    soldiers: [
+                        { name: "ראובן", role: "משק", color: "#7dd3fc", active: true, allowedShifts: [] },
+                        { name: "חיים", role: "משק", color: "#93c5fd", active: true, allowedShifts: [] },
+                        { name: "ניקולאי", role: "משק", color: "#ddd6fe", active: true, allowedShifts: [] },
+                        { name: "אריאל דגן", role: "מאבחנת", color: "#fca5a5", active: true, allowedShifts: [] },
+                        { name: "אריאל פרץ", role: "מאבחנת", color: "#fcd34d", active: true, allowedShifts: [] },
+                        { name: "גל", role: "מאבחנת", color: "#86efac", active: true, allowedShifts: [] },
+                        { name: "יהב", role: "מאבחנת", color: "#cbd5e1", active: true, allowedShifts: [] },
+                        { name: "עדן", role: "מאבחנת", color: "#fdba74", active: true, allowedShifts: [] },
+                        { name: "רונה", role: "מאבחנת", color: "#bef264", active: true, allowedShifts: [] },
+                        { name: "הילה", role: "מאבחנת", color: "#c084fc", active: true, allowedShifts: [] },
+                        { name: "שני", role: "מאבחנת", color: "#fda4af", active: true, allowedShifts: [] },
+                        { name: "שיר", role: "מאבחנת", color: "#fde047", active: true, allowedShifts: [] }
+                    ],
+                    shiftTypes: [
+                        { id: "mashak_open1", name: "משק פותח 1", desc: "הגעה 07:30", role: "משק", days: [0,1,2,3,4], isTrashDuty: false },
+                        { id: "mashak_open2", name: "משק פותח 2", desc: "הגעה 07:30", role: "משק", days: [0,1,2,3,4], isTrashDuty: false },
+                        { id: "mashak_close", name: "משק סוגר", desc: "הגעה 09:30", role: "משק", days: [0,1,2,3,4], isTrashDuty: false },
+                        { id: "st_0", name: "לביא א'", desc: "כיתת בוקר (07:30 - 12:30)", role: "מאבחנת", days: [0,1,2,3,4], isTrashDuty: false },
+                        { id: "st_1", name: "לביא ב'", desc: "כיתת צהריים (12:30 - 17:00)", role: "מאבחנת", days: [0,1,2,3,4], isTrashDuty: false },
+                        { id: "st_2", name: "רמון א'", desc: "כיתת בוקר (07:30 - 12:30)", role: "מאבחנת", days: [0,1,2,3,4], isTrashDuty: false },
+                        { id: "st_3", name: "רמון ב'", desc: "כיתה סוגרת (12:30 - אחרון)", role: "מאבחנת", days: [0,1,2,3,4], isTrashDuty: false },
+                        { id: "st_4", name: "ימנית א'", desc: "כיתת בוקר (07:30 - 12:30)", role: "מאבחנת", days: [0,1,2,3,4], isTrashDuty: false },
+                        { id: "st_5", name: "ימנית ב'", desc: "כיתת צהריים (12:30 - 17:00)", role: "מאבחנת", days: [0,1,2,3,4], isTrashDuty: false },
+                        { id: "st_6", name: "שמאלית", desc: "07:30", role: "מאבחנת", days: [0,1,2,3,4], isTrashDuty: false },
+                        { id: "st_7", name: "קבלה", desc: "תורנות קבלה", role: "מאבחנת", days: [0,1,2,3,4], isTrashDuty: false },
+                        { id: "trash", name: "תורנות פח", desc: "החלפת פחי אשפה בסוף היום", role: "הכל", days: [0,1,2,3,4], isTrashDuty: true }
+                    ],
+                    rules: [
+                        { id: "rule_seq_close_open", name: "מניעת רצף: סוגר לא פותח למחרת", type: "sequence", fromShiftId: "mashak_close", toShiftId: "mashak_open1", offsetDays: 1 },
+                        { id: "rule_seq_close_open2", name: "מניעת רצף: סוגר לא פותח 2 למחרת", type: "sequence", fromShiftId: "mashak_close", toShiftId: "mashak_open2", offsetDays: 1 }
+                    ],
+                    constraints: {},
+                    assignments: {},
+                    swaps: {},
+                    justice: { month: new Date().getMonth(), year: new Date().getFullYear(), counts: {}, debtLedger: [] }
+                }
+            }
+        };
+
+        // Current editing state
+        let editingSoldierIndex = null;
+        const APP_ID = 'shifts_board_main'; 
+
+        // --- פונקציות טעינה ושמירה מהשרת ---
+        async function loadFromServer() {
+            try {
+                const response = await fetch(`api.php?file=${APP_ID}`);
+                if (response.ok) {
+                    const serverData = await response.json();
+                    if (serverData && Object.keys(serverData).length > 0) {
+                        return serverData;
+                    }
+                }
+            } catch (e) {
+                console.warn('לא הצליח לטעון נתונים מהשרת. מנסה לטעון מ-localStorage...', e);
+            }
+            try {
+                const localData = localStorage.getItem('mch_shifts_state');
+                if (localData) return JSON.parse(localData);
+            } catch(e){}
+            return null;
+        }
+
+        async function save() {
+            try {
+                localStorage.setItem('mch_shifts_state', JSON.stringify(state));
+            } catch(e){}
+            try {
+                await fetch(`api.php?file=${APP_ID}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(state)
+                });
+            } catch (e) {
+                console.error("שגיאה בסנכרון לשרת:", e);
+            }
+        }
+
+        // --- אתחול המערכת ---
+        async function initApp() {
+            // טעינה מהשרת
+            const data = await loadFromServer();
+            if (data) {
+                if (data.boards && data.activeBoardId) {
+                    state = data;
+                } else {
+                    // הגירה ממבנה ישן (Legacy migration)
+                    state.boards["default"] = {
+                        name: "לוח כיתות שבועי",
+                        soldiers: data.soldiers || state.boards["default"].soldiers,
+                        shiftTypes: state.boards["default"].shiftTypes, 
+                        rules: data.rules || state.boards["default"].rules,
+                        constraints: data.constraints || {},
+                        assignments: data.assignments || {},
+                        swaps: data.swaps || {},
+                        justice: data.justice || state.boards["default"].justice
+                    };
+                    state.activeBoardId = "default";
+                }
+            }
+
+            // וידוא יציבות של כל שדות ה-boards הפעילים למניעת קריסות (פגיעות לנתונים חלקיים מהעבר)
+            Object.keys(state.boards).forEach(id => {
+                const b = state.boards[id];
+                if (!b.soldiers) b.soldiers = [];
+                if (!b.shiftTypes) b.shiftTypes = [];
+                if (!b.rules) b.rules = [];
+                if (!b.constraints) b.constraints = {};
+                if (!b.assignments) b.assignments = {};
+                if (!b.swaps) b.swaps = {};
+                if (!b.justice) {
+                    b.justice = { month: new Date().getMonth(), year: new Date().getFullYear(), counts: {}, debtLedger: [] };
+                } else {
+                    if (!b.justice.counts) b.justice.counts = {};
+                    if (!b.justice.debtLedger) b.justice.debtLedger = [];
+                    if (b.justice.month === undefined || b.justice.month === null) b.justice.month = new Date().getMonth();
+                    if (b.justice.year === undefined || b.justice.year === null) b.justice.year = new Date().getFullYear();
+                }
+
+                // נורמליזציה של תפקידים מאנגלית לעברית (Legacy roles translation/normalization)
+                b.soldiers.forEach(s => {
+                    if (s.role === 'mashak') s.role = 'משק';
+                    if (s.role === 'meavchenet') s.role = 'מאבחנת';
+                });
+                b.shiftTypes.forEach(st => {
+                    if (st.role === 'mashak') st.role = 'משק';
+                    if (st.role === 'meavchenet') st.role = 'מאבחנת';
+                });
+            });
+
+            // וידוא שהלוח הנוכחי תקין
+            if (!state.boards[state.activeBoardId]) {
+                state.activeBoardId = Object.keys(state.boards)[0] || "default";
+            }
+
+            showSegelStatus();
+            buildBoardSelectOptions();
+            render();
+        }
+
+        // --- ניהול ריבוי לוחות (Multi-Board) ---
+        function buildBoardSelectOptions() {
+            const select = document.getElementById('board-profile-select');
+            select.innerHTML = '';
+            Object.entries(state.boards).forEach(([id, board]) => {
+                select.innerHTML += `<option value="${id}" ${id === state.activeBoardId ? 'selected' : ''}>${board.name}</option>`;
+            });
+        }
+
+        function changeActiveBoard() {
+            const select = document.getElementById('board-profile-select');
+            state.activeBoardId = select.value;
+            save();
+            render();
+        }
+
+        function openNewBoardModal() {
+            if (!checkSegelAuth()) return;
+            document.getElementById('new-board-modal').classList.remove('hidden');
+            document.getElementById('new-board-name').value = '';
+            document.getElementById('new-board-name').focus();
+        }
+
+        function closeNewBoardModal() {
+            document.getElementById('new-board-modal').classList.add('hidden');
+        }
+
+        function submitNewBoard() {
+            const name = document.getElementById('new-board-name').value.trim();
+            const temp = document.getElementById('new-board-template').value;
+            if (!name) return alert("אנא הזן שם ללוח");
+
+            const newId = "board_" + Date.now();
+            const activeB = state.boards[state.activeBoardId];
+
+            if (temp === 'copy_current' && activeB) {
+                // העתק מבנה קיים ללא שיבוצים ואילוצים
+                state.boards[newId] = {
+                    name: name,
+                    soldiers: JSON.parse(JSON.stringify(activeB.soldiers)),
+                    shiftTypes: JSON.parse(JSON.stringify(activeB.shiftTypes)),
+                    rules: JSON.parse(JSON.stringify(activeB.rules || [])),
+                    constraints: {},
+                    assignments: {},
+                    swaps: {},
+                    justice: { month: new Date().getMonth(), year: new Date().getFullYear(), counts: {}, debtLedger: [] }
+                };
+            } else {
+                // לוח ריק
+                state.boards[newId] = {
+                    name: name,
+                    soldiers: [],
+                    shiftTypes: [],
+                    rules: [],
+                    constraints: {},
+                    assignments: {},
+                    swaps: {},
+                    justice: { month: new Date().getMonth(), year: new Date().getFullYear(), counts: {}, debtLedger: [] }
+                };
+            }
+
+            state.activeBoardId = newId;
+            buildBoardSelectOptions();
+            closeNewBoardModal();
+            save();
+            render();
+            showSuccessAlert(`הלוח "${name}" נוצר בהצלחה!`);
+        }
+
+        function deleteActiveBoard() {
+            if (!checkSegelAuth()) return;
+            const keys = Object.keys(state.boards);
+            if (keys.length <= 1) return alert("לא ניתן למחוק את הלוח האחרון שנותר.");
+            const activeB = state.boards[state.activeBoardId];
+            if (!confirm(`האם אתה בטוח שברצונך למחוק את הלוח "${activeB.name}"?`)) return;
+
+            delete state.boards[state.activeBoardId];
+            state.activeBoardId = Object.keys(state.boards)[0];
+            buildBoardSelectOptions();
+            save();
+            render();
+            showSuccessAlert("הלוח נמחק בהצלחה");
+        }
+
+        // --- אימות סגל (Segel Auth) ---
+        function checkSegelAuth(callback = null) {
+            const isAuth = localStorage.getItem('mch_authorized') === 'true';
+            if (isAuth) {
+                if (callback) callback();
+                return true;
+            }
+            // פתיחת מודל אימות סגל
+            window.segelAuthCallback = callback;
+            document.getElementById('segel-auth-modal').classList.remove('hidden');
+            document.getElementById('segel-auth-code').value = '';
+            setTimeout(() => document.getElementById('segel-auth-code').focus(), 150);
+            return false;
+        }
+
+        function submitSegelAuth() {
+            const code = document.getElementById('segel-auth-code').value;
+            if (code === '0112') {
+                localStorage.setItem('mch_authorized', 'true');
+                showSegelStatus();
+                closeSegelAuthModal();
+                showSuccessAlert('אימות סגל בוצע בהצלחה!');
+                if (window.segelAuthCallback) {
+                    window.segelAuthCallback();
+                    window.segelAuthCallback = null;
+                }
+                render();
+            } else {
+                alert('קוד שגוי!');
+            }
+        }
+
+        function closeSegelAuthModal() {
+            document.getElementById('segel-auth-modal').classList.add('hidden');
+        }
+
+        function toggleSegelLock() {
+            const isAuth = localStorage.getItem('mch_authorized') === 'true';
+            if (isAuth) {
+                localStorage.removeItem('mch_authorized');
+                showSegelStatus();
+                render();
+                showSuccessAlert('יצאת מאימות סגל. הלוח עבר למצב צפייה בלבד.');
+            } else {
+                checkSegelAuth();
+            }
+        }
+
+        function showSegelStatus() {
+            const isAuth = localStorage.getItem('mch_authorized') === 'true';
+            const btn = document.getElementById('segel-lock-btn');
+            const text = document.getElementById('segel-lock-text');
+            const icon = document.getElementById('segel-lock-icon');
+
+            if (isAuth) {
+                btn.className = "flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl border text-xs font-bold transition-all shadow-sm bg-emerald-50 border-emerald-300 text-emerald-700 hover:bg-emerald-100";
+                text.innerText = "סגל מחובר (פתוח לשינויים)";
+                if (icon) icon.setAttribute('name', 'check-circle');
+            } else {
+                btn.className = "flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl border text-xs font-bold transition-all shadow-sm bg-amber-50 border-amber-300 text-amber-700 hover:bg-amber-100";
+                text.innerText = "צפייה בלבד (לחץ לאימות)";
+                if (icon) icon.setAttribute('name', 'alert-triangle');
+            }
+        }
+
+        // --- שיבוץ אוטומטי - פותר CSP backtracking חכם ---
+        function runAutoSchedule() {
+            if (!checkSegelAuth()) return;
+            if (!confirm("האם לבצע שיבוץ אוטומטי מלא ללוח זה?")) return;
+
+            const board = state.boards[state.activeBoardId];
+            const assignments = {};
+            
+            // 1. מיפוי כל המשתנים: עמדה + יום
+            const variables = [];
+            for (let d = 0; d < 5; d++) {
+                board.shiftTypes.forEach(st => {
+                    if (st.days.includes(d)) {
+                        variables.push({ day: d, shift: st });
+                    }
+                });
+            }
+            
+            // מיון משתנים: עמדות רגילות תחילה, תורנויות פח אחרונות. עמדות סוגרות (close) לפני פותחות (open).
+            variables.sort((a, b) => {
+                if (a.shift.isTrashDuty !== b.shift.isTrashDuty) {
+                    return a.shift.isTrashDuty ? 1 : -1;
+                }
+                if (a.shift.id.includes('close') && !b.shift.id.includes('close')) return -1;
+                if (!a.shift.id.includes('close') && b.shift.id.includes('close')) return 1;
+                return 0;
+            });
+
+            const activeRules = board.rules || [];
+
+            // פונקציית בדיקת אילוצים קשיחים (Hard Constraints)
+            function isEligible(soldier, day, shift, currentAssignments) {
+                if (!soldier.active) return false;
+                if (!rolesMatch(soldier.role, shift.role)) return false;
+
+                // בדיקת מורשות שיבוץ פרטנית (Allowed Shifts)
+                if (soldier.allowedShifts && soldier.allowedShifts.length > 0) {
+                    if (!soldier.allowedShifts.includes(shift.id)) return false;
+                }
+
+                // בדיקה שאינו משובץ כבר באותו יום לעמדה אחרת
+                const alreadyAssigned = Object.keys(currentAssignments).some(key => {
+                    const [sId, dIdx] = parseKey(key);
+                    return parseInt(dIdx) === day && currentAssignments[key] === soldier.name;
+                });
+                if (alreadyAssigned) return false;
+
+                // בדיקת חופש/אילוצים אישיים חוסמים
+                const cKey = `${soldier.name}_${day}`;
+                const c = board.constraints[cKey];
+                
+                // 1. אילוצי חסימה מלאים: חופש, שמירה, יום שחרור
+                if (c && (c.type === 'absent' || c.type === 'release' || c.type === 'guard')) {
+                    return false;
+                }
+                
+                // 2. אילוץ פטור תורנות: חוסם רק תורנויות פח/צדק
+                if (c && c.type === 'exempt' && shift.isTrashDuty) {
+                    return false;
+                }
+
+                // הרצת חוקים מוגדרים במערכת
+                for (let r of activeRules) {
+                    if (r.type === 'sequence') {
+                        if (shift.id === r.toShiftId) {
+                            const prevDay = day - r.offsetDays;
+                            if (prevDay >= 0 && currentAssignments[`${r.fromShiftId}_${prevDay}`] === soldier.name) return false;
+                        }
+                        if (shift.id === r.fromShiftId) {
+                            const nextDay = day + r.offsetDays;
+                            if (nextDay < 5 && currentAssignments[`${r.toShiftId}_${nextDay}`] === soldier.name) return false;
+                        }
+                    }
+                    if (r.type === 'constraint_conflict') {
+                        if (r.targetShiftId === 'any' || shift.id === r.targetShiftId) {
+                            if (c && c.type === r.constraintType) return false;
+                        }
+                    }
+                    if (r.type === 'max_limit' && shift.id === r.targetShiftId) {
+                        let count = 0;
+                        Object.keys(currentAssignments).forEach(key => {
+                            const [sId, dIdx] = parseKey(key);
+                            if (sId === r.targetShiftId && currentAssignments[key] === soldier.name) count++;
+                        });
+                        if (count >= r.maxLimit) return false;
+                    }
+                }
+                return true;
+            }
+
+            // חישוב ציון העדפה (Soft Constraints) - ציון נמוך = עדיף
+            function getCandidateScore(soldier, day, shift, currentAssignments) {
+                let score = 0;
+
+                // איזון שיבוצים שבועי כללי
+                let weeklyCount = 0;
+                Object.keys(currentAssignments).forEach(key => {
+                    if (currentAssignments[key] === soldier.name) weeklyCount++;
+                });
+                score += weeklyCount * 10;
+
+                // שיקולי טבלת צדק (עבור תורנויות הוגנות)
+                if (shift.isTrashDuty) {
+                    const justiceCount = board.justice.counts[soldier.name] || 0;
+                    score += justiceCount * 100;
+
+                    let swapsOwed = 0;
+                    let swapsEarned = 0;
+                    board.justice.debtLedger.forEach(ld => {
+                        if (ld.debtor === soldier.name) swapsOwed++;
+                        if (ld.creditor === soldier.name) swapsEarned++;
+                    });
+                    score -= swapsOwed * 100;
+                    score += swapsEarned * 100;
+                }
+
+                // חוק מותנה (העדפה חיובית)
+                activeRules.forEach(r => {
+                    if (r.type === 'conditional_dependency' && shift.id === r.targetShiftId) {
+                        const prevDay = day - r.offsetDays;
+                        if (prevDay >= 0 && currentAssignments[`${r.fromShiftId}_${prevDay}`] === soldier.name) {
+                            score -= 50; 
+                        }
+                    }
+                });
+
+                score += Math.random(); // גיוון אקראי קל
+                return score;
+            }
+
+            // פותר Backtracking
+            function backtrack(varIdx) {
+                if (varIdx === variables.length) return true;
+
+                const { day, shift } = variables[varIdx];
+                const candidates = board.soldiers.filter(s => isEligible(s, day, shift, assignments));
+                
+                // מיון מועמדים לפי ציון
+                candidates.sort((a, b) => getCandidateScore(a, day, shift, assignments) - getCandidateScore(b, day, shift, assignments));
+
+                for (let c of candidates) {
+                    assignments[`${shift.id}_${day}`] = c.name;
+                    if (backtrack(varIdx + 1)) return true;
+                    delete assignments[`${shift.id}_${day}`];
+                }
+                return false;
+            }
+
+            const success = backtrack(0);
+            if (success) {
+                board.assignments = assignments;
+                // עדכון טבלת צדק לשיבוצים החדשים שבוצעו
+                Object.keys(assignments).forEach(key => {
+                    const [shiftId, dayIdx] = parseKey(key);
+                    const st = board.shiftTypes.find(s => s.id === shiftId);
+                    if (st && st.isTrashDuty) {
+                        const name = assignments[key];
+                        board.justice.counts[name] = (board.justice.counts[name] || 0) + 1;
+                    }
+                });
+                save();
+                render();
+                showSuccessAlert("השיבוץ האוטומטי הושלם בהצלחה תוך עמידה בכל החוקים והאילוצים!");
+            } else {
+                alert("לא נמצא פתרון שיבוץ שעומד בכל החוקים הנוקשים שהגדרת. נסה להסיר או להקל חלק מחוקי הרצף או המגבלות השבועיות בטאב 'חוקים ולוגיקה' ונסה שוב.");
+            }
+        }
+
+        // --- פונקציות הרינדור הראשיות ---
+        function render() {
+            const board = state.boards[state.activeBoardId];
+            if (!board) return;
+
+            checkJusticeReset();
+            renderDynamicBoardGrid();
+            renderSoldiers();
+            renderShiftsList();
+            renderConstraints();
+            renderRules();
+            renderJusticeTable();
+            renderSwapOptions();
+            
+            // עדכון כותרת השבוע
+            document.getElementById('current-week-display').innerText = `לוח פעיל: ${board.name}`;
+            
+            // שליטה על כפתורי ניהול סגל בהתאם להרשאות
+            const isAuth = localStorage.getItem('mch_authorized') === 'true';
+            document.getElementById('auto-schedule-btn').style.display = isAuth ? 'flex' : 'none';
+            document.getElementById('clear-board-btn').style.display = isAuth ? 'inline-flex' : 'none';
+            document.getElementById('delete-board-btn').style.display = isAuth ? 'inline-flex' : 'none';
+            
+            if (isAuth) {
+                document.getElementById('rules-lock-msg').classList.add('hidden');
+                document.getElementById('rules-content').classList.remove('hidden');
+                document.getElementById('soldier-editor-container').classList.remove('opacity-50', 'pointer-events-none');
+            } else {
+                document.getElementById('rules-lock-msg').classList.remove('hidden');
+                document.getElementById('rules-content').classList.add('hidden');
+                document.getElementById('soldier-editor-container').classList.add('opacity-50', 'pointer-events-none');
+            }
+        }
+
+        // 1. רינדור גריד השיבוצים השבועי
+        function renderDynamicBoardGrid() {
+            const board = state.boards[state.activeBoardId];
+            const tbody = document.getElementById('board-grid-body');
+            tbody.innerHTML = '';
+
+            // רינדור אילוצים פעילים בכותרת של כל יום
+            for (let d = 0; d < 5; d++) {
+                const headerConstraintsDiv = document.getElementById(`day-constraints-${d}`);
+                if (headerConstraintsDiv) {
+                    const dayConstraintsList = [];
+                    board.soldiers.forEach(s => {
+                        const cKey = `${s.name}_${d}`;
+                        const c = board.constraints[cKey];
+                        if (c) {
+                            const iconMap = { absent: "🏖️", exempt: "📜", release: "🚪", guard: "🛡️", reception_pref: "🎯" };
+                            dayConstraintsList.push(`${iconMap[c.type] || ''}${s.name}`);
+                        }
+                    });
+                    headerConstraintsDiv.innerHTML = dayConstraintsList.length > 0 ? dayConstraintsList.join(', ') : '';
+                    headerConstraintsDiv.title = dayConstraintsList.length > 0 ? "אילוצים פעילים: " + dayConstraintsList.join(', ') : 'אין אילוצים';
+                }
+            }
+
+            if (board.shiftTypes.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-gray-400 font-bold">אין עמדות/תורנויות מוגדרות בלוח זה. עבור ללשונית "ניהול עמדות" כדי להוסיף עמדות.</td></tr>`;
+                return;
+            }
+
+            const isAuth = localStorage.getItem('mch_authorized') === 'true';
+
+            board.shiftTypes.forEach(st => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-gray-150 dark:border-slate-800 hover:bg-slate-50/50 dark:hover:bg-slate-850/50";
+                
+                // Shift Info Column
+                let roleBadgeColor = st.role === 'משק' ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400' : (st.role === 'מאבחנת' ? 'bg-rose-50 text-rose-700 dark:bg-rose-900/20 dark:text-rose-400' : 'bg-purple-50 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400');
+                let trashBadge = st.isTrashDuty ? '<span class="inline-block bg-amber-100 dark:bg-amber-950/30 text-amber-800 dark:text-amber-400 text-[10px] font-black px-1.5 py-0.5 rounded-lg mr-1.5 shadow-xs">צדק</span>' : '';
+                
+                let tdInfo = `
+                    <td class="p-3 border-l border-gray-200 dark:border-slate-700 font-extrabold text-gray-800 dark:text-slate-200">
+                        <div class="flex flex-col gap-0.5">
+                            <span class="flex items-center gap-1">${st.name} ${trashBadge}</span>
+                            <span class="text-xxs text-gray-400 font-normal">${st.desc || ''}</span>
+                            <span class="self-start text-[9px] font-black px-1.5 py-0.5 rounded ${roleBadgeColor} mt-1 select-none">${st.role}</span>
+                        </div>
+                    </td>
+                `;
+                tr.innerHTML = tdInfo;
+
+                // Day Columns (0..4)
+                for (let d = 0; d < 5; d++) {
+                    const td = document.createElement('td');
+                    td.className = "p-2.5 border-l border-gray-200 dark:border-slate-700 align-middle relative";
+
+                    if (!st.days.includes(d)) {
+                        // Day not active for this shift
+                        td.innerHTML = `<div class="w-full py-2 bg-gray-100/50 dark:bg-slate-800/30 rounded-lg text-center text-xxs text-gray-400 select-none">סגור</div>`;
+                    } else {
+                        const currentAssigned = board.assignments[`${st.id}_${d}`] || '';
+                        
+                        // Check if the current assignment has a warning
+                        let hasWarning = false;
+                        let warningMsg = '';
+                        if (currentAssigned) {
+                            const soldier = board.soldiers.find(s => s.name === currentAssigned);
+                            if (soldier) {
+                                // Rule validation
+                                const mockAssignments = { ...board.assignments };
+                                const eligible = validateManualAssignment(soldier, d, st, mockAssignments);
+                                if (!eligible.valid) {
+                                    hasWarning = true;
+                                    warningMsg = eligible.reason;
+                                }
+                            }
+                        }
+
+                        if (!isAuth) {
+                            // View-only mode for regular soldiers
+                            if (currentAssigned) {
+                                const sObj = board.soldiers.find(s => s.name === currentAssigned);
+                                const color = sObj ? sObj.color : '#cbd5e1';
+                                let warnIcon = hasWarning ? `<span class="text-red-500 absolute top-1.5 left-1.5 cursor-help" title="${warningMsg}">⚠️</span>` : '';
+                                td.innerHTML = `
+                                    <div style="background-color: ${color}" class="w-full py-2.5 px-3 border border-black/10 rounded-xl text-center font-extrabold text-sm text-black shadow-xs relative">
+                                        ${currentAssigned}
+                                        ${warnIcon}
+                                    </div>
+                                `;
+                            } else {
+                                td.innerHTML = `<div class="w-full py-2.5 bg-gray-50 dark:bg-slate-800 border border-dashed border-gray-300 dark:border-slate-700 rounded-xl text-center text-xs text-gray-400 select-none">- ריק -</div>`;
+                            }
+                        } else {
+                            // Edit Mode for Segel (Select dropdown)
+                            const select = document.createElement('select');
+                            select.className = "w-full p-2 border border-gray-250 dark:border-slate-700 rounded-xl outline-none font-bold text-xs bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-200 transition-all focus:border-primary shadow-xs";
+                            
+                            // Check if manually assigned soldier is eligible for styling
+                            if (hasWarning) {
+                                select.className += " border-red-500 bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-400 focus:border-red-500";
+                            } else if (currentAssigned) {
+                                const sObj = board.soldiers.find(s => s.name === currentAssigned);
+                                if (sObj) select.style.borderColor = sObj.color;
+                            }
+
+                            select.onchange = (e) => updateAssignment(st.id, d, e.target.value);
+                            
+                            let options = `<option value="">-- בחר חייל --</option>`;
+                            board.soldiers.forEach(s => {
+                                if (s.active && rolesMatch(s.role, st.role)) {
+                                    options += `<option value="${s.name}" ${s.name === currentAssigned ? 'selected' : ''}>${s.name}</option>`;
+                                }
+                            });
+                            select.innerHTML = options;
+                            td.appendChild(select);
+
+                            if (hasWarning) {
+                                const warnBadge = document.createElement('span');
+                                warnBadge.className = "absolute top-4 left-4 text-red-500 cursor-help font-bold text-sm hover:scale-110 transition-transform select-none";
+                                warnBadge.innerText = "⚠️";
+                                warnBadge.title = warningMsg;
+                                td.appendChild(warnBadge);
+                            }
+                        }
+                    }
+                    tr.appendChild(td);
+                }
+                tbody.appendChild(tr);
+            });
+        }
+
+        // מנגנון בדיקת חוקים לשיבוץ ידני
+        function validateManualAssignment(soldier, day, shift, currentAssignments) {
+            const board = state.boards[state.activeBoardId];
+            if (!soldier.active) return { valid: false, reason: "החייל אינו פעיל" };
+            if (!rolesMatch(soldier.role, shift.role)) return { valid: false, reason: `מיועד ל-${shift.role} בלבד` };
+
+            // בדיקת הרשאות שיבוץ
+            if (soldier.allowedShifts && soldier.allowedShifts.length > 0) {
+                if (!soldier.allowedShifts.includes(shift.id)) return { valid: false, reason: "החייל אינו מורשה לעמדה זו" };
+            }
+
+            // בדיקה שאינו משובץ בעמדה אחרת באותו יום
+            const alreadyAssigned = Object.keys(currentAssignments).some(key => {
+                const [sId, dIdx] = parseKey(key);
+                return sId !== shift.id && parseInt(dIdx) === day && currentAssignments[key] === soldier.name;
+            });
+            if (alreadyAssigned) return { valid: false, reason: "משובץ כבר בעמדה אחרת באותו היום" };
+
+            // בדיקת אילוצים
+            const cKey = `${soldier.name}_${day}`;
+            const c = board.constraints[cKey];
+            if (c) {
+                if (c.type === 'absent' || c.type === 'release' || c.type === 'guard') {
+                    const map = { absent: "בחופש", release: "ביום שחרור", guard: "בשמירה" };
+                    return { valid: false, reason: `נמצא ${map[c.type] || 'באילוץ'} (${c.reason || 'ללא סיבה'})` };
+                }
+                if (c.type === 'exempt' && shift.isTrashDuty) {
+                    return { valid: false, reason: `נמצא בפטור תורנות (${c.reason || 'ללא סיבה'})` };
+                }
+            }
+
+            // הרצת חוקים
+            const activeRules = board.rules || [];
+            for (let r of activeRules) {
+                if (r.type === 'sequence') {
+                    if (shift.id === r.toShiftId) {
+                        const prevDay = day - r.offsetDays;
+                        if (prevDay >= 0 && currentAssignments[`${r.fromShiftId}_${prevDay}`] === soldier.name) {
+                            return { valid: false, reason: `מפר חוק רצף: ${r.name}` };
+                        }
+                    }
+                    if (shift.id === r.fromShiftId) {
+                        const nextDay = day + r.offsetDays;
+                        if (nextDay < 5 && currentAssignments[`${r.toShiftId}_${nextDay}`] === soldier.name) {
+                            return { valid: false, reason: `מפר חוק רצף: ${r.name}` };
+                        }
+                    }
+                }
+                if (r.type === 'constraint_conflict') {
+                    if (r.targetShiftId === 'any' || shift.id === r.targetShiftId) {
+                        if (c && c.type === r.constraintType) {
+                            return { valid: false, reason: `מפר חוק אילוץ: ${r.name}` };
+                        }
+                    }
+                }
+                if (r.type === 'max_limit' && shift.id === r.targetShiftId) {
+                    let count = 0;
+                    Object.keys(currentAssignments).forEach(key => {
+                        const [sId, dIdx] = parseKey(key);
+                        if (sId === r.targetShiftId && currentAssignments[key] === soldier.name) count++;
+                    });
+                    if (count > r.maxLimit) {
+                        return { valid: false, reason: `מפר חוק מגבלה: ${r.name} (עבר את הגבול)` };
+                    }
+                }
+            }
+
+            return { valid: true };
+        }
+
+        function updateAssignment(shiftId, dayIdx, name) {
+            const board = state.boards[state.activeBoardId];
+            const key = `${shiftId}_${dayIdx}`;
+            if (name === '') {
+                delete board.assignments[key];
+            } else {
+                board.assignments[key] = name;
+            }
+            save();
+            render();
+        }
+
+        // 2. רינדור טאב אילוצים
+        function renderConstraints() {
+            const board = state.boards[state.activeBoardId];
+            const select = document.getElementById('con-soldier');
+            select.innerHTML = '<option value="">-- בחר --</option>';
+            board.soldiers.forEach(s => {
+                if (s.active) select.innerHTML += `<option value="${s.name}">${s.name}</option>`;
+            });
+
+            const listArea = document.getElementById('constraints-list-area');
+            listArea.innerHTML = '';
+            
+            const daysHebrew = ["ראשון", "שני", "שלישי", "רביעי", "חמישי"];
+            const constraintTypesHebrew = {
+                absent: "חופש / מחלה / גימלים",
+                exempt: "פטור תורנות",
+                release: "יום שחרור",
+                guard: "שמירה באותו יום",
+                reception_pref: "העדפה לתפקיד קבלה"
+            };
+
+            const keys = Object.keys(board.constraints).sort();
+            if (keys.length === 0) {
+                listArea.innerHTML = `<div class="col-span-2 p-8 border border-dashed border-gray-250 dark:border-slate-800 rounded-2xl text-center text-gray-400 font-bold">לא רשומים אילוצים לשבוע זה.</div>`;
+                return;
+            }
+
+            keys.forEach(key => {
+                const c = board.constraints[key];
+                const parts = key.split('_');
+                const sName = parts[0];
+                const dayIdx = parseInt(parts[1]);
+                
+                const sObj = board.soldiers.find(s => s.name === sName);
+                const color = sObj ? sObj.color : '#e2e8f0';
+
+                const card = document.createElement('div');
+                card.className = "bg-white dark:bg-slate-850 p-4 border border-gray-200 dark:border-slate-800 rounded-xl flex items-center justify-between shadow-xs";
+                
+                card.innerHTML = `
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-3.5 h-3.5 rounded-full inline-block" style="background-color: ${color}"></span>
+                        <div class="flex flex-col">
+                            <span class="font-extrabold text-gray-800 dark:text-slate-200">${sName} - יום ${daysHebrew[dayIdx]}</span>
+                            <span class="text-xxs font-bold text-[#3776AB]">${constraintTypesHebrew[c.type]}</span>
+                            <span class="text-xxs text-gray-400 mt-0.5">${c.reason || 'אין פירוט'}</span>
+                        </div>
+                    </div>
+                    <button onclick="deleteConstraint('${key}')" class="text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 p-2 rounded-lg transition-all" title="מחק אילוץ">
+                        <ui-icon name="trash-2" class="w-4 h-4"></ui-icon>
+                    </button>
+                `;
+                listArea.appendChild(card);
+            });
+        }
+
+        // שינוי הרשאות הוספת אילוץ: פתוח לכולם (חיילים וסגל)
+        function addConstraint() {
+            const board = state.boards[state.activeBoardId];
+            const soldier = document.getElementById('con-soldier').value;
+            const day = document.getElementById('con-day').value;
+            const type = document.getElementById('con-type').value;
+            const reason = document.getElementById('con-reason').value.trim();
+
+            if (!soldier) return alert("בחר חייל/ת");
+
+            const key = `${soldier}_${day}`;
+            board.constraints[key] = { type, reason };
+            
+            document.getElementById('con-reason').value = '';
+            save();
+            render();
+            showSuccessAlert("האילוץ נוסף בהצלחה!");
+        }
+
+        // שינוי הרשאות מחיקת אילוץ: פתוח לכולם
+        function deleteConstraint(key) {
+            const board = state.boards[state.activeBoardId];
+            delete board.constraints[key];
+            save();
+            render();
+            showSuccessAlert("האילוץ נמחק בהצלחה");
+        }
+
+        // 3. רינדור טאב ניהול חיילים
+        function renderSoldiers() {
+            const board = state.boards[state.activeBoardId];
+            const listArea = document.getElementById('soldiers-list-area');
+            listArea.innerHTML = '';
+
+            // טעינת תיבות סימון עמדות בטופס הוספה/עריכה בהתאם לתפקיד שנבחר
+            const activeSoldier = editingSoldierIndex !== null ? board.soldiers[editingSoldierIndex] : null;
+            updateSoldierAllowedShiftsList(activeSoldier ? activeSoldier.allowedShifts : null);
+
+            if (board.soldiers.length === 0) {
+                listArea.innerHTML = `<div class="col-span-2 p-8 border border-dashed border-gray-250 dark:border-slate-800 rounded-2xl text-center text-gray-400 font-bold">לא רשומים חיילים בלוח זה. השתמש בטופס מימין כדי להוסיף.</div>`;
+                return;
+            }
+
+            const isAuth = localStorage.getItem('mch_authorized') === 'true';
+
+            board.soldiers.forEach((s, idx) => {
+                const card = document.createElement('div');
+                card.className = "bg-white dark:bg-slate-850 p-4 border border-gray-200 dark:border-slate-800 rounded-2xl shadow-xs flex items-center justify-between";
+                
+                // Details
+                const roleText = s.role;
+                const allowedCount = s.allowedShifts ? s.allowedShifts.length : 0;
+                const allowedText = allowedCount === 0 || allowedCount === board.shiftTypes.length ? "הכל" : `${allowedCount} עמדות`;
+
+                let actionHtml = '';
+                if (isAuth) {
+                    actionHtml = `
+                        <div class="flex items-center gap-1">
+                            <button onclick="editSoldier(${idx})" class="p-1.5 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/20 rounded-lg transition-all" title="ערוך">
+                                <ui-icon name="edit-2" class="w-4 h-4"></ui-icon>
+                            </button>
+                            <button onclick="deleteSoldier(${idx})" class="p-1.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 rounded-lg transition-all" title="מחק">
+                                <ui-icon name="trash-2" class="w-4 h-4"></ui-icon>
+                            </button>
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="w-5 h-5 rounded-full inline-block border border-black/10 flex-shrink-0" style="background-color: ${s.color}"></span>
+                        <div class="flex flex-col">
+                            <span class="font-extrabold text-sm text-gray-800 dark:text-slate-100">${s.name}</span>
+                            <span class="text-xxs text-gray-400 font-bold">תפקיד: ${roleText} | עמדות מורשות: <span class="text-[#3776AB]">${allowedText}</span></span>
+                        </div>
+                    </div>
+                    ${actionHtml}
+                `;
+                listArea.appendChild(card);
+            });
+        }
+
+        function saveSoldier() {
+            if (!checkSegelAuth()) return;
+            const board = state.boards[state.activeBoardId];
+            const name = document.getElementById('sol-name').value.trim();
+            const role = document.getElementById('sol-role').value;
+            const color = document.getElementById('sol-color').value;
+
+            if (!name) return alert("הזן שם מלא");
+
+            // קבלת רשימת תיבות סימון מסומנות לעמדות מורשות
+            const checkedCheckboxes = document.querySelectorAll('.sol-allowed-shift-checkbox:checked');
+            const allowedShifts = [];
+            
+            // אם מספר העמדות המסומנות קטן מסך כל העמדות, נשמור את הרשימה (אם הכל מסומן, נשמור ריק כסימן להכל)
+            if (checkedCheckboxes.length < board.shiftTypes.length) {
+                checkedCheckboxes.forEach(cb => allowedShifts.push(cb.value));
+            }
+
+            if (editingSoldierIndex !== null) {
+                // עריכה
+                board.soldiers[editingSoldierIndex] = { name, role, color, active: true, allowedShifts };
+                showSuccessAlert("פרטי החייל עודכנו בהצלחה!");
+            } else {
+                // הוספה
+                if (board.soldiers.some(s => s.name === name)) return alert("חייל עם שם זה כבר קיים בלוח.");
+                board.soldiers.push({ name, role, color, active: true, allowedShifts });
+                showSuccessAlert("החייל/ת נוסף בהצלחה!");
+            }
+
+            resetSoldierForm();
+            save();
+            render();
+        }
+
+        function editSoldier(idx) {
+            const board = state.boards[state.activeBoardId];
+            const s = board.soldiers[idx];
+            editingSoldierIndex = idx;
+
+            document.getElementById('sol-name').value = s.name;
+            document.getElementById('sol-role').value = s.role;
+            document.getElementById('sol-color').value = s.color;
+            
+            document.getElementById('soldier-editor-title').innerText = `עריכת חייל: ${s.name}`;
+            document.getElementById('cancel-edit-soldier-btn').classList.remove('hidden');
+
+            // עדכון תיבות סימון עמדות מורשות בהתאם לתפקיד שנבחר
+            updateSoldierAllowedShiftsList(s.allowedShifts || null);
+        }
+
+        function resetSoldierForm() {
+            editingSoldierIndex = null;
+            document.getElementById('sol-name').value = '';
+            document.getElementById('sol-role').value = 'משק';
+            document.getElementById('sol-color').value = '#7dd3fc';
+            document.getElementById('soldier-editor-title').innerText = "הוספת חייל/ת חדש/ה";
+            document.getElementById('cancel-edit-soldier-btn').classList.add('hidden');
+            
+            updateSoldierAllowedShiftsList(null);
+        }
+
+        function deleteSoldier(idx) {
+            if (!checkSegelAuth()) return;
+            const board = state.boards[state.activeBoardId];
+            const s = board.soldiers[idx];
+            if (!confirm(`האם למחוק את החייל "${s.name}" מהלוח?`)) return;
+
+            // הסרת שיבוצים שלו
+            Object.keys(board.assignments).forEach(key => {
+                if (board.assignments[key] === s.name) delete board.assignments[key];
+            });
+
+            board.soldiers.splice(idx, 1);
+            save();
+            render();
+            showSuccessAlert("החייל נמחק בהצלחה");
+        }
+
+        // 4. רינדור טאב ניהול עמדות
+        function renderShiftsList() {
+            const board = state.boards[state.activeBoardId];
+            const listArea = document.getElementById('shifts-list-area');
+            listArea.innerHTML = '';
+
+            if (board.shiftTypes.length === 0) {
+                listArea.innerHTML = `<div class="col-span-2 p-8 border border-dashed border-gray-250 dark:border-slate-800 rounded-2xl text-center text-gray-400 font-bold">לא רשומות עמדות/תורנויות בלוח זה. השתמש בטופס מימין כדי להוסיף.</div>`;
+                return;
+            }
+
+            const daysHebrew = ["א", "ב", "ג", "ד", "ה"];
+            const isAuth = localStorage.getItem('mch_authorized') === 'true';
+
+            board.shiftTypes.forEach((st, idx) => {
+                const card = document.createElement('div');
+                card.className = "bg-white dark:bg-slate-850 p-4 border border-gray-200 dark:border-slate-800 rounded-2xl shadow-xs flex items-center justify-between";
+                
+                const activeDays = st.days.map(d => daysHebrew[d]).join(', ');
+                const trashLabel = st.isTrashDuty ? ' | ⚖️ תורנות צדק' : '';
+
+                let actionHtml = '';
+                if (isAuth) {
+                    actionHtml = `
+                        <button onclick="deleteShiftType(${idx})" class="p-1.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 rounded-lg transition-all" title="מחק עמדה">
+                            <ui-icon name="trash-2" class="w-4 h-4"></ui-icon>
+                        </button>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div class="flex flex-col gap-0.5">
+                        <span class="font-extrabold text-sm text-gray-800 dark:text-slate-100">${st.name}</span>
+                        <span class="text-xxs text-gray-400 font-bold">מיועד ל: <span class="text-primary font-black">${st.role}</span>${trashLabel}</span>
+                        <span class="text-xxs text-gray-500 font-semibold mt-1">ימי פעילות: ${activeDays || 'ללא ימים'}</span>
+                    </div>
+                    ${actionHtml}
+                `;
+                listArea.appendChild(card);
+            });
+        }
+
+        function addShiftType() {
+            if (!checkSegelAuth()) return;
+            const board = state.boards[state.activeBoardId];
+            const name = document.getElementById('sh-name').value.trim();
+            const desc = document.getElementById('sh-desc').value.trim();
+            const role = document.getElementById('sh-role').value;
+            const isTrashDuty = document.getElementById('sh-trash').checked;
+
+            if (!name) return alert("הזן שם עמדה");
+
+            // ימי פעילות
+            const days = [];
+            for (let d = 0; d < 5; d++) {
+                if (document.getElementById(`sh-day-${d}`).checked) days.push(d);
+            }
+
+            if (days.length === 0) return alert("בחר לפחות יום פעילות אחד בשבוע.");
+
+            const newId = "shift_" + Date.now();
+            board.shiftTypes.push({ id: newId, name, desc, role, days, isTrashDuty });
+            
+            // איפוס טופס
+            document.getElementById('sh-name').value = '';
+            document.getElementById('sh-desc').value = '';
+            document.getElementById('sh-trash').checked = false;
+
+            save();
+            render();
+            showSuccessAlert("סוג העמדה נוצר והתווסף ללוח בהצלחה!");
+        }
+
+        function deleteShiftType(idx) {
+            if (!checkSegelAuth()) return;
+            const board = state.boards[state.activeBoardId];
+            const st = board.shiftTypes[idx];
+            if (!confirm(`האם אתה בטוח שברצונך למחוק את העמדה "${st.name}" מהלוח? כל השיבוצים הקשורים יימחקו.`)) return;
+
+            // מחיקת שיבוצים קשורים לעמדה
+            Object.keys(board.assignments).forEach(key => {
+                const [sId, dIdx] = parseKey(key);
+                if (sId === st.id) delete board.assignments[key];
+            });
+
+            board.shiftTypes.splice(idx, 1);
+            save();
+            render();
+            showSuccessAlert("העמדה נמחקה בהצלחה מהלוח");
+        }
+
+        // 5. רינדור מנוע החוקים
+        function renderRules() {
+            const board = state.boards[state.activeBoardId];
+            const selectOptions = (elemId) => {
+                const elem = document.getElementById(elemId);
+                if (!elem) return;
+                elem.innerHTML = '';
+                board.shiftTypes.forEach(s => {
+                    elem.innerHTML += `<option value="${s.id}">${s.name}</option>`;
+                });
+            };
+
+            selectOptions('seq-trigger');
+            selectOptions('seq-target');
+            selectOptions('con-conflict-target');
+            selectOptions('limit-target');
+            selectOptions('cond-trigger');
+            selectOptions('cond-target');
+
+            const listArea = document.getElementById('rules-list-area');
+            listArea.innerHTML = '';
+
+            const rules = board.rules || [];
+            if (rules.length === 0) {
+                listArea.innerHTML = `<div class="p-8 border border-dashed border-gray-250 dark:border-slate-800 rounded-2xl text-center text-gray-400 font-bold">לא מוגדרים חוקים פעילים בלוח זה.</div>`;
+                return;
+            }
+
+            rules.forEach((r, idx) => {
+                const card = document.createElement('div');
+                card.className = "bg-white dark:bg-slate-850 p-4 border border-gray-200 dark:border-slate-800 rounded-xl flex items-center justify-between shadow-xs";
+                
+                let ruleDesc = '';
+                if (r.type === 'sequence') {
+                    const fromName = board.shiftTypes.find(s => s.id === r.fromShiftId)?.name || 'עמדה מחוקה';
+                    const toName = board.shiftTypes.find(s => s.id === r.toShiftId)?.name || 'עמדה מחוקה';
+                    const daysMap = { 0: 'באותו יום', 1: 'למחרת', 2: 'יומיים אחרי' };
+                    ruleDesc = `חייל שמשובץ ב-<strong>${fromName}</strong> לא ישובץ ב-<strong>${toName}</strong> ${daysMap[r.offsetDays] || 'כעבור יום'}.`;
+                } else if (r.type === 'constraint_conflict') {
+                    const toName = board.shiftTypes.find(s => s.id === r.targetShiftId)?.name || 'עמדה מחוקה';
+                    const map = { absent: "חופש", exempt: "פטור", release: "יום שחרור", guard: "שמירה" };
+                    ruleDesc = `חייל באילוץ <strong>${map[r.constraintType] || r.constraintType}</strong> לא ישובץ ב-<strong>${toName}</strong>.`;
+                } else if (r.type === 'max_limit') {
+                    const toName = board.shiftTypes.find(s => s.id === r.targetShiftId)?.name || 'עמדה מחוקה';
+                    ruleDesc = `חייל ישובץ לכל היותר <strong>${r.maxLimit}</strong> פעמים בשבוע בעמדה <strong>${toName}</strong>.`;
+                } else if (r.type === 'conditional_dependency') {
+                    const fromName = board.shiftTypes.find(s => s.id === r.fromShiftId)?.name || 'עמדה מחוקה';
+                    const toName = board.shiftTypes.find(s => s.id === r.toShiftId)?.name || 'עמדה מחוקה';
+                    ruleDesc = `חייל ששובץ ב-<strong>${fromName}</strong> יועדף למחרת לשיבוץ ב-<strong>${toName}</strong>.`;
+                }
+
+                card.innerHTML = `
+                    <div class="flex flex-col">
+                        <span class="font-extrabold text-sm text-gray-800 dark:text-slate-100">${r.name}</span>
+                        <span class="text-xs text-gray-500 dark:text-slate-400 mt-1">${ruleDesc}</span>
+                    </div>
+                    <button onclick="deleteRule(${idx})" class="p-1.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 rounded-lg transition-all" title="מחק חוק">
+                        <ui-icon name="trash-2" class="w-4 h-4"></ui-icon>
+                    </button>
+                `;
+                listArea.appendChild(card);
+            });
+        }
+
+        function toggleRuleFields() {
+            const type = document.getElementById('rule-type-select').value;
+            document.getElementById('params-sequence').classList.add('hidden');
+            document.getElementById('params-constraint').classList.add('hidden');
+            document.getElementById('params-limit').classList.add('hidden');
+            document.getElementById('params-conditional').classList.add('hidden');
+
+            if (type === 'sequence') document.getElementById('params-sequence').classList.remove('hidden');
+            else if (type === 'constraint_conflict') document.getElementById('params-constraint').classList.remove('hidden');
+            else if (type === 'max_limit') document.getElementById('params-limit').classList.remove('hidden');
+            else if (type === 'conditional_dependency') document.getElementById('params-conditional').classList.remove('hidden');
+        }
+
+        function addRule() {
+            if (!checkSegelAuth()) return;
+            const board = state.boards[state.activeBoardId];
+            const name = document.getElementById('rule-name').value.trim();
+            const type = document.getElementById('rule-type-select').value;
+
+            if (!name) return alert("הזן שם לחוק");
+
+            let newRule = { id: "rule_" + Date.now(), name, type };
+
+            if (type === 'sequence') {
+                newRule.fromShiftId = document.getElementById('seq-trigger').value;
+                newRule.toShiftId = document.getElementById('seq-target').value;
+                newRule.offsetDays = parseInt(document.getElementById('seq-offset').value);
+            } else if (type === 'constraint_conflict') {
+                newRule.constraintType = document.getElementById('con-conflict-type').value;
+                newRule.targetShiftId = document.getElementById('con-conflict-target').value;
+                newRule.offsetDays = 0;
+            } else if (type === 'max_limit') {
+                newRule.maxLimit = parseInt(document.getElementById('limit-count').value);
+                newRule.targetShiftId = document.getElementById('limit-target').value;
+            } else if (type === 'conditional_dependency') {
+                newRule.fromShiftId = document.getElementById('cond-trigger').value;
+                newRule.toShiftId = document.getElementById('cond-target').value;
+                newRule.offsetDays = 1;
+            }
+
+            if (!board.rules) board.rules = [];
+            board.rules.push(newRule);
+            
+            document.getElementById('rule-name').value = '';
+            save();
+            render();
+            showSuccessAlert("חוק הלוגיקה החדש נוצר והופעל במערכת!");
+        }
+
+        function deleteRule(idx) {
+            if (!checkSegelAuth()) return;
+            const board = state.boards[state.activeBoardId];
+            board.rules.splice(idx, 1);
+            save();
+            render();
+            showSuccessAlert("החוק נמחק בהצלחה");
+        }
+
+        // 6. טבלת צדק ותיעוד חובות החלפות
+        function renderJusticeTable() {
+            const board = state.boards[state.activeBoardId];
+            const tbody = document.getElementById('justice-table-body');
+            tbody.innerHTML = '';
+
+            const swapsOwed = {};
+            const swapsEarned = {};
+            board.justice.debtLedger.forEach(ld => {
+                swapsOwed[ld.debtor] = (swapsOwed[ld.debtor] || 0) + 1;
+                swapsEarned[ld.creditor] = (swapsEarned[ld.creditor] || 0) + 1;
+            });
+
+            // דירוג החיילים לפי מדד משוקלל: (תורנויות החודש - חובות + זכויות)
+            const sortedSoldiers = [...board.soldiers].filter(s => s.active).sort((a, b) => {
+                const scoreA = (board.justice.counts[a.name] || 0) - (swapsOwed[a.name] || 0) + (swapsEarned[a.name] || 0);
+                const scoreB = (board.justice.counts[b.name] || 0) - (swapsOwed[b.name] || 0) + (swapsEarned[b.name] || 0);
+                return scoreA - scoreB; // הציון הנמוך ראשון (הכי פחות שימש בתורנויות)
+            });
+
+            if (sortedSoldiers.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400 font-bold">אין חיילים רשומים בלוח.</td></tr>`;
+                return;
+            }
+
+            sortedSoldiers.forEach(s => {
+                const count = board.justice.counts[s.name] || 0;
+                const owed = swapsOwed[s.name] || 0;
+                const earned = swapsEarned[s.name] || 0;
+                const totalScore = count - owed + earned;
+
+                tbody.innerHTML += `
+                    <tr class="border-b border-gray-150 dark:border-slate-800 hover:bg-slate-50/50 dark:hover:bg-slate-850/50">
+                        <td class="p-2.5 font-bold text-gray-800 dark:text-slate-200">
+                            <span class="w-2.5 h-2.5 inline-block rounded-full ml-1.5" style="background:${s.color}; border:1px solid rgba(0,0,0,0.1);"></span>
+                            ${s.name}
+                        </td>
+                        <td class="p-2.5 font-bold text-[#3776AB]">${s.role}</td>
+                        <td class="p-2.5 text-center font-extrabold text-gray-900 dark:text-white">${count}</td>
+                        <td class="p-2.5 text-center text-red-500 font-extrabold">${owed}</td>
+                        <td class="p-2.5 text-center text-emerald-600 font-extrabold">${earned}</td>
+                        <td class="p-2.5 text-center font-black ${totalScore <= 1 ? 'text-emerald-600' : 'text-gray-900 dark:text-white'}">${totalScore}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function renderSwapOptions() {
+            const board = state.boards[state.activeBoardId];
+            const debtor = document.getElementById('swap-debtor');
+            const creditor = document.getElementById('swap-creditor');
+
+            debtor.innerHTML = '';
+            creditor.innerHTML = '';
+            
+            board.soldiers.forEach(s => {
+                if (s.active) {
+                    const opt = `<option value="${s.name}">${s.name}</option>`;
+                    debtor.innerHTML += opt;
+                    creditor.innerHTML += opt;
+                }
+            });
+        }
+
+        // מניעת שינוי חובות החלפות ללא סגל
+        function addManualSwap() {
+            if (!checkSegelAuth()) return;
+            const board = state.boards[state.activeBoardId];
+            const debtor = document.getElementById('swap-debtor').value;
+            const creditor = document.getElementById('swap-creditor').value;
+
+            if (debtor === creditor) return alert("חייל לא יכול להחליף את עצמו!");
+
+            board.justice.debtLedger.push({
+                id: Date.now() + Math.random(),
+                debtor,
+                creditor,
+                date: new Date().toLocaleDateString('he-IL')
+            });
+            save();
+            render();
+            showSuccessAlert("חוב ההחלפה נרשם וטבלת הצדק עודכנה!");
+        }
+
+        function checkJusticeReset() {
+            const board = state.boards[state.activeBoardId];
+            const now = new Date();
+            if (board.justice.month !== now.getMonth() || board.justice.year !== now.getFullYear()) {
+                board.justice.month = now.getMonth();
+                board.justice.year = now.getFullYear();
+                board.justice.counts = {}; 
+                save();
+            }
+        }
+
+        // --- ניקוי לוח לשבוע חדש ---
+        function clearBoard() {
+            if (!checkSegelAuth()) return;
+            if (!confirm("פעולה זו תנקה את כל השיבוצים בלוח זה לשבוע חדש. האם להמשיך?")) return;
+
+            const board = state.boards[state.activeBoardId];
+            board.assignments = {};
+            board.swaps = {};
+            save();
+            render();
+            showSuccessAlert("הלוח נוקה והוכן לשבוע חדש!");
+        }
+
+        // --- פונקציות תצוגת טאבים וניווט ---
+        function showTab(tabId, btnElement) {
+            document.querySelectorAll('.section').forEach(s => {
+                s.classList.remove('block', 'flex');
+                s.classList.add('hidden');
+            });
+            const target = document.getElementById(tabId);
+            target.classList.remove('hidden');
+            target.classList.add(tabId === 'tab-board' ? 'block' : 'flex');
+
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.className = 'tab-btn px-5 py-2 rounded-xl font-bold transition-all duration-300 bg-white text-gray-600 hover:bg-gray-50 border border-gray-200 dark:bg-slate-850 dark:text-slate-350 dark:border-slate-700';
+            });
+            if (btnElement) btnElement.className = 'tab-btn px-5 py-2 rounded-xl font-extrabold transition-all duration-300 bg-primary text-white shadow-sm';
+        }
+
+        // --- התראות Toast צפות ---
+        function showSuccessAlert(msg) {
+            const banner = document.getElementById('toast-banner');
+            document.getElementById('toast-message').innerText = msg;
+            banner.classList.remove('translate-y-20', 'opacity-0');
+            banner.classList.add('translate-y-0', 'opacity-100');
+            
+            setTimeout(() => {
+                banner.classList.remove('translate-y-0', 'opacity-100');
+                banner.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Start initialization
+        initApp();
+    </script>
+</body>
+</html>
