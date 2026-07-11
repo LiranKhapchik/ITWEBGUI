@@ -209,18 +209,37 @@ function seedDatabaseIfNeeded($db, $dataDir) {
             ]
         ];
 
+        // צוות ברירת מחדל - זהה לצוות הדיפולטיבי בקרוסלה שב"אתר מחשוב"
         $defaultTeam = [
             [
                 'personalId' => '7777777', 'name' => 'לירן', 'rank' => 'סמ״ר', 'profession' => 'מנהל רשת ותשתיות',
-                'sapir' => '518-3508', 'email' => 'liran.admin@iaf.local', 'isKave' => 1, 'photo' => '',
-                'quotes' => json_encode(['"אוטומציה טובה חוסכת אלף לחיצות עכבר מיותרות."'], JSON_UNESCAPED_UNICODE),
-                'tags' => json_encode([['text' => 'Python', 'color' => 'blue']], JSON_UNESCAPED_UNICODE)
+                'sapir' => '518-3508', 'email' => 'S9117951@IDF.IL', 'isKave' => 1, 'photo' => 'images/file.png',
+                'quotes' => json_encode([], JSON_UNESCAPED_UNICODE),
+                'tags' => json_encode([], JSON_UNESCAPED_UNICODE)
             ],
             [
-                'personalId' => '1111111', 'name' => 'מאיה', 'rank' => 'אע״צ', 'profession' => 'מפקדת הצוות',
-                'sapir' => '102', 'email' => 'maya.pmo@iaf.local', 'isKave' => 0, 'photo' => '',
-                'quotes' => json_encode(['"תכנון מראש מונע תקלות בשטח."'], JSON_UNESCAPED_UNICODE),
-                'tags' => json_encode([['text' => 'ניהול משמרות', 'color' => 'emerald']], JSON_UNESCAPED_UNICODE)
+                'personalId' => '1111111', 'name' => 'מאיה', 'rank' => 'אע״צ', 'profession' => 'פסיכולוגית (מפקדת הצוות)',
+                'sapir' => '518-2526', 'email' => 'C9812810@IDF.IL', 'isKave' => 0, 'photo' => 'images/mayafile.jpeg',
+                'quotes' => json_encode([], JSON_UNESCAPED_UNICODE),
+                'tags' => json_encode([], JSON_UNESCAPED_UNICODE)
+            ],
+            [
+                'personalId' => '2222222', 'name' => 'ראובן', 'rank' => 'רב״ט', 'profession' => 'תמיכת חומרה',
+                'sapir' => '518-2021', 'email' => 'S9311294@IDF.IL', 'isKave' => 0, 'photo' => 'images/filrReuven.jpg',
+                'quotes' => json_encode([], JSON_UNESCAPED_UNICODE),
+                'tags' => json_encode([], JSON_UNESCAPED_UNICODE)
+            ],
+            [
+                'personalId' => '3333333', 'name' => 'חיים', 'rank' => 'סמל', 'profession' => 'טכנאי רשתות',
+                'sapir' => '518-2021', 'email' => 'S9298128@IDF.IL', 'isKave' => 0, 'photo' => '',
+                'quotes' => json_encode([], JSON_UNESCAPED_UNICODE),
+                'tags' => json_encode([], JSON_UNESCAPED_UNICODE)
+            ],
+            [
+                'personalId' => '4444444', 'name' => 'ניקולאי', 'rank' => 'רב״ט', 'profession' => 'איש תמיכה בחומרה',
+                'sapir' => '518-2021', 'email' => 'S9664735@IDF.IL', 'isKave' => 0, 'photo' => '',
+                'quotes' => json_encode([], JSON_UNESCAPED_UNICODE),
+                'tags' => json_encode([], JSON_UNESCAPED_UNICODE)
             ]
         ];
 

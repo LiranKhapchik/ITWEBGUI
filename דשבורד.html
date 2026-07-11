@@ -520,14 +520,26 @@
                             <!-- Top row: Search input and selects -->
                             <div class="flex gap-3 items-center flex-wrap w-full">
                                 <input type="text" id="search-input" oninput="handleSearch()" placeholder="חיפוש קריאה חופשי / ת.ז. מתמיין..." class="flex-1 min-w-[200px] px-4 py-2.5 text-sm font-semibold border border-gray-300 rounded-xl focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary bg-white dark:bg-slate-900 dark:border-slate-800">
-                                
-                                <select id="special-filter-select" onchange="handleSearch()" class="w-48 px-3 py-2.5 text-sm font-bold border border-gray-300 rounded-xl bg-white dark:bg-slate-900 dark:border-slate-800 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary cursor-pointer text-gray-700 dark:text-slate-350">
-                                    <option value="">כל סוגי הקריאות</option>
-                                    <option value="deactivating">תקלות משביתות בלבד</option>
-                                    <option value="has_suggestions">בעלות פתרון מומלץ</option>
-                                </select>
 
-                                <select id="team-filter-select" onchange="toggleTeamFilter(this.value)" class="w-40 px-3 py-2.5 text-sm font-bold border border-gray-300 rounded-xl bg-white dark:bg-slate-900 dark:border-slate-800 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary cursor-pointer text-gray-700 dark:text-slate-350">
+                                <!-- כפתור מצב חיפוש (שלוש פסים) שפותח בחירה בין חכם/פשוט/לפי סוג -->
+                                <div class="relative" id="search-mode-wrap">
+                                    <button type="button" id="search-mode-btn" onclick="toggleSearchModeMenu(event)" title="בחירת מצב חיפוש" class="flex items-center gap-2 px-3 py-2.5 text-sm font-bold border border-gray-300 rounded-xl bg-white dark:bg-slate-900 dark:border-slate-800 hover:border-primary cursor-pointer text-gray-700 dark:text-slate-350 transition-all">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" class="text-primary flex-shrink-0"><line x1="4" y1="7" x2="20" y2="7"></line><line x1="7" y1="12" x2="17" y2="12"></line><line x1="10" y1="17" x2="14" y2="17"></line></svg>
+                                        <span id="search-mode-current-label">חיפוש חכם</span>
+                                    </button>
+                                    <div id="search-mode-menu" class="hidden absolute top-full mt-1 right-0 w-48 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl shadow-lg z-50 overflow-hidden py-1">
+                                        <button type="button" onclick="pickSearchMode('smart')" class="w-full text-right px-3 py-2 text-sm font-bold text-gray-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800">🔍 חיפוש חכם</button>
+                                        <button type="button" onclick="pickSearchMode('simple')" class="w-full text-right px-3 py-2 text-sm font-bold text-gray-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800">חיפוש פשוט (מלל חופשי)</button>
+                                        <button type="button" onclick="pickSearchMode('type')" class="w-full text-right px-3 py-2 text-sm font-bold text-gray-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800">חיפוש לפי סוג</button>
+                                    </div>
+                                    <select id="search-mode-select" class="hidden">
+                                        <option value="smart">חיפוש חכם</option>
+                                        <option value="simple">חיפוש פשוט</option>
+                                        <option value="type">חיפוש לפי סוג</option>
+                                    </select>
+                                </div>
+
+                                <select id="team-filter-select" onchange="toggleTeamFilter(this.value)" class="hidden w-40 px-3 py-2.5 text-sm font-bold border border-gray-300 rounded-xl bg-white dark:bg-slate-900 dark:border-slate-800 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary cursor-pointer text-gray-700 dark:text-slate-350">
                                     <option value="">כל הטכנאים</option>
                                 </select>
                             </div>
@@ -535,30 +547,23 @@
                             <!-- Search Tags Container -->
                             <div id="search-tags-container" class="flex flex-wrap gap-1.5 pt-0.5 hidden"></div>
 
-                            <!-- Bottom row: Horizontal Category pills -->
-                            <div class="flex flex-wrap items-center gap-1.5 pt-1" id="category-pills-container">
-                                <span class="text-xs font-black text-gray-400 dark:text-slate-500 ml-2 select-none">קטגוריה:</span>
-                                <button onclick="setCategoryFilter('', this)" class="category-pill active px-3.5 py-1.5 text-xs font-black rounded-lg border border-primary bg-primary text-white transition-all shadow-sm cursor-pointer select-none" data-cat="all">הכל</button>
-                                <button onclick="setCategoryFilter('screen', this)" class="category-pill px-3.5 py-1.5 text-xs font-bold rounded-lg border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:border-primary transition-all cursor-pointer select-none" data-cat="screen">מסכים</button>
-                                <button onclick="setCategoryFilter('keyboard', this)" class="category-pill px-3.5 py-1.5 text-xs font-bold rounded-lg border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:border-primary transition-all cursor-pointer select-none" data-cat="keyboard">מקלדות</button>
-                                <button onclick="setCategoryFilter('mouse', this)" class="category-pill px-3.5 py-1.5 text-xs font-bold rounded-lg border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:border-primary transition-all cursor-pointer select-none" data-cat="mouse">עכברים</button>
-                                <button onclick="setCategoryFilter('printer', this)" class="category-pill px-3.5 py-1.5 text-xs font-bold rounded-lg border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:border-primary transition-all cursor-pointer select-none" data-cat="printer">מדפסות</button>
-                                <button onclick="setCategoryFilter('computer', this)" class="category-pill px-3.5 py-1.5 text-xs font-bold rounded-lg border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:border-primary transition-all cursor-pointer select-none" data-cat="computer">מחשבים</button>
-                                <button onclick="setCategoryFilter('תשתית', this)" class="category-pill px-3.5 py-1.5 text-xs font-bold rounded-lg border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:border-primary transition-all cursor-pointer select-none" data-cat="תשתית">תשתית</button>
-                                <button onclick="setCategoryFilter('other', this)" class="category-pill px-3.5 py-1.5 text-xs font-bold rounded-lg border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:border-primary transition-all cursor-pointer select-none" data-cat="other">רשת/תוכנה</button>
-                                <button onclick="setCategoryFilter('stick', this)" class="category-pill px-3.5 py-1.5 text-xs font-bold rounded-lg border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:border-primary transition-all cursor-pointer select-none" data-cat="stick">סטיק</button>
-                                <button onclick="setCategoryFilter('mazeret', this)" class="category-pill px-3.5 py-1.5 text-xs font-bold rounded-lg border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:border-primary transition-all cursor-pointer select-none" data-cat="mazeret">מצרעת</button>
-                                <button onclick="setCategoryFilter('spaces', this)" class="category-pill px-3.5 py-1.5 text-xs font-bold rounded-lg border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:border-primary transition-all cursor-pointer select-none" data-cat="spaces">מרחבים</button>
-                                <button onclick="setCategoryFilter('telephony', this)" class="category-pill px-3.5 py-1.5 text-xs font-bold rounded-lg border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:border-primary transition-all cursor-pointer select-none" data-cat="telephony">טלפוניה</button>
-                            </div>
+                            <!-- מסנן "לפי סוג" מבוסס כפתורים (סוג קריאה -> חומרה: רכיב/תקלה | תוכנה: תת-סוג/תקלה) -->
+                            <div id="type-filter-bar" class="hidden flex flex-col gap-2 pt-1 max-h-[40vh] overflow-y-auto custom-scrollbar"></div>
+
+                            <!-- מיכל ריק לתאימות עם פונקציות עזר ישנות -->
+                            <div class="hidden" id="category-pills-container"></div>
                         </div>
                         <div class="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-3" id="tickets-list-container"></div>
                     </div>
                     
                     <!-- פרטי קריאה משמאל (מנקה את המודל ועובר לאינליין) -->
-                    <div id="ticket-placeholder-container" class="w-full lg:w-[480px] bg-white border border-gray-200 rounded-2xl p-8 flex flex-col items-center justify-center text-center shadow-sm flex-shrink-0">
-                        <ui-icon name="search" class="w-16 h-16 text-gray-400 mb-3"></ui-icon>
-                        <div class="text-base font-extrabold text-gray-500">בחרו קריאה מהרשימה כדי לראות את פרטיה ולטפל בה</div>
+                    <div id="ticket-placeholder-container" class="w-full lg:w-[480px] bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-2xl p-5 flex flex-col shadow-sm flex-shrink-0 overflow-y-auto custom-scrollbar">
+                        <div class="flex items-center gap-2 mb-1">
+                            <ui-icon name="users" class="w-5 h-5 text-primary"></ui-icon>
+                            <h3 class="text-base font-extrabold text-gray-800 dark:text-slate-100">עומס טכנאים - תקלות פעילות</h3>
+                        </div>
+                        <p class="text-xs text-gray-400 dark:text-slate-500 font-bold mb-3">בחרו קריאה מהרשימה כדי לראות את פרטיה, או צפו בעומס הצוות למטה.</p>
+                        <div id="tech-workload-area"></div>
                     </div>
                     
                     <div id="ticket-detail-inline-container" class="hidden w-full lg:w-[480px] flex flex-col bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm flex-shrink-0">
@@ -1460,9 +1465,13 @@
         { id: 'TCK-2042', title: 'מדפסת נתקעה', building: 'ofroni', room: 'כיתה ימנית', station: 2, status: 'open', desc: 'נייר נתקע במדפסת 1', date: '14/06/2026 09:15', createdAt: '14/06/2026, 09:15', faultType: 'hardware', component: 'מדפסת', assignedTo: 'ראובן', phone: '518-4455' }
     ];
 
+    // צוות ברירת מחדל - זהה לצוות הדיפולטיבי בקרוסלה שב"אתר מחשוב"
     const DEFAULT_TEAM = [
-        { name: 'לירן', rank: 'סמ״ר', profession: 'מנהל רשת ותשתיות', sapir: '518-3508', email: 'liran.admin@iaf.local', personalId: '7777777', isKave: true, photo: '', quotes: ['"אוטומציה טובה חוסכת אלף לחיצות עכבר מיותרות."'], tags: [{text:'Python', color:'blue'}] },
-        { name: 'מאיה', rank: 'אע״צ', profession: 'מפקדת הצוות', sapir: '102', email: 'maya.pmo@iaf.local', personalId: '1111111', isKave: false, photo: '', quotes: ['"תכנון מראש מונע תקלות בשטח."'], tags: [{text:'ניהול משמרות', color:'emerald'}] }
+        { name: 'לירן', rank: 'סמ״ר', profession: 'מנהל רשת ותשתיות', sapir: '518-3508', email: 'S9117951@IDF.IL', personalId: '7777777', isKave: true, photo: 'images/file.png', quotes: [], tags: [] },
+        { name: 'מאיה', rank: 'אע״צ', profession: 'פסיכולוגית (מפקדת הצוות)', sapir: '518-2526', email: 'C9812810@IDF.IL', personalId: '1111111', isKave: false, photo: 'images/mayafile.jpeg', quotes: [], tags: [] },
+        { name: 'ראובן', rank: 'רב״ט', profession: 'תמיכת חומרה', sapir: '518-2021', email: 'S9311294@IDF.IL', personalId: '2222222', isKave: false, photo: 'images/filrReuven.jpg', quotes: [], tags: [] },
+        { name: 'חיים', rank: 'סמל', profession: 'טכנאי רשתות', sapir: '518-2021', email: 'S9298128@IDF.IL', personalId: '3333333', isKave: false, photo: '', quotes: [], tags: [] },
+        { name: 'ניקולאי', rank: 'רב״ט', profession: 'איש תמיכה בחומרה', sapir: '518-2021', email: 'S9664735@IDF.IL', personalId: '4444444', isKave: false, photo: '', quotes: [], tags: [] }
     ];
 
     const DEFAULT_INVENTORY = [
@@ -1478,9 +1487,16 @@
         ticketsFilter: 'all',
         filterTeamMember: null,
         searchQuery: '',
+        simpleSearch: false,
+        searchMode: 'smart',
+        filterCallType: '',
+        filterComponent: '',
+        filterComponentCat: '',
+        filterSoftSub: '',
+        componentFaultFilter: '',
         modalTicketId: null,
         tickets: [],
-        team: [],
+        team: JSON.parse(JSON.stringify(DEFAULT_TEAM)),
         inventory: [],
         tips: [...DEFAULT_TIPS],
         contacts: [],
@@ -1506,7 +1522,7 @@
             try {
                 const p = JSON.parse(saved);
                 state.tickets = p.tickets || DEFAULT_TICKETS;
-                state.team = p.team || DEFAULT_TEAM;
+                state.team = (p.team && p.team.length) ? p.team : JSON.parse(JSON.stringify(DEFAULT_TEAM));
                 state.inventory = p.inventory || DEFAULT_INVENTORY;
                 state.systemStatus = p.systemStatus || 'ok';
                 state.tips = p.tips || [...DEFAULT_TIPS];
@@ -1868,7 +1884,7 @@
                 const hasNewTicket = (serverData.tickets || []).some(t => !oldIds.has(t.id));
 
                 state.tickets = serverData.tickets || DEFAULT_TICKETS;
-                state.team = serverData.team || DEFAULT_TEAM;
+                state.team = (serverData.team && serverData.team.length) ? serverData.team : JSON.parse(JSON.stringify(DEFAULT_TEAM));
                 state.inventory = serverData.inventory || DEFAULT_INVENTORY;
                 state.systemStatus = serverData.systemStatus || 'ok';
                 state.tips = serverData.tips || [...DEFAULT_TIPS];
@@ -4080,6 +4096,314 @@
         });
     };
 
+    /* ===== מנוע חיפוש מדויק (נרמול עברית + דירוג התאמות) ===== */
+    // נרמול טקסט עברי: הורדת רישיות, ניקוד, גרש/גרשיים/מרכאות, איחוד אותיות סופיות, וסימני פיסוק
+    function normHeb(s) {
+        if (s === null || s === undefined) return '';
+        return String(s)
+            .toLowerCase()
+            .replace(/[֑-ׇ]/g, '')            // ניקוד וטעמים
+            .replace(/[׳״'"׳״`]/g, '')        // גרש / גרשיים / מרכאות
+            .replace(/ם/g, 'מ').replace(/ן/g, 'נ').replace(/ף/g, 'פ').replace(/ץ/g, 'צ').replace(/ך/g, 'כ')
+            .replace(/[^א-ת0-9a-z\s]/g, ' ')  // כל שאר סימני הפיסוק -> רווח
+            .replace(/\s+/g, ' ')
+            .trim();
+    }
+
+    // מילון מילים נרדפות דו-לשוני להרחבת שאילתה (המפתחות מנורמלים)
+    const SEARCH_SYNONYMS = {
+        'עכבר': ['mouse'], 'mouse': ['עכבר'],
+        'מקלדת': ['keyboard'], 'keyboard': ['מקלדת'],
+        'מסכ': ['screen', 'monitor', 'צג'], 'צג': ['מסכ', 'screen', 'monitor'],
+        'screen': ['מסכ', 'צג'], 'monitor': ['מסכ', 'צג'],
+        'מדפסת': ['printer'], 'printer': ['מדפסת'],
+        'מחשב': ['computer', 'pc'], 'computer': ['מחשב'], 'pc': ['מחשב'],
+        'רשת': ['network', 'net'], 'network': ['רשת'], 'תקשורת': ['network', 'רשת'],
+        'סטיק': ['joystick', 'stick'], 'joystick': ['סטיק'], 'stick': ['סטיק'],
+        'מצרעת': ['throttle', 'מצערת'], 'מצערת': ['throttle', 'מצרעת'], 'throttle': ['מצרעת', 'מצערת'],
+        'טלפונ': ['phone', 'telephone', 'טלפוניה'], 'phone': ['טלפונ', 'טלפוניה']
+    };
+
+    function expandToken(tok) {
+        const out = [tok];
+        (SEARCH_SYNONYMS[tok] || []).forEach(syn => {
+            const n = normHeb(syn);
+            if (n && out.indexOf(n) === -1) out.push(n);
+        });
+        return out;
+    }
+
+    // מרחק עריכה (Levenshtein) מוגבל ל-1 לזיהוי שגיאות הקלדה
+    function levLE1(a, b) {
+        if (a === b) return 0;
+        const la = a.length, lb = b.length;
+        if (Math.abs(la - lb) > 1) return 2;
+        let i = 0, j = 0, edits = 0;
+        while (i < la && j < lb) {
+            if (a[i] === b[j]) { i++; j++; continue; }
+            if (++edits > 1) return 2;
+            if (la > lb) i++;
+            else if (lb > la) j++;
+            else { i++; j++; }
+        }
+        if (i < la || j < lb) edits++;
+        return edits;
+    }
+
+    // עוצמת התאמה בין מונח לשדה מנורמל: 4=מילה שלמה, 3=תחילית, 2=תת-מחרוזת, 1=שגיאת כתיב, 0=אין
+    function matchStrength(tok, fieldNorm, allowFuzzy) {
+        if (!tok || !fieldNorm) return 0;
+        const words = fieldNorm.split(' ');
+        if (words.indexOf(tok) !== -1) return 4;
+        for (const w of words) {
+            if (w.length >= 2 && tok.length >= 2 && (w.startsWith(tok) || tok.startsWith(w))) return 3;
+        }
+        if (tok.length >= 3 && fieldNorm.indexOf(tok) !== -1) return 2;
+        if (allowFuzzy && tok.length >= 4) {
+            for (const w of words) {
+                if (Math.abs(w.length - tok.length) <= 1 && levLE1(w, tok) <= 1) return 1;
+            }
+        }
+        return 0;
+    }
+
+    // חישוב ציון חיפוש לתקלה מול רשימת מונחים מנורמלים
+    function computeTicketSearch(t, tokens, allowFuzzy) {
+        const fields = [
+            [normHeb(t.title), 6],
+            [normHeb(t.desc), 4],
+            [normHeb(t.room), 7],
+            [normHeb(String(t.station || '')), 5],
+            [normHeb(BUILDING_LABELS[t.building] || t.building || ''), 4],
+            [normHeb(t.component), 4],
+            [normHeb(t.id), 5],
+            [normHeb(t.assignedTo), 3],
+            [normHeb(t.resolvedBy), 3],
+            [normHeb(t.resolution), 5],
+            [normHeb(t.examId), 4],
+            [normHeb(t.examName), 4],
+            [normHeb(t.examType), 2],
+            [normHeb(t.faultType), 2]
+        ];
+        let total = 0, matchedCount = 0, minStrength = 99, maxStrength = 0, bestKw = '';
+        tokens.forEach(tokRaw => {
+            const variants = expandToken(tokRaw);
+            let bestStrength = 0, bestFieldW = 0;
+            for (const [fv, w] of fields) {
+                if (!fv) continue;
+                for (const v of variants) {
+                    const s = matchStrength(v, fv, allowFuzzy);
+                    if (s > bestStrength || (s === bestStrength && w > bestFieldW)) {
+                        bestStrength = s; bestFieldW = w;
+                    }
+                }
+            }
+            if (bestStrength > 0) {
+                matchedCount++;
+                if (!bestKw) bestKw = tokRaw;
+                total += bestStrength * (bestFieldW / 2 + 1);
+                minStrength = Math.min(minStrength, bestStrength);
+                maxStrength = Math.max(maxStrength, bestStrength);
+            } else {
+                minStrength = 0;
+            }
+        });
+        const allMatched = matchedCount === tokens.length && tokens.length > 0;
+        return {
+            score: total,
+            matched: matchedCount,
+            exact: allMatched && minStrength >= 3,
+            matchedKeyword: bestKw,
+            minStrength: matchedCount ? (minStrength === 99 ? 0 : minStrength) : 0,
+            maxStrength: maxStrength
+        };
+    }
+
+    /* ===== מסנן "חיפוש לפי סוג" מבוסס כפתורים (סוג קריאה -> חומרה/תוכנה -> רכיב/תת-סוג -> תקלה) ===== */
+    // רכיבי חומרה: תווית + מפתח קטגוריה לסינון (משמש את activeCategoryFilter)
+    const HW_COMPONENTS = [
+        { label: 'מסך', cat: 'screen' },
+        { label: 'מקלדת', cat: 'keyboard' },
+        { label: 'עכבר', cat: 'mouse' },
+        { label: 'מדפסת', cat: 'printer' },
+        { label: 'מחשב / מארז', cat: 'computer' },
+        { label: 'מצלמה', cat: 'computer' },
+        { label: 'אוזניות', cat: 'other' },
+        { label: 'סטיק', cat: 'stick' },
+        { label: 'מצערת', cat: 'mazeret' },
+        { label: 'לוח מקשים כסוף', cat: 'other' },
+        { label: 'כבלים / תשתית', cat: 'תשתית' }
+    ];
+    // מיפוי רכיב -> תקלות נפוצות (זהה בקונספט לקובץ פתיחת תקלות)
+    const HW_FAULTS = {
+        'מסך': ['מרצד', 'לא נדלק', 'אין תצוגה (No Signal)', 'פסים על המסך', 'נזק פיזי'],
+        'עכבר': ['לא מגיב', 'גלילה קופצת', 'קליק שמאלי/ימני תקול', 'כבל קרוע'],
+        'מקלדת': ['מקשים לא מגיבים', 'מקש תקוע/לחוץ', 'נתק במגעים (מתנתק ומתחבר)'],
+        'מצלמה': ['תמונה שחורה', 'לא מזוהה במחשב', 'תמונה מטושטשת/קופאת'],
+        'מדפסת': ['נתקע נייר', 'מדפיס מטושטש', 'נורית שגיאה דולקת', 'לא מושכת נייר'],
+        'אוזניות': ['שומעים בצד אחד בלבד', 'מיקרופון לא עובד', 'רעש סטטי', 'כבל קרוע'],
+        'סטיק': ['לא מגיב לתנועה', 'כפתורים לא עובדים', 'לא מתמרכז', 'ציר (Z) לא תקין'],
+        'מצערת': ['תנועה נוקשה מדי', 'לא מגיבה', 'קפיצות בערכים'],
+        'לוח מקשים כסוף': ['לחצנים לא מגיבים', 'נוריות לא דולקות', 'לא מזוהה'],
+        'מחשב / מארז': ['לא נדלק בכלל', 'עושה רעש חזק', 'כבה מעצמו באמצע עבודה', 'נזק פיזי למארז', 'צפצופים בהדלקה'],
+        'כבלים / תשתית': ['נתק במגעים', 'כבל קרוע/סדוק', 'כבל רשת לא נעול', 'כבל לא מתאים']
+    };
+    // תת-סוגי תוכנה: כללית / מ"ח / מרחבים
+    const SW_SUBTYPES = [
+        { key: 'general', label: 'כללית', faults: ['מחשב איטי / קופא', 'בעיה בדפדפן / אתר לא נפתח', 'בעיה ביישומי אופיס / אאוטלוק', 'שגיאת רישיון / הפעלת מערכת', 'חוסר הרשאות גישה', 'תוכנה לא מגיבה / קורסת'] },
+        { key: 'mch', label: 'מ"ח', faults: ['בעיה בהעברת נתונים', 'ציון למבחן לא מתחשב', 'שגיאה בטעינת המבחן', 'מקלדת/עכבר נעולים במבחן'] },
+        { key: 'spaces', label: 'מרחבים', faults: ['סימולטור לא נטען', 'תקלה במרחב סימולציה', 'תצוגת מרחבים תקועה', 'בעיה בהרצת תרחיש'] }
+    ];
+
+    let typeFaultList = []; // רשימת התקלות המוצגת כרגע (לבחירה לפי אינדקס)
+    const SEARCH_MODE_LABELS = { smart: '🔍 חיפוש חכם', simple: 'חיפוש פשוט', type: 'חיפוש לפי סוג' };
+
+    // תפריט כפתור שלוש-הפסים לבחירת מצב חיפוש
+    window.toggleSearchModeMenu = function(event) {
+        if (event) event.stopPropagation();
+        const menu = document.getElementById('search-mode-menu');
+        if (menu) menu.classList.toggle('hidden');
+    };
+    window.closeSearchModeMenu = function() {
+        const menu = document.getElementById('search-mode-menu');
+        if (menu) menu.classList.add('hidden');
+    };
+    window.pickSearchMode = function(mode) {
+        const sel = document.getElementById('search-mode-select');
+        if (sel) sel.value = mode;
+        closeSearchModeMenu();
+        onSearchModeChange();
+    };
+    // סגירת התפריט בלחיצה מחוץ לאזור הכפתור
+    document.addEventListener('click', function(e) {
+        const wrap = document.getElementById('search-mode-wrap');
+        if (wrap && !wrap.contains(e.target)) closeSearchModeMenu();
+    });
+
+    // בחירת מצב חיפוש: חכם / פשוט / לפי סוג
+    window.onSearchModeChange = function() {
+        const mode = document.getElementById('search-mode-select').value;
+        state.searchMode = mode;
+        state.simpleSearch = (mode === 'simple');
+        const searchInput = document.getElementById('search-input');
+        const bar = document.getElementById('type-filter-bar');
+        const label = document.getElementById('search-mode-current-label');
+        const teamSel = document.getElementById('team-filter-select');
+        if (label) label.textContent = SEARCH_MODE_LABELS[mode] || 'חיפוש';
+
+        // תפריט "כל הטכנאים" מוצג רק במצב חיפוש לפי סוג
+        if (teamSel) {
+            if (mode === 'type') {
+                teamSel.classList.remove('hidden');
+            } else {
+                teamSel.classList.add('hidden');
+                teamSel.value = '';
+                state.filterTeamMember = null;
+            }
+        }
+
+        if (mode === 'type') {
+            if (searchInput) { searchInput.value = ''; searchInput.classList.add('hidden'); }
+            state.searchQuery = '';
+            if (bar) bar.classList.remove('hidden');
+            renderTypeFilterBar();
+        } else {
+            if (searchInput) searchInput.classList.remove('hidden');
+            if (bar) bar.classList.add('hidden');
+            state.filterCallType = ''; state.filterComponent = ''; state.filterComponentCat = '';
+            state.filterSoftSub = ''; state.componentFaultFilter = '';
+            activeCategoryFilter = '';
+        }
+        renderTicketsList();
+    };
+
+    function typeBtn(label, active, handler) {
+        const cls = active
+            ? 'px-3 py-1.5 text-xs font-black rounded-lg border border-primary bg-primary text-white shadow-sm cursor-pointer select-none transition-all'
+            : 'px-3 py-1.5 text-xs font-bold rounded-lg border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:border-primary cursor-pointer select-none transition-all';
+        return `<button type="button" onclick="${handler}" class="${cls}">${label}</button>`;
+    }
+
+    function collectPredefinedFaults(compLabel) {
+        const out = [];
+        (state.predefinedFaults || []).forEach(f => {
+            if (f.title && f.faultType === 'hardware' && normHeb(f.title).includes(normHeb(compLabel))) out.push(f.title);
+        });
+        return out;
+    }
+
+    function faultRowHtml(faults) {
+        typeFaultList = faults;
+        return `<div class="flex flex-wrap items-center gap-1.5 pr-2 border-r-2 border-emerald-200 dark:border-emerald-900/40">
+            <span class="text-xs font-black text-emerald-500 ml-1 select-none">תקלה:</span>
+            ${typeBtn('הכל', !state.componentFaultFilter, 'setTypeFault(-1)')}
+            ${faults.map((f, i) => typeBtn(f, state.componentFaultFilter === f, `setTypeFault(${i})`)).join('')}
+        </div>`;
+    }
+
+    function renderTypeFilterBar() {
+        const bar = document.getElementById('type-filter-bar');
+        if (!bar) return;
+        let html = `<div class="flex flex-wrap items-center gap-1.5">
+            <span class="text-xs font-black text-gray-400 dark:text-slate-500 ml-1 select-none">סוג קריאה:</span>
+            ${typeBtn('כללית', state.filterCallType === 'general', "setCallType('general')")}
+            ${typeBtn('חומרה', state.filterCallType === 'hardware', "setCallType('hardware')")}
+            ${typeBtn('תוכנה', state.filterCallType === 'software', "setCallType('software')")}
+        </div>`;
+
+        if (state.filterCallType === 'hardware') {
+            html += `<div class="flex flex-wrap items-center gap-1.5 pr-2 border-r-2 border-amber-200 dark:border-amber-900/40">
+                <span class="text-xs font-black text-amber-500 ml-1 select-none">רכיב:</span>
+                ${HW_COMPONENTS.map((c, i) => typeBtn(c.label, state.filterComponent === c.label, `setTypeComponent(${i})`)).join('')}
+            </div>`;
+            if (state.filterComponent) {
+                const faults = [...new Set([...(HW_FAULTS[state.filterComponent] || []), ...collectPredefinedFaults(state.filterComponent)])];
+                html += faultRowHtml(faults);
+            }
+        } else if (state.filterCallType === 'software') {
+            html += `<div class="flex flex-wrap items-center gap-1.5 pr-2 border-r-2 border-indigo-200 dark:border-indigo-900/40">
+                <span class="text-xs font-black text-indigo-500 ml-1 select-none">סוג תוכנה:</span>
+                ${SW_SUBTYPES.map((s, i) => typeBtn(s.label, state.filterSoftSub === s.key, `setSoftSub(${i})`)).join('')}
+            </div>`;
+            if (state.filterSoftSub) {
+                const sub = SW_SUBTYPES.find(s => s.key === state.filterSoftSub);
+                html += faultRowHtml(sub ? sub.faults : []);
+            }
+        }
+        bar.innerHTML = html;
+    }
+
+    window.setCallType = function(t) {
+        state.filterCallType = (state.filterCallType === t) ? '' : t;
+        state.filterComponent = ''; state.filterComponentCat = ''; activeCategoryFilter = '';
+        state.filterSoftSub = ''; state.componentFaultFilter = '';
+        renderTypeFilterBar();
+        renderTicketsList();
+    };
+
+    window.setTypeComponent = function(i) {
+        const c = HW_COMPONENTS[i];
+        if (state.filterComponent === c.label) { state.filterComponent = ''; state.filterComponentCat = ''; activeCategoryFilter = ''; }
+        else { state.filterComponent = c.label; state.filterComponentCat = c.cat; activeCategoryFilter = c.cat; }
+        state.componentFaultFilter = '';
+        renderTypeFilterBar();
+        renderTicketsList();
+    };
+
+    window.setSoftSub = function(i) {
+        const s = SW_SUBTYPES[i];
+        state.filterSoftSub = (state.filterSoftSub === s.key) ? '' : s.key;
+        state.componentFaultFilter = '';
+        renderTypeFilterBar();
+        renderTicketsList();
+    };
+
+    window.setTypeFault = function(i) {
+        state.componentFaultFilter = (i < 0) ? '' : (typeFaultList[i] || '');
+        renderTypeFilterBar();
+        renderTicketsList();
+    };
+
     function handleSearch() {
         const val = document.getElementById('search-input').value.toLowerCase();
         state.searchQuery = val;
@@ -4094,22 +4418,14 @@
             return;
         }
 
-        // Auto-detect category
-        let detectedCat = null;
-        if (val.includes('סטיק') || val.includes('ג\'ויסטיק') || val.includes('joystick')) detectedCat = 'stick';
-        else if (val.includes('מצערת') || val.includes('מצרעת') || val.includes('throttle')) detectedCat = 'mazeret';
-        else if (val.includes('מרחב') || val.includes('סימולטור')) detectedCat = 'spaces';
-        else if (val.includes('טלפון') || val.includes('טלפוניה')) detectedCat = 'telephony';
-        else if (val.includes('מסך') || val.includes('screen') || val.includes('monitor')) detectedCat = 'screen';
-        else if (val.includes('מקלדת') || val.includes('keyboard')) detectedCat = 'keyboard';
-        else if (val.includes('עכבר') || val.includes('mouse')) detectedCat = 'mouse';
-        else if (val.includes('מדפסת') || val.includes('printer')) detectedCat = 'printer';
-        else if (val.includes('מחשב') || val.includes('computer')) detectedCat = 'computer';
-        else if (val.includes('תשתית') || val.includes('חשמל') || val.includes('כבל')) detectedCat = 'תשתית';
-
-        if (detectedCat) {
-            activeCategoryFilter = detectedCat;
-            updateCategoryPillsUI(detectedCat);
+        // חיפוש פשוט ("טיפש"): ללא זיהוי קטגוריה אוטומטי וללא תיוג - פשוט כל המקרים שמכילים את המילה
+        if (state.simpleSearch) {
+            if (tagContainer) {
+                tagContainer.innerHTML = '';
+                tagContainer.classList.add('hidden');
+            }
+            renderTicketsList();
+            return;
         }
 
         // Auto-Tagging
@@ -4164,10 +4480,55 @@
     }
     function clearTeamFilter() { state.filterTeamMember = null; renderStackedTeamList(); renderTicketsList(); }
 
+    // טבלת עומס טכנאים (מוצגת כשלא נבחרה תקלה) - כל הטכנאים בסדר יורד לפי תקלות משוייכות פעילות
+    function renderTechWorkload() {
+        const area = document.getElementById('tech-workload-area');
+        if (!area) return;
+        const activeStatuses = ['open', 'ofek', 'treatment'];
+        // ספירת כלל התקלות הפעילות של הטכנאי (מכל הזמן, לא רק היום)
+        const rows = (state.team || []).map(m => {
+            const mine = state.tickets.filter(t => t.assignedTo === m.name && activeStatuses.includes(t.status));
+            const assigned = mine.length;
+            const treatment = mine.filter(t => t.status === 'treatment').length;
+            return { name: m.name, role: m.profession || m.role || '—', assigned, treatment };
+        });
+        rows.sort((a, b) => (b.assigned - a.assigned) || (b.treatment - a.treatment) || a.name.localeCompare(b.name, 'he'));
+
+        if (rows.length === 0) {
+            area.innerHTML = `<div class="text-center text-gray-400 dark:text-slate-500 font-bold py-8 border border-dashed border-gray-200 dark:border-slate-800 rounded-xl">לא רשומים אנשי צוות.</div>`;
+            return;
+        }
+
+        area.innerHTML = `
+            <div class="overflow-hidden border border-gray-150 dark:border-slate-800 rounded-xl">
+                <table class="w-full text-right border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 dark:bg-slate-850 text-[11px] font-black text-gray-500 dark:text-slate-400">
+                            <th class="py-2 px-3">איש הצוות</th>
+                            <th class="py-2 px-2">תפקיד</th>
+                            <th class="py-2 px-2 text-center whitespace-nowrap">משוייכות</th>
+                            <th class="py-2 px-2 text-center whitespace-nowrap">בטיפול</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rows.map(r => `
+                            <tr class="border-t border-gray-100 dark:border-slate-800 hover:bg-slate-50/60 dark:hover:bg-slate-850/60">
+                                <td class="py-2 px-3 font-extrabold text-gray-800 dark:text-slate-100 text-sm">${r.name}</td>
+                                <td class="py-2 px-2 text-xs font-bold text-gray-500 dark:text-slate-400">${r.role}</td>
+                                <td class="py-2 px-2 text-center"><span class="inline-block min-w-[1.75rem] px-2 py-0.5 rounded-lg text-xs font-black ${r.assigned > 0 ? 'bg-primary/10 text-primary' : 'bg-slate-100 dark:bg-slate-800 text-gray-400'}">${r.assigned}</span></td>
+                                <td class="py-2 px-2 text-center"><span class="inline-block min-w-[1.75rem] px-2 py-0.5 rounded-lg text-xs font-black ${r.treatment > 0 ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-950/30 dark:text-yellow-400' : 'bg-slate-100 dark:bg-slate-800 text-gray-400'}">${r.treatment}</span></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>`;
+    }
+
     function renderTicketsList() {
+        renderTechWorkload();
         const container = document.getElementById('tickets-list-container');
         if (!container) return;
-        
+
         let filtered = state.tickets;
         
         // 1. Check if search query is a candidate ID (e.g. numeric, 9 digits, or matches any candidate's examId)
@@ -4213,6 +4574,36 @@
             });
         }
 
+        // 2b. מסנן "חיפוש לפי סוג": סוג קריאה (חומרה/תוכנה) -> תת-סוג תוכנה -> תקלה
+        if (state.searchMode === 'type') {
+            if (state.filterCallType === 'hardware') {
+                filtered = filtered.filter(t => t.faultType === 'hardware');
+            } else if (state.filterCallType === 'software') {
+                filtered = filtered.filter(t => t.faultType && t.faultType !== 'hardware');
+                if (state.filterSoftSub === 'mch') {
+                    filtered = filtered.filter(t => {
+                        const blob = [t.title, t.desc, t.component, t.examType, t.examName].map(v => normHeb(v)).join(' | ');
+                        const words = blob.split(/[ |]+/);
+                        return words.includes('מח') || blob.includes('mch') || words.some(w => w.startsWith('מבחנ') || w.startsWith('מתמיינ') || w.startsWith('ציונ'));
+                    });
+                } else if (state.filterSoftSub === 'spaces') {
+                    filtered = filtered.filter(t => {
+                        const blob = [t.title, t.desc, t.component].map(v => normHeb(v)).join(' | ');
+                        return blob.includes('מרחב') || blob.includes('סימולטור') || blob.includes('סימולצי');
+                    });
+                }
+            }
+            // סינון לפי התקלה שנבחרה (חומרה או תוכנה)
+            if (state.componentFaultFilter) {
+                const faultWords = normHeb(state.componentFaultFilter).split(' ').filter(w => w.length >= 3);
+                filtered = filtered.filter(t => {
+                    const blob = [t.title, t.desc, t.component].map(v => normHeb(v)).join(' | ');
+                    if (blob.includes(normHeb(state.componentFaultFilter))) return true;
+                    return faultWords.some(w => blob.includes(w));
+                });
+            }
+        }
+
         // 3. Special Filter (Deactivating / Solved recommendations)
         const specialFilter = document.getElementById('special-filter-select')?.value || '';
         if (specialFilter === 'deactivating') {
@@ -4245,53 +4636,54 @@
             });
         }
 
-        // 4. Free text Search Query (including candidate ID matching)
-        if(state.searchQuery) {
-            const keywords = state.searchQuery.split(/\s+/).filter(k => k.length > 0);
-            if (keywords.length > 0) {
-                filtered = filtered.filter(t => {
-                    const searchFields = [
-                        t.id,
-                        t.title,
-                        t.desc,
-                        t.room,
-                        t.station ? String(t.station) : '',
-                        t.building ? (BUILDING_LABELS[t.building] || t.building) : '',
-                        t.assignedTo,
-                        t.resolvedBy,
-                        t.resolution,
-                        t.examId,
-                        t.examName,
-                        t.examType,
-                        t.faultType,
-                        t.status === 'open' ? 'פתוח' : (t.status === 'ofek' ? 'באופק' : (t.status === 'treatment' ? 'בטיפול' : 'סגור')),
-                        t.usedInventory ? t.usedInventory.name : '',
-                        t.usedInventory ? t.usedInventory.serial : '',
-                        t.usedInventory ? t.usedInventory.masha : '',
-                        t.usedInventory ? t.usedInventory.reason : ''
-                    ].map(val => val ? String(val).toLowerCase() : '').join(' | ');
-
-                    return keywords.every(kw => searchFields.includes(kw));
+        // 4. Free text Search Query (normalized, graded matching)
+        const searchTokens = normHeb(state.searchQuery).split(' ').filter(k => k.length > 0);
+        if (searchTokens.length > 0 && state.simpleSearch && !isCandidateSearch) {
+            // חיפוש פשוט ("טיפש"): כל התקלות שמכילות את המילה כתת-מחרוזת, ללא דירוג/צמצום/המלצות
+            filtered = filtered.filter(t => {
+                const blob = [
+                    t.id, t.title, t.desc, t.room, String(t.station || ''),
+                    (BUILDING_LABELS[t.building] || t.building || ''), t.component,
+                    t.assignedTo, t.resolvedBy, t.resolution, t.examId, t.examName, t.examType, t.faultType
+                ].map(v => normHeb(v)).join(' | ');
+                return searchTokens.every(tok => blob.includes(tok));
+            });
+        } else if (searchTokens.length > 0 && !isCandidateSearch) {
+            const preSearch = filtered;
+            // מעבר ראשון (מדויק): כל המונחים חייבים להימצא, ללא סובלנות לשגיאות כתיב
+            filtered = preSearch.filter(t => {
+                t._search = computeTicketSearch(t, searchTokens, false);
+                return t._search.matched === searchTokens.length;
+            });
+            // נפילה חכמה: אם אין תוצאות מדויקות, מתירים התאמה חלקית + שגיאות כתיב
+            if (filtered.length === 0) {
+                filtered = preSearch.filter(t => {
+                    t._search = computeTicketSearch(t, searchTokens, true);
+                    return t._search.matched >= Math.max(1, Math.ceil(searchTokens.length * 0.6)) && t._search.maxStrength >= 1;
                 });
             }
+        } else if (searchTokens.length > 0 && isCandidateSearch) {
+            // חיפוש לפי ת.ז / מזהה בחינה - שומרים על ההתנהגות הקיימת (התאמת מזהה מדויקת)
+            filtered = filtered.filter(t => {
+                t._search = computeTicketSearch(t, searchTokens, false);
+                return t._search.matched === searchTokens.length;
+            });
         }
 
-        // Generate search-based org knowledge recommendations
+        // Generate search-based org knowledge recommendations (מבוטל בחיפוש פשוט)
         let searchKnowledgeHtml = '';
-        if (state.searchQuery && !isCandidateSearch) {
-            const queryWords = state.searchQuery.toLowerCase().split(/\s+/).filter(w => w.length > 1);
+        if (state.searchQuery && !isCandidateSearch && !state.simpleSearch) {
+            const queryWords = normHeb(state.searchQuery).split(' ').filter(w => w.length > 1);
             if (queryWords.length > 0) {
                 const resolved = state.tickets.filter(t => t.status === 'closed' && t.resolution);
                 const matchedResolutions = [];
-                
+                // דרישת סף לדיוק: לפחות 60% מהמונחים חייבים להתאים, וחייבת להיות התאמה חזקה אחת לפחות
+                const needMatches = Math.max(1, Math.ceil(queryWords.length * 0.6));
+
                 resolved.forEach(rt => {
-                    const searchString = [rt.title, rt.desc, rt.resolution].join(' ').toLowerCase();
-                    let matchesCount = 0;
-                    queryWords.forEach(w => {
-                        if (searchString.includes(w)) matchesCount++;
-                    });
-                    if (matchesCount > 0) {
-                        matchedResolutions.push({ ticket: rt, score: matchesCount });
+                    const sc = computeTicketSearch(rt, queryWords, false);
+                    if (sc.matched >= needMatches && sc.maxStrength >= 3) {
+                        matchedResolutions.push({ ticket: rt, score: sc.score });
                     }
                 });
 
@@ -4299,9 +4691,9 @@
 
                 if (matchedResolutions.length > 0) {
                     searchKnowledgeHtml = `
-                        <div class="bg-gradient-to-br from-indigo-50/50 to-blue-50/50 dark:from-slate-900/30 dark:to-slate-900/20 border border-indigo-150 dark:border-indigo-900/30 rounded-2xl p-4.5 mb-4 shadow-sm text-right">
+                        <div class="bg-gradient-to-br from-indigo-50/50 to-blue-50/50 dark:from-slate-900/30 dark:to-slate-900/20 border border-indigo-150 dark:border-indigo-900/30 rounded-2xl p-4 mb-4 shadow-sm text-right">
                             <h4 class="font-extrabold text-xs text-indigo-900 dark:text-indigo-400 mb-2.5 flex items-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4.5 w-4.5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" class="flex-shrink-0 text-indigo-500" style="width:18px;height:18px;min-width:18px" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                                 <span>ידע ארגוני מאותר (פתרונות שנמצאו בארכיון):</span>
                             </h4>
                             <div class="space-y-2.5 max-h-44 overflow-y-auto custom-scrollbar">
@@ -4342,53 +4734,31 @@
                 score += 10000;
             }
 
-            if (state.searchQuery) {
-                const keywords = state.searchQuery.toLowerCase().split(/\s+/).filter(k => k.length > 0);
-                const searchFields = {
-                    title: (t.title || '').toLowerCase(),
-                    desc: (t.desc || '').toLowerCase(),
-                    room: (t.room || '').toLowerCase(),
-                    station: String(t.station || '').toLowerCase(),
-                    component: (t.component || '').toLowerCase(),
-                    id: (t.id || '').toLowerCase()
-                };
-
-                let matchedCount = 0;
-                keywords.forEach(kw => {
-                    let kwMatched = false;
-                    if (searchFields.title.includes(kw) || searchFields.desc.includes(kw)) {
-                        kwMatched = true; score += 15;
-                    }
-                    if (searchFields.room.includes(kw)) {
-                        kwMatched = true; score += 25;
-                    }
-                    if (searchFields.station === kw) {
-                        kwMatched = true; score += 20;
-                    }
-                    if (searchFields.component.includes(kw)) {
-                        kwMatched = true; score += 8;
-                    }
-                    if (searchFields.id.includes(kw)) {
-                        kwMatched = true; score += 5;
-                    }
-
-                    if (kwMatched) {
-                        matchedCount++;
-                        t._matchedKeyword = kw;
-                    }
-                });
-
-                if (matchedCount === keywords.length && keywords.length > 0) {
+            if (searchTokens.length > 0 && !state.simpleSearch) {
+                // שימוש בציון שחושב במנוע החיפוש המנורמל (שלב 4)
+                const sc = t._search || computeTicketSearch(t, searchTokens, true);
+                score += sc.score;
+                t._matchedKeyword = sc.matchedKeyword;
+                if (sc.exact) {
                     t._exactMatch = true;
                     score += 100;
-                } else if (matchedCount > 0) {
+                } else if (sc.matched > 0) {
                     t._similarMatch = true;
-                    score += matchedCount * 10;
+                    score += sc.matched * 10;
                 }
             }
 
             t._relevanceScore = score;
         });
+
+        // צמצום לתוצאות המדויקות ביותר: כשקיימות התאמות מדויקות, מסירים התאמות חלשות/רחוקות (מבוטל בחיפוש פשוט)
+        if (searchTokens.length > 0 && !isCandidateSearch && !state.simpleSearch && filtered.length > 0) {
+            const hasExact = filtered.some(t => t._search && t._search.exact);
+            if (hasExact) {
+                const topSearchScore = Math.max(...filtered.map(t => (t._search ? t._search.score : 0)));
+                filtered = filtered.filter(t => t._search && (t._search.exact || t._search.score >= topSearchScore * 0.5));
+            }
+        }
 
         if (filtered.length === 0) {
             container.innerHTML = searchKnowledgeHtml + `<div style="text-align: center; font-weight: bold; color: #64748b; padding: 40px; border: 1px dashed #cbd5e1; border-radius: 12px;">לא נמצאו תקלות התואמות לסינון הנוכחי</div>`;
@@ -4998,9 +5368,12 @@
             }
         }
 
+        const wasOfek = (t.status === 'ofek');
         t.status = 'closed';
         t.assignedTo = newAssignee;
-        t.resolvedBy = newAssignee || 'צוות מחשוב';
+        // תקלה שנסגרה בעודה בטיפול יחידת אופק - מסומנת כנסגרה ע"י אופק ולא ע"י צוות מחשוב
+        t.resolvedBy = wasOfek ? 'יחידת אופק' : (newAssignee || 'צוות מחשוב');
+        t.closedFromOfek = wasOfek;
         t.resolution = res;
         t.resolvedDate = new Date().toLocaleString('he-IL', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
 
@@ -9288,11 +9661,11 @@
             <h3 class="text-lg font-extrabold text-slate-900 dark:text-white mb-2">אימות סגל מורשה</h3>
             <p class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-6">אנא הזן קוד אימות כדי לבצע פעולה זו</p>
             
-            <input type="password" id="lock-code-input" maxlength="4" placeholder="••••" class="w-full text-center tracking-[1em] text-lg font-black py-3 px-4 border border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white outline-none focus:border-[#3776AB] dark:focus:border-[#38bdf8] transition-colors mb-6 shadow-inner" oninput="if(this.value.length === 4) verifyLockCode()">
-            
+            <input type="password" id="lock-code-input" maxlength="4" inputmode="numeric" placeholder="••••" class="w-full text-center font-mono tracking-widest bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary mb-6" oninput="if(this.value.length === 4) verifyLockCode()">
+
             <div class="flex gap-3">
-                <button onclick="verifyLockCode()" class="flex-1 py-3 bg-[#3776AB] hover:bg-[#2b5d87] dark:bg-[#38bdf8] dark:hover:bg-[#0ea5e9] text-white dark:text-slate-950 rounded-xl font-extrabold text-sm transition-colors shadow-sm">אשר</button>
-                <button onclick="closeLockModal()" class="flex-1 py-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-extrabold text-sm transition-colors border border-slate-200 dark:border-slate-700">ביטול</button>
+                <button onclick="verifyLockCode()" class="flex-grow py-3 bg-[#3776AB] hover:bg-[#2b5d87] text-white rounded-xl font-extrabold text-sm transition-colors shadow-sm">אישור</button>
+                <button onclick="closeLockModal()" class="py-3 px-6 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-extrabold text-sm border border-slate-200 dark:border-slate-700 transition-colors">ביטול</button>
             </div>
         </div>
     </div>

@@ -636,6 +636,20 @@
             'הטלפון מראה קו תפוס תמידי': 'Off-hook Status'
         };
 
+        // תקלות מרחבים/סימולציה נפוצות
+        const PILLS_MERHAVIM = [
+            'סימולטור לא נטען',
+            'תקלה במרחב סימולציה',
+            'תצוגת מרחבים תקועה',
+            'בעיה בהרצת תרחיש',
+            'אין תמונה/וידאו במרחב'
+        ];
+
+        // עמדת מאבחנת (office עם הרשאת בחינה) או עמדת בחינה - תומכות בתת-סוגי מ"ח ומרחבים
+        function supportsMchMerhavim() {
+            return S.stationType === 'exam' || (S.stationType === 'office' && S.stationConfig && S.stationConfig.allowExam);
+        }
+
         function selectSoftwareSubType(subType, el) {
             if (S.softwareSubType === subType) {
                 S.softwareSubType = '';
@@ -663,14 +677,15 @@
             let titleText = 'תקלות נפוצות';
             
             if (S.faultType === 'software') {
-                if (S.stationType === 'exam') {
+                if (supportsMchMerhavim()) {
                     list = [...PILLS_SOFTWARE_GENERAL];
                     titleText = 'תקלות תוכנה נפוצות';
-                    
+
                     if (S.softwareSubType === 'mch') {
                         list.push(...PILLS_MCH);
                         titleText = 'תקלות תוכנה ומ"ח נפוצות';
                     } else if (S.softwareSubType === 'merhavim') {
+                        list.push(...PILLS_MERHAVIM);
                         titleText = 'תקלות תוכנה ומרחבים נפוצות';
                     }
                 } else {
@@ -692,7 +707,7 @@
                 if (S.faultType === 'network') {
                     if (f.networkType && f.networkType !== S.networkType) return false;
                 }
-                if (S.faultType === 'software' && S.stationType === 'exam') {
+                if (S.faultType === 'software' && supportsMchMerhavim()) {
                     const targetSub = S.softwareSubType || 'general';
                     if (f.softwareSubType && f.softwareSubType !== targetSub) return false;
                 }
@@ -1002,7 +1017,7 @@
             // Hide/Show software sub section if needed
             const swSub = document.getElementById('software-sub-section');
             if (swSub) {
-                if (S.faultType === 'software' && S.stationType === 'exam') {
+                if (S.faultType === 'software' && supportsMchMerhavim()) {
                     swSub.classList.remove('hidden');
                 } else {
                     swSub.classList.add('hidden');
@@ -1010,7 +1025,7 @@
             }
 
             if (S.faultType === 'software') {
-                if (S.stationType !== 'exam') {
+                if (!supportsMchMerhavim()) {
                     S.softwareSubType = 'general';
                     document.getElementById('hardware-components-section').classList.add('hidden');
                     renderGeneralPills();
@@ -1089,7 +1104,7 @@
             
             const swSub = document.getElementById('software-sub-section');
             if (swSub) {
-                if (type === 'software' && S.stationType === 'exam') {
+                if (type === 'software' && supportsMchMerhavim()) {
                     swSub.classList.remove('hidden');
                     // Reset sub-tiles
                     document.querySelectorAll('#software-sub-tiles > div').forEach(t => t.classList.remove('tile-active'));
@@ -1114,7 +1129,7 @@
             } else if (type === 'network') {
                 document.getElementById('general-fault-pills-section').classList.remove('hidden');
                 renderGeneralPills();
-            } else if (type === 'software' && S.stationType !== 'exam') {
+            } else if (type === 'software' && !supportsMchMerhavim()) {
                 S.softwareSubType = 'general';
                 renderGeneralPills();
             } else {

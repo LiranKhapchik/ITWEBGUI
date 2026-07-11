@@ -4846,9 +4846,9 @@
         </div>
         <h3 class="text-lg font-extrabold text-slate-900 dark:text-white mb-2">אימות סגל מורשה</h3>
         <p class="text-xs font-bold text-slate-550 dark:text-slate-400 mb-6">אנא הזן קוד אימות כדי לבצע פעולה זו</p>
-        <input type="password" id="segel-auth-code" class="w-full text-center font-mono tracking-widest bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary mb-6" placeholder="••••" maxlength="4" oninput="if(this.value.length === 4) submitSegelAuth()">
+        <input type="password" id="segel-auth-code" class="w-full text-center font-mono tracking-widest bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary mb-6" placeholder="••••" maxlength="4" inputmode="numeric" oninput="if(this.value.length === 4) submitSegelAuth()">
         <div class="flex gap-3">
-            <button onclick="submitSegelAuth()" class="flex-grow py-3 bg-[#3776AB] hover:bg-[#2b5d87] text-white rounded-xl font-extrabold text-sm transition-colors shadow-sm">התחבר</button>
+            <button onclick="submitSegelAuth()" class="flex-grow py-3 bg-[#3776AB] hover:bg-[#2b5d87] text-white rounded-xl font-extrabold text-sm transition-colors shadow-sm">אישור</button>
             <button onclick="closeSegelAuthModal()" class="py-3 px-6 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-extrabold text-sm border border-slate-200 dark:border-slate-750 transition-colors">ביטול</button>
         </div>
     </div>
