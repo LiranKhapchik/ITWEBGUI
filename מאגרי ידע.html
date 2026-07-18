@@ -1,0 +1,1865 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מאגר ידע - פתרונות ותקנון תקלות</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/tailwind.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+    <script src="js/config.js"></script>
+    <script src="js/common.js"></script>
+    <style>
+        html { font-size: 18px; }
+        body { 
+            font-family: 'Assistant', 'Segoe UI', Tahoma, sans-serif; 
+            background-color: #fafbfc; 
+            letter-spacing: -0.01em; 
+            color: #111827;
+        }
+        h1, h2, h3, h4, .font-extrabold {
+            font-weight: 800 !important;
+            letter-spacing: -0.025em;
+        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+        .dark ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        
+        select, input[type="text"], input[type="number"], textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            font-family: inherit;
+            background-color: #f8fafc;
+            color: #1f2937;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+        select:focus, input[type="text"]:focus, input[type="number"]:focus, textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+        .dark select, .dark input[type="text"], .dark input[type="number"], .dark textarea {
+            background-color: #1e293b;
+            border-color: #334155;
+            color: #f1f5f9;
+        }
+        .dark select:focus, .dark input[type="text"]:focus, .dark input[type="number"]:focus, .dark textarea:focus {
+            background-color: #0f172a;
+            border-color: #3b82f6;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col p-4 lg:p-6 justify-start items-center dark:bg-slate-950 transition-colors duration-300">
+
+    <!-- Header Section -->
+    <header class="w-full max-w-6xl flex justify-between items-center mb-6 px-4">
+        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2">
+                <a href="אתר מחשוב.html" class="px-4 py-2.5 rounded-xl bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 font-extrabold text-sm transition-all flex items-center gap-2 shadow-sm dark:bg-slate-900 dark:border-slate-800 dark:text-gray-300 dark:hover:bg-slate-800" title="חזרה לאתר מחשוב">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transform rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                    </svg>
+                    <span>לאתר מחשוב</span>
+                </a>
+                <a href="דשבורד.html" class="px-4 py-2.5 rounded-xl bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 font-extrabold text-sm transition-all flex items-center gap-2 shadow-sm dark:bg-slate-900 dark:border-slate-800 dark:text-gray-300 dark:hover:bg-slate-800" title="מעבר לדשבורד">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 8v8m-4-5v5m-4-2v2M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12z"/>
+                    </svg>
+                    <span>דשבורד</span>
+                </a>
+            </div>
+            <div>
+                <h1 class="text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">מאגר ידע פתרונות ותמיכה</h1>
+                <p class="text-blue-600 dark:text-blue-400 font-bold mt-0.5 text-sm">מרכז מידע לשירות עצמי ולטכנאים</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="toggleDarkMode()" class="flex items-center justify-center p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-gray-700 transition-all border border-gray-200 dark:bg-slate-900 dark:border-slate-800 dark:text-gray-300 dark:hover:bg-slate-800" title="שינוי ערכת נושא">
+                <ui-icon name="moon" class="w-5 h-5"></ui-icon>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Section -->
+    <main class="w-full max-w-6xl flex flex-col gap-6">
+
+        <!-- Tabs Interface -->
+        <div class="flex border-b border-gray-200 dark:border-slate-800 gap-4 flex-shrink-0">
+            <button id="tab-btn-list" onclick="switchTab('list')" class="pb-3 px-4 font-extrabold text-lg border-b-4 border-blue-600 text-blue-600 dark:text-blue-400 transition-all focus:outline-none flex items-center gap-2">
+                <ui-icon name="guides" class="w-5 h-5"></ui-icon>
+                <span>רשימת פתרונות</span>
+            </button>
+            <button id="tab-btn-create" onclick="switchTab('create')" class="pb-3 px-4 font-extrabold text-lg border-b-4 border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all focus:outline-none flex items-center gap-2">
+                <ui-icon name="edit-2" class="w-5 h-5"></ui-icon>
+                <span>יצירת מאמר פתרון חדש</span>
+            </button>
+        </div>
+
+        <!-- Tab 1: Solutions List -->
+        <section id="tab-content-list" class="space-y-6">
+            <!-- Search & Filter Card -->
+            <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800/80 rounded-3xl p-6 shadow-sm">
+                <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+                    <!-- Search Input -->
+                    <div class="relative w-full md:w-1/2">
+                        <input type="text" id="search-solutions" oninput="filterArticles();" placeholder="חיפוש חופשי (נושא, שלבי פתרון, תגיות, מחבר)..." class="w-full pl-4 pr-11 font-bold animate-fade-in">
+                        <div class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500">
+                            <ui-icon name="search" class="w-5 h-5"></ui-icon>
+                        </div>
+                    </div>
+                    <!-- Active Filters Indicator -->
+                    <div class="text-xs font-bold text-gray-500 dark:text-slate-400" id="results-count">
+                        טוען מאמרים...
+                    </div>
+                </div>
+
+                <!-- Category Filters -->
+                <div class="mt-4 pt-4 border-t border-gray-100 dark:border-slate-800 flex flex-wrap gap-2 items-center">
+                    <span class="text-xs font-black text-gray-400 dark:text-slate-500 ml-2">סנן לפי קטגוריה:</span>
+                    <button onclick="setFilterCategory('all')" id="filter-cat-all" class="px-3 py-1.5 rounded-full text-xs font-black bg-blue-600 text-white shadow-sm transition-all">הכל</button>
+                    <button onclick="setFilterCategory('תוכנה')" id="filter-cat-תוכנה" class="px-3 py-1.5 rounded-full text-xs font-black bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 transition-all">תוכנה</button>
+                    <button onclick="setFilterCategory('חומרה')" id="filter-cat-חומרה" class="px-3 py-1.5 rounded-full text-xs font-black bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 transition-all">חומרה</button>
+                    <button onclick="setFilterCategory('רשת ותקשורת')" id="filter-cat-רשת" class="px-3 py-1.5 rounded-full text-xs font-black bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 transition-all">רשת ותקשורת</button>
+                    <button onclick="setFilterCategory('טלפוניה')" id="filter-cat-טלפוניה" class="px-3 py-1.5 rounded-full text-xs font-black bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 transition-all">טלפוניה</button>
+                    <button onclick="setFilterCategory('כללי')" id="filter-cat-כללי" class="px-3 py-1.5 rounded-full text-xs font-black bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 transition-all">אחר / כללי</button>
+                </div>
+            </div>
+
+            <!-- Solutions Grid / List -->
+            <div id="articles-container" class="grid grid-cols-1 gap-6">
+                <!-- Dynamic Article Cards -->
+            </div>
+        </section>
+
+        <!-- Tab 2: Create Solution -->
+        <section id="tab-content-create" class="hidden">
+            <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800/80 rounded-3xl p-6 lg:p-8 shadow-sm space-y-8">
+                <div>
+                    <h2 class="text-xl font-extrabold text-slate-800 dark:text-white mb-1">הוספת מאמר ידע חדש</h2>
+                    <p class="text-xs text-gray-400 dark:text-slate-500">אנא מלאו את השדות הבאים כדי להוסיף פתרון חדש למאגר הידע הארגוני.</p>
+                </div>
+
+                <div class="space-y-6">
+
+                    <!-- בלוק 1: פרטי כותב הפתרון המקורי -->
+                    <div class="p-5 bg-slate-50/50 dark:bg-slate-950/30 border border-slate-100 dark:border-slate-800/60 rounded-2xl space-y-4">
+                        <div class="flex items-center gap-2 border-b border-gray-200/60 dark:border-slate-850 pb-2 mb-3">
+                            <span class="p-1.5 bg-blue-600 rounded-lg text-white"><ui-icon name="user" class="w-4 h-4"></ui-icon></span>
+                            <h3 class="text-sm font-extrabold text-slate-900 dark:text-slate-200">פרטי כותב הפתרון המקורי</h3>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold mb-1.5 text-gray-500 dark:text-slate-400">מספר אישי <span class="text-red-500">*</span></label>
+                                <input type="text" id="author-personal-id" maxlength="9" placeholder="הקלד מ״א להשלמה" oninput="autocompleteAuthor();" class="font-mono">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold mb-1.5 text-gray-500 dark:text-slate-400">שם מלא <span class="text-red-500">*</span></label>
+                                <input type="text" id="author-name" placeholder="שם מלא">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold mb-1.5 text-gray-500 dark:text-slate-400">דרגה <span class="text-red-500">*</span></label>
+                                <select id="author-rank">
+                                    <option value="">-- בחר דרגה --</option>
+                                    <option value="טוראי">טוראי</option>
+                                    <option value="רב״ט">רב״ט</option>
+                                    <option value="סמל">סמל</option>
+                                    <option value="סמ״ר">סמ״ר</option>
+                                    <option value="רס״ל">רס״ל</option>
+                                    <option value="רס״ר">רס״ר</option>
+                                    <option value="רס״ם">רס״ם</option>
+                                    <option value="רנ״ג">רנ״ג</option>
+                                    <option value="סג״ם">סג״ם</option>
+                                    <option value="סגן">סגן</option>
+                                    <option value="סרן">סרן</option>
+                                    <option value="רס״ן">רס״ן</option>
+                                    <option value="סא״ל">סא״ל</option>
+                                    <option value="אל״ם">אל״ם</option>
+                                    <option value="אע״צ">אע״צ</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold mb-1.5 text-gray-500 dark:text-slate-400">תפקיד <span class="text-red-500">*</span></label>
+                                <input type="text" id="author-role" placeholder="למשל: טכנאי מחשוב">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- בלוק 2: מזהה קריאה מקושר -->
+                    <div class="p-5 bg-slate-50/50 dark:bg-slate-950/30 border border-slate-100 dark:border-slate-800/60 rounded-2xl space-y-4">
+                        <div class="flex items-center gap-2 border-b border-gray-200/60 dark:border-slate-850 pb-2 mb-3">
+                            <span class="p-1.5 bg-blue-600 rounded-lg text-white"><ui-icon name="ticket" class="w-4 h-4"></ui-icon></span>
+                            <h3 class="text-sm font-extrabold text-slate-900 dark:text-slate-200">מזהה קריאה מקושר (תקלה לדוגמה)</h3>
+                        </div>
+                        <div class="flex flex-col sm:flex-row gap-3 items-end relative">
+                            <div class="flex-1 relative">
+                                <label class="block text-xs font-bold mb-1.5 text-gray-500 dark:text-slate-400">מזהה קריאה מקושר (לדוגמה: SN-260704-H01)</label>
+                                <input type="text" id="linked-ticket-id" placeholder="הקלידו מזהה קריאה או חפשו תקלה קיימת..." oninput="searchSystemTickets()">
+                                <div id="ticket-search-dropdown" class="hidden mt-1 max-h-40 overflow-y-auto bg-white border border-gray-200 rounded-xl shadow-lg z-50 dark:bg-slate-900 dark:border-slate-800 absolute w-full"></div>
+                            </div>
+                            <button type="button" onclick="pullTicketDetails()" class="px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm transition-all flex items-center gap-2 shadow-sm h-[2.75rem] dark:bg-blue-600 dark:hover:bg-blue-500">
+                                <ui-icon name="bolt" class="w-4 h-4"></ui-icon>
+                                <span>משוך פרטי קריאה</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- בלוק 3: כותרת המאמר -->
+                    <div class="p-5 bg-slate-50/50 dark:bg-slate-950/30 border border-slate-100 dark:border-slate-800/60 rounded-2xl space-y-4">
+                        <div class="flex items-center gap-2 border-b border-gray-200/60 dark:border-slate-850 pb-2 mb-3">
+                            <span class="p-1.5 bg-blue-600 rounded-lg text-white"><ui-icon name="edit-2" class="w-4 h-4"></ui-icon></span>
+                            <h3 class="text-sm font-extrabold text-slate-900 dark:text-slate-200">כותרת המאמר</h3>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold mb-1.5 text-gray-500 dark:text-slate-400">כותרת מאמר הפתרון <span class="text-red-500">*</span></label>
+                            <input type="text" id="article-title" placeholder="למשל: איפוס והגדרה מחדש של מדפסת HP בכיתה ימנית">
+                        </div>
+                    </div>
+
+                    <!-- בלוק 4: בחירת קטגוריה ותגיות דינמיות -->
+                    <div class="p-5 bg-slate-50/50 dark:bg-slate-950/30 border border-slate-100 dark:border-slate-800/60 rounded-2xl space-y-4">
+                        <div class="flex items-center gap-2 border-b border-gray-200/60 dark:border-slate-850 pb-2 mb-3">
+                            <span class="p-1.5 bg-blue-600 rounded-lg text-white"><ui-icon name="database" class="w-4 h-4"></ui-icon></span>
+                            <h3 class="text-sm font-extrabold text-slate-900 dark:text-slate-200">בחירת קטגוריה ותגיות דינמיות</h3>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold mb-1.5 text-gray-500 dark:text-slate-400">קטגוריה ראשית <span class="text-red-500">*</span></label>
+                                <select id="article-category">
+                                    <option value="">-- בחר קטגוריה --</option>
+                                    <option value="מדריך">מדריך</option>
+                                    <option value="נהלי עבודה">נהלי עבודה</option>
+                                    <option value="מדריך לפתרון תקלות">מדריך לפתרון תקלות</option>
+                                    <option value="באג ידוע">באג ידוע</option>
+                                    <option value="כללי">כללי</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold mb-1.5 text-gray-500 dark:text-slate-400">קטגוריה משנית <span class="text-red-500">*</span></label>
+                                <select id="article-subcategory" onchange="onArticleSubcategoryChange();">
+                                    <option value="">-- בחר קטגוריה משנית --</option>
+                                    <option value="חומרה">חומרה</option>
+                                    <option value="תוכנה">תוכנה</option>
+                                    <option value="טלפוניה">טלפוניה</option>
+                                    <option value="רשת ותקשורת">רשת ותקשורת</option>
+                                    <option value="כללי">כללי</option>
+                                </select>
+                            </div>
+                            <div id="article-component-wrapper" class="hidden">
+                                <label id="article-component-label" class="block text-xs font-bold mb-1.5 text-gray-500 dark:text-slate-400">רכיב / תת-נושא <span class="text-red-500">*</span></label>
+                                <select id="article-component" onchange="updateRecommendedTags();">
+                                    <option value="">-- בחר תת-נושא --</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- תגיות -->
+                        <div class="pt-2">
+                            <label class="block text-xs font-bold mb-1.5 text-gray-500 dark:text-slate-400">תגיות המאמר (הקלד ולחץ אנטר או +)</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="tag-input" placeholder="הוסף תגית (לדוגמה: HP, איפוס, סיסמה)" class="flex-1">
+                                <button type="button" onclick="addTagFromInput()" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200 rounded-xl font-bold text-sm transition-all">+</button>
+                            </div>
+                            <div class="flex flex-wrap gap-1.5 mt-3" id="tags-pills-container">
+                                <!-- tags display here -->
+                            </div>
+                            
+                            <!-- Suggested Tags -->
+                            <div class="mt-3 bg-slate-50 dark:bg-slate-950/20 p-3.5 rounded-xl border border-dashed border-slate-200 dark:border-slate-800">
+                                <span class="text-xs font-black text-slate-400 dark:text-slate-500 block mb-2">תגיות מומלצות לפי הקטגוריה שנבחרה (לחצו להוספה מהירה):</span>
+                                <div id="recommended-tags-pills" class="flex flex-wrap gap-1.5">
+                                    <!-- dynamic recommended pills -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- בלוק 5: תיאור התקלה -->
+                    <div class="p-5 bg-slate-50/50 dark:bg-slate-950/30 border border-slate-100 dark:border-slate-800/60 rounded-2xl space-y-4">
+                        <div class="flex items-center gap-2 border-b border-gray-200/60 dark:border-slate-850 pb-2 mb-3">
+                            <span class="p-1.5 bg-blue-600 rounded-lg text-white"><ui-icon name="file-text" class="w-4 h-4"></ui-icon></span>
+                            <h3 class="text-sm font-extrabold text-slate-900 dark:text-slate-200">תיאור התקלה</h3>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold mb-1.5 text-gray-500 dark:text-slate-400">תיאור מלא של הבעיה / תקלה <span class="text-red-500">*</span></label>
+                            <textarea id="article-description" rows="4" placeholder="תאר/י בפירוט את התקלה, השפעתה ואיך היא באה לידי ביטוי..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- בלוק 6: שלבי פתרון מובנים -->
+                    <div class="p-5 bg-slate-50/50 dark:bg-slate-950/30 border border-slate-100 dark:border-slate-800/60 rounded-2xl space-y-4">
+                        <div class="flex items-center gap-2 border-b border-gray-200/60 dark:border-slate-850 pb-2 mb-3">
+                            <span class="p-1.5 bg-blue-600 rounded-lg text-white"><ui-icon name="board" class="w-4 h-4"></ui-icon></span>
+                            <h3 class="text-sm font-extrabold text-slate-900 dark:text-slate-200">שלבי פתרון מובנים (צעד-אחר-צעד)</h3>
+                        </div>
+                        <div id="steps-repeater" class="space-y-3">
+                            <!-- step inputs here -->
+                        </div>
+                        <button type="button" onclick="addStepInput()" class="mt-2 px-4 py-2 text-xs font-extrabold text-blue-600 bg-blue-50 border border-blue-200 rounded-xl hover:bg-blue-100 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800/60 dark:hover:bg-blue-900/40 transition-all flex items-center gap-1.5">
+                            <span>+ הוסף שלב פתרון</span>
+                        </button>
+                    </div>
+
+                    <!-- בלוק 7: ניהול אנשי קשר רלוונטיים -->
+                    <div class="p-5 bg-slate-50/50 dark:bg-slate-950/30 border border-slate-100 dark:border-slate-800/60 rounded-2xl space-y-4">
+                        <div class="flex items-center gap-2 border-b border-gray-200/60 dark:border-slate-850 pb-2 mb-3">
+                            <span class="p-1.5 bg-blue-600 rounded-lg text-white"><ui-icon name="users" class="w-4 h-4"></ui-icon></span>
+                            <h3 class="text-sm font-extrabold text-slate-900 dark:text-slate-200">ניהול אנשי קשר רלוונטיים למאמר</h3>
+                        </div>
+                        
+                        <!-- Search Box for Existing Contacts -->
+                        <div class="relative">
+                            <label class="block text-xs font-bold mb-1.5 text-gray-500 dark:text-slate-400">חפש והוסף איש קשר קיים במערכת</label>
+                            <div class="relative">
+                                <input type="text" id="contact-search" placeholder="הקלד שם לחיפוש..." oninput="searchSystemContacts()" class="w-full pl-4 pr-11 font-bold">
+                                <div class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500">
+                                    <ui-icon name="users" class="w-4 h-4"></ui-icon>
+                                </div>
+                            </div>
+                            <!-- Autocomplete Dropdown List -->
+                            <div id="contact-search-dropdown" class="hidden mt-1 max-h-40 overflow-y-auto bg-white border border-gray-200 rounded-xl shadow-lg z-50 dark:bg-slate-900 dark:border-slate-800 absolute w-full"></div>
+                        </div>
+
+                        <div class="text-center text-xs font-black text-gray-300 dark:text-slate-700 py-1">או הוסף איש קשר חדש:</div>
+
+                        <!-- Manual Contact Form -->
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+                            <div>
+                                <label class="block text-xs font-bold mb-1 text-gray-500 dark:text-slate-400">שם מלא</label>
+                                <input type="text" id="contact-new-name" placeholder="למשל: סמ״ר עומרי גלון">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold mb-1 text-gray-500 dark:text-slate-400">טלפון ספיר (6 ספרות XX-XXXX)</label>
+                                <input type="text" id="contact-new-phone" placeholder="למשל: 51-2021">
+                            </div>
+                            <div>
+                                <button type="button" onclick="addCustomContact()" class="w-full px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200 rounded-xl font-bold text-sm transition-all h-[2.5rem] flex items-center justify-center gap-1">
+                                    <span>+ הוסף איש קשר</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Selected Contacts Display -->
+                        <div class="pt-2">
+                            <label class="block text-xs font-bold mb-1.5 text-gray-500 dark:text-slate-400">אנשי קשר משויכים למאמר זה:</label>
+                            <div class="flex flex-wrap gap-1.5" id="contacts-pills-container">
+                                <!-- contact display pills -->
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Submit Section -->
+                <div class="pt-6 border-t border-gray-200 dark:border-slate-850 flex justify-end gap-3">
+                    <button onclick="switchTab('list')" class="px-6 py-3 bg-gray-150 hover:bg-gray-200 text-gray-700 rounded-xl font-extrabold text-base transition-colors dark:bg-slate-800 dark:text-gray-300 dark:hover:bg-slate-700 flex items-center gap-2">
+                        <ui-icon name="x" class="w-5 h-5"></ui-icon>
+                        <span>ביטול וחזרה</span>
+                    </button>
+                    <button onclick="publishArticle()" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-extrabold text-base transition-colors flex items-center gap-2 shadow-md dark:bg-emerald-600 dark:hover:bg-emerald-500">
+                        <ui-icon name="save" class="w-5 h-5"></ui-icon>
+                        <span>פרסם מאמר פתרון</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Global variables for database state
+        let state = { team: [], tickets: [], contacts: [] };
+        let kbArticles = [];
+        
+        // Form states
+        let selectedTags = [];
+        let selectedContacts = [];
+        let currentFilterCat = 'all';
+
+        // Autocomplete search listener config
+        document.getElementById('tag-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addTagFromInput();
+            }
+        });
+
+        // Auto formatting Sapir phone number format (XX-XXXX)
+        document.getElementById('contact-new-phone').addEventListener('input', (e) => {
+            let val = e.target.value.replace(/\D/g, ''); // Digits only
+            if (val.length > 6) val = val.substring(0, 6);
+            if (val.length > 2) {
+                val = val.substring(0, 2) + '-' + val.substring(2);
+            }
+            e.target.value = val;
+        });
+
+        // Tab management
+        function switchTab(tab) {
+            const listBtn = document.getElementById('tab-btn-list');
+            const createBtn = document.getElementById('tab-btn-create');
+            const listContent = document.getElementById('tab-content-list');
+            const createContent = document.getElementById('tab-content-create');
+
+            if (tab === 'list') {
+                listBtn.className = "pb-3 px-4 font-extrabold text-lg border-b-4 border-blue-600 text-blue-600 dark:text-blue-400 transition-all focus:outline-none flex items-center gap-2";
+                createBtn.className = "pb-3 px-4 font-extrabold text-lg border-b-4 border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all focus:outline-none flex items-center gap-2";
+                listContent.classList.remove('hidden');
+                createContent.classList.add('hidden');
+                renderArticlesList();
+            } else {
+                createBtn.className = "pb-3 px-4 font-extrabold text-lg border-b-4 border-blue-600 text-blue-600 dark:text-blue-400 transition-all focus:outline-none flex items-center gap-2";
+                listBtn.className = "pb-3 px-4 font-extrabold text-lg border-b-4 border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all focus:outline-none flex items-center gap-2";
+                createContent.classList.remove('hidden');
+                listContent.classList.add('hidden');
+                if (tab === 'create') {
+                    resetForm();
+                }
+            }
+        }
+
+        // Subcategory change: populated dynamic Component/Sub-topic select
+        function onArticleSubcategoryChange() {
+            const sub = document.getElementById('article-subcategory').value;
+            const compWrapper = document.getElementById('article-component-wrapper');
+            const compLabel = document.getElementById('article-component-label');
+            const compSelect = document.getElementById('article-component');
+            
+            compSelect.innerHTML = '';
+            
+            if (sub === 'חומרה') {
+                compWrapper.classList.remove('hidden');
+                compLabel.innerHTML = 'רכיב חומרה <span class="text-red-500">*</span>';
+                
+                const options = [
+                    { value: '', text: '-- בחר רכיב --' },
+                    { value: 'מסך', text: 'מסך' },
+                    { value: 'עכבר', text: 'עכבר' },
+                    { value: 'מקלדת', text: 'מקלדת' },
+                    { value: 'מצלמה', text: 'מצלמה' },
+                    { value: 'מדפסת', text: 'מדפסת' },
+                    { value: 'אוזניות', text: 'אוזניות' },
+                    { value: 'סטיק', text: 'סטיק' },
+                    { value: 'מצערת', text: 'מצערת' },
+                    { value: 'לוח מקשים כסוף', text: 'לוח מקשים כסוף' },
+                    { value: 'מחשב / מארז', text: 'מחשב / מארז' },
+                    { value: 'כבלים (חשמל/רשת/מסך)', text: 'כבלים (חשמל/רשת/מסך)' }
+                ];
+                options.forEach(opt => {
+                    const o = document.createElement('option');
+                    o.value = opt.value;
+                    o.textContent = opt.text;
+                    compSelect.appendChild(o);
+                });
+            } else if (sub === 'תוכנה') {
+                compWrapper.classList.remove('hidden');
+                compLabel.innerHTML = 'תת-נושא תוכנה <span class="text-red-500">*</span>';
+                
+                const options = [
+                    { value: '', text: '-- בחר תת-נושא --' },
+                    { value: 'מ״ח', text: 'מ״ח (בחינות)' },
+                    { value: 'מרחבים וסימולציה', text: 'מרחבים וסימולציה' },
+                    { value: 'כללי', text: 'כללי / תוכנות משרד' }
+                ];
+                options.forEach(opt => {
+                    const o = document.createElement('option');
+                    o.value = opt.value;
+                    o.textContent = opt.text;
+                    compSelect.appendChild(o);
+                });
+            } else {
+                compWrapper.classList.add('hidden');
+                const o = document.createElement('option');
+                o.value = '';
+                o.textContent = '-- ללא --';
+                compSelect.appendChild(o);
+            }
+            
+            updateRecommendedTags();
+        }
+
+        // Tag management
+        function addTagFromInput() {
+            const input = document.getElementById('tag-input');
+            const val = input.value.trim();
+            if (val && !selectedTags.includes(val)) {
+                selectedTags.push(val);
+                renderTags();
+            }
+            input.value = '';
+            input.focus();
+        }
+
+        function removeTag(tag) {
+            selectedTags = selectedTags.filter(t => t !== tag);
+            renderTags();
+        }
+
+        function renderTags() {
+            const container = document.getElementById('tags-pills-container');
+            container.innerHTML = selectedTags.map(tag => `
+                <span class="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-bold dark:bg-blue-900/30 dark:text-blue-300">
+                    <span>${tag}</span>
+                    <button type="button" onclick="removeTag('${tag}')" class="text-blue-500 hover:text-blue-700 font-bold leading-none">&times;</button>
+                </span>
+            `).join('');
+        }
+
+        // Contacts list pills
+        function addSelectedContact(c) {
+            if (!selectedContacts.some(sc => sc.name === c.name)) {
+                selectedContacts.push(c);
+                renderContactPills();
+            }
+            document.getElementById('contact-search').value = '';
+            document.getElementById('contact-search-dropdown').classList.add('hidden');
+        }
+
+        function removeContactPill(name) {
+            selectedContacts = selectedContacts.filter(c => c.name !== name);
+            renderContactPills();
+        }
+
+        // Search saved contacts - global matches array to prevent Hebrew quote syntax break
+        let currentContactMatches = [];
+
+        async function saveGlobalState() {
+            localStorage.setItem('mch_state', JSON.stringify(state));
+            try {
+                await fetch(CONFIG.API_URL + '?file=mch_state', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(state)
+                });
+            } catch(e) {
+                console.warn("Could not sync global state to server.", e);
+            }
+        }
+
+        function searchSystemContacts() {
+            const q = document.getElementById('contact-search').value.trim().toLowerCase();
+            const dropdown = document.getElementById('contact-search-dropdown');
+            if (q.length < 1) {
+                dropdown.classList.add('hidden');
+                return;
+            }
+
+            // Combine contacts directory and IT team
+            const combined = [];
+            (state.contacts || []).forEach(c => {
+                if (c.name) {
+                    combined.push({ name: c.name, phone: c.phone || '—', source: c.category || 'אלפון' });
+                }
+            });
+            (state.team || []).forEach(t => {
+                if (t.name) {
+                    const formattedName = `${t.rank || ''} ${t.name}`.trim();
+                    combined.push({ name: formattedName, phone: t.sapir || t.phone || '—', source: 'צוות מחשוב' });
+                }
+            });
+
+            currentContactMatches = combined.filter(c => c.name.toLowerCase().includes(q) || c.phone.includes(q));
+            
+            if (currentContactMatches.length === 0) {
+                dropdown.innerHTML = '<div class="p-2.5 text-xs text-gray-400 font-bold">לא נמצאו אנשי קשר תואמים</div>';
+            } else {
+                dropdown.innerHTML = currentContactMatches.slice(0, 10).map((c, index) => `
+                    <div onclick="addSelectedContactByIndex(${index})" class="p-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 cursor-pointer flex justify-between border-b dark:border-slate-850">
+                        <div>
+                            <span>${c.name}</span>
+                            <span class="text-[9px] px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 rounded-md text-gray-500 mr-2">${c.source}</span>
+                        </div>
+                        <span class="text-gray-400 font-mono">${c.phone}</span>
+                    </div>
+                `).join('');
+            }
+            dropdown.classList.remove('hidden');
+        }
+
+        function addSelectedContactByIndex(index) {
+            const c = currentContactMatches[index];
+            if (c) {
+                addSelectedContact({ name: c.name, phone: c.phone });
+            }
+        }
+
+        function renderContactPills() {
+            const container = document.getElementById('contacts-pills-container');
+            container.innerHTML = selectedContacts.map(c => `
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 border border-slate-200 text-slate-800 rounded-xl text-xs font-bold dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200">
+                    <span>${c.name} (${c.phone})</span>
+                    <button type="button" onclick="removeContactPill('${c.name}')" class="text-slate-400 hover:text-slate-600 font-bold leading-none">&times;</button>
+                </span>
+            `).join('');
+        }
+
+        async function addCustomContact() {
+            const name = document.getElementById('contact-new-name').value.trim();
+            const phone = document.getElementById('contact-new-phone').value.trim();
+            if (!name) return showCustomAlert('נא להזין את שם איש הקשר החדש.');
+            if (!phone) return showCustomAlert('נא להזין את טלפון הספיר (פורמט XX-XXXX).');
+            
+            const newContact = { name, phone };
+            addSelectedContact(newContact);
+            
+            // Push to global phonebook state if not already existing
+            const exists = state.contacts.some(c => c.name && c.name.trim().toLowerCase() === name.toLowerCase());
+            if (!exists) {
+                state.contacts.push({
+                    name: name,
+                    phone: phone,
+                    category: 'מאגרי ידע',
+                    color: 'blue',
+                    icon: 'users'
+                });
+                await saveGlobalState();
+            }
+            
+            document.getElementById('contact-new-name').value = '';
+            document.getElementById('contact-new-phone').value = '';
+        }
+
+        // Steps repeater
+        function addStepInput(valObj = null) {
+            const container = document.getElementById('steps-repeater');
+            const stepNum = container.children.length + 1;
+            
+            let title = '';
+            let text = '';
+            let image = '';
+            let imageDesc = '';
+            let imageSize = 'medium';
+            let imageAlign = 'right';
+            
+            if (valObj) {
+                if (typeof valObj === 'string') {
+                    text = valObj;
+                } else {
+                    title = valObj.title || '';
+                    text = valObj.text || '';
+                    image = valObj.image || '';
+                    imageDesc = valObj.imageDesc || '';
+                    imageSize = valObj.imageSize || 'medium';
+                    imageAlign = valObj.imageAlign || 'right';
+                }
+            }
+
+            const div = document.createElement('div');
+            div.className = "p-4 bg-slate-100/50 dark:bg-slate-950/20 border border-slate-200 dark:border-slate-800 rounded-2xl space-y-3 step-row relative";
+            div.innerHTML = `
+                <div class="flex justify-between items-center border-b border-slate-200/50 dark:border-slate-800/50 pb-2">
+                    <span class="font-extrabold text-sm text-slate-700 dark:text-slate-300 step-number">שלב ${stepNum}</span>
+                    <button type="button" onclick="removeStepInput(this)" class="text-rose-500 hover:text-rose-700 text-xs font-black flex items-center gap-1">
+                        <ui-icon name="trash-2" class="w-3.5 h-3.5"></ui-icon>
+                        <span>הסר שלב</span>
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 mb-1">כותרת השלב <span class="text-red-500">*</span></label>
+                        <input type="text" class="step-title w-full text-xs font-bold" placeholder="למשל: כיבוי העמדה או בדיקת תקינות כבל הרשת..." value="${title}">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 mb-1">פירוט הפעולות לביצוע</label>
+                        <textarea class="step-text w-full text-xs font-semibold" rows="2" placeholder="פרטו כאן את הפעולות הנדרשות בשלב זה...">${text}</textarea>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500">תמונה להמחשה (אופציונלי)</label>
+                        <div class="flex items-center gap-3">
+                            <input type="file" accept="image/*" class="step-image-file hidden" onchange="uploadStepImage(this)">
+                            <button type="button" onclick="triggerStepImageUpload(this)" class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[10px] font-black rounded-lg transition-all flex items-center gap-1">
+                                <ui-icon name="image" class="w-3.5 h-3.5"></ui-icon>
+                                <span>בחר תמונה...</span>
+                            </button>
+                            <span class="text-[10px] text-gray-400 upload-status"></span>
+                            <input type="hidden" class="step-image-url" value="${image}">
+                        </div>
+                        <div class="step-image-preview-container ${image ? '' : 'hidden'} relative w-32 h-20 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm mt-2">
+                            <img src="${image || ''}" class="w-full h-full object-cover step-image-preview-img">
+                            <button type="button" onclick="removeStepImage(this)" class="absolute top-1 right-1 p-1 bg-black/60 hover:bg-black/80 text-white rounded-full transition-all" title="הסר תמונה">
+                                <ui-icon name="x" class="w-3 h-3"></ui-icon>
+                            </button>
+                        </div>
+                        <div class="step-image-options-container ${image ? '' : 'hidden'} mt-2 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <input type="text" class="step-image-desc w-full text-xs border border-slate-200 dark:border-slate-800 rounded px-2 py-1.5 bg-slate-50 dark:bg-slate-900" placeholder="תיאור תמונה (אופציונלי)" value="${imageDesc}">
+                            <select class="step-image-size w-full text-xs border border-slate-200 dark:border-slate-800 rounded px-2 py-1.5 bg-slate-50 dark:bg-slate-900">
+                                <option value="small" ${imageSize === 'small' ? 'selected' : ''}>גודל: קטן</option>
+                                <option value="medium" ${imageSize === 'medium' ? 'selected' : ''}>גודל: בינוני</option>
+                                <option value="large" ${imageSize === 'large' ? 'selected' : ''}>גודל: גדול</option>
+                            </select>
+                            <select class="step-image-align w-full text-xs border border-slate-200 dark:border-slate-800 rounded px-2 py-1.5 bg-slate-50 dark:bg-slate-900">
+                                <option value="right" ${imageAlign === 'right' ? 'selected' : ''}>יישור: ימין</option>
+                                <option value="center" ${imageAlign === 'center' ? 'selected' : ''}>יישור: מרכז</option>
+                                <option value="left" ${imageAlign === 'left' ? 'selected' : ''}>יישור: שמאל</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(div);
+        }
+
+        function removeStepInput(btn) {
+            const row = btn.closest('.step-row');
+            row.parentNode.removeChild(row);
+            reorderSteps();
+        }
+
+        function reorderSteps() {
+            const container = document.getElementById('steps-repeater');
+            Array.from(container.children).forEach((row, i) => {
+                row.querySelector('.step-number').textContent = `שלב ${i + 1}`;
+            });
+        }
+
+        function triggerStepImageUpload(btn) {
+            btn.parentNode.querySelector('.step-image-file').click();
+        }
+
+        function uploadStepImage(fileInput) {
+            const file = fileInput.files[0];
+            if (!file) return;
+            
+            const statusSpan = fileInput.parentNode.querySelector('.upload-status');
+            statusSpan.textContent = 'מעלה תמונה...';
+            statusSpan.className = 'text-[10px] text-gray-400 upload-status';
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64Url = e.target.result;
+                
+                // Try uploading to server
+                const formData = new FormData();
+                formData.append('image', file);
+                
+                fetch(CONFIG.API_URL + '?file=upload_image', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        statusSpan.textContent = 'הועלה בהצלחה לשרת!';
+                        statusSpan.className = 'text-[10px] text-emerald-500 font-bold upload-status';
+                        saveStepImageToState(fileInput, data.url);
+                    } else {
+                        // Server error fallback
+                        statusSpan.textContent = 'נשמר מקומית (שגיאת שרת)';
+                        statusSpan.className = 'text-[10px] text-amber-500 font-bold upload-status';
+                        saveStepImageToState(fileInput, base64Url);
+                    }
+                })
+                .catch(err => {
+                    // Offline / file:// protocol fallback
+                    statusSpan.textContent = 'נשמר מקומית (מצב אופליין)';
+                    statusSpan.className = 'text-[10px] text-amber-500 font-bold upload-status';
+                    saveStepImageToState(fileInput, base64Url);
+                });
+            };
+            
+            reader.onerror = function() {
+                statusSpan.textContent = 'שגיאה בקריאת הקובץ.';
+                statusSpan.className = 'text-[10px] text-rose-500 font-bold upload-status';
+            };
+            
+            reader.readAsDataURL(file);
+        }
+
+        function saveStepImageToState(fileInput, imageUrl) {
+            const row = fileInput.closest('.step-row');
+            row.querySelector('.step-image-url').value = imageUrl;
+            row.querySelector('.step-image-preview-img').src = imageUrl;
+            row.querySelector('.step-image-preview-container').classList.remove('hidden');
+            row.querySelector('.step-image-options-container').classList.remove('hidden');
+        }
+
+        function removeStepImage(btn) {
+            const row = btn.closest('.step-row');
+            row.querySelector('.step-image-preview-container').classList.add('hidden');
+            row.querySelector('.step-image-preview-img').src = '';
+            row.querySelector('.step-image-options-container').classList.add('hidden');
+            
+            row.querySelector('.step-image-url').value = '';
+            row.querySelector('.upload-status').textContent = '';
+            row.querySelector('.step-image-desc').value = '';
+        }
+
+        function openImageLightbox(src) {
+            const overlay = document.createElement('div');
+            overlay.className = "fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center cursor-pointer p-4 transition-all duration-300";
+            overlay.innerHTML = `
+                <div class="relative max-w-4xl max-h-[90vh]">
+                    <img src="${src}" class="max-w-full max-h-[90vh] rounded-2xl object-contain border border-white/10 shadow-2xl">
+                    <button type="button" class="absolute top-4 right-4 p-2 bg-black/60 text-white rounded-full hover:bg-black/80 transition-all font-bold text-lg">&times;</button>
+                </div>
+            `;
+            overlay.onclick = () => overlay.remove();
+            document.body.appendChild(overlay);
+        }
+
+        // Autocomplete for author
+        function autocompleteAuthor() {
+            const personalId = document.getElementById('author-personal-id').value.trim();
+            if (personalId.length < 5) return;
+            
+            // Search in state.team
+            const member = state.team.find(m => m.personalId === personalId);
+            if (member) {
+                document.getElementById('author-name').value = member.name;
+                document.getElementById('author-rank').value = member.rank || '';
+                return;
+            }
+
+            // Search in local storage keys (if synced user profiles exist)
+            const storedUser = localStorage.getItem('user_' + personalId);
+            if (storedUser) {
+                try {
+                    const u = JSON.parse(storedUser);
+                    document.getElementById('author-name').value = u.name;
+                    document.getElementById('author-rank').value = u.rank || '';
+                } catch(e){}
+            }
+        }
+
+        // Pull calls details
+        function pullTicketDetails() {
+            const ticketId = document.getElementById('linked-ticket-id').value.trim();
+            if (!ticketId) return showCustomAlert("נא להזין מזהה קריאה תקין (לדוגמה SN-260704-H01) תחילה.");
+
+            const ticket = state.tickets.find(t => t.id && t.id.toLowerCase() === ticketId.toLowerCase());
+            if (ticket) {
+                document.getElementById('article-title').value = ticket.title || '';
+                document.getElementById('article-description').value = ticket.desc || '';
+                
+                // Default main category for ticket solutions
+                document.getElementById('article-category').value = 'מדריך לפתרון תקלות';
+                
+                // Map faultType to subCategory
+                const subCatMap = {
+                    'hardware': 'חומרה',
+                    'software': 'תוכנה',
+                    'network': 'רשת ותקשורת',
+                    'telephony': 'טלפוניה'
+                };
+                const mappedSubCat = subCatMap[ticket.faultType] || 'כללי';
+                document.getElementById('article-subcategory').value = mappedSubCat;
+                
+                // Rebuild the component options based on selected subcategory
+                onArticleSubcategoryChange();
+                
+                // Map component
+                if (ticket.component) {
+                    if (ticket.faultType === 'software') {
+                        if (ticket.component === 'mch') {
+                            document.getElementById('article-component').value = 'מ״ח';
+                        } else if (ticket.component === 'spaces') {
+                            document.getElementById('article-component').value = 'מרחבים וסימולציה';
+                        } else {
+                            document.getElementById('article-component').value = 'כללי';
+                        }
+                    } else {
+                        document.getElementById('article-component').value = ticket.component;
+                    }
+                }
+                
+                // Update tags symptoms
+                updateRecommendedTags();
+
+                showCustomAlert("פרטי התקלה נמשכו בהצלחה לתוך הטופס!");
+            } else {
+                showCustomAlert("קריאה זו לא נמצאה במסד הנתונים של המערכת. אנא ודא שהמזהה תקין.");
+            }
+        }
+
+        // Close search dropdown on click outside
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('contact-search-dropdown');
+            const search = document.getElementById('contact-search');
+            if (e.target !== dropdown && e.target !== search) {
+                dropdown.classList.add('hidden');
+            }
+        });
+
+        async function loadAllData() {
+            // טעינת גיבויים מקומיים מה-LocalStorage תחילה לזמינות מיידית (עבודה אופליין)
+            const localKB = localStorage.getItem('kb_articles');
+            if (localKB) {
+                try { kbArticles = JSON.parse(localKB); } catch(e){}
+            }
+            
+            // טעינת מכלול הנתונים של המערכת (תקלות, משתמשים, אנשי קשר) ישירות מ-mch_state
+            const localStateStr = localStorage.getItem('mch_state');
+            if (localStateStr) {
+                try {
+                    const localState = JSON.parse(localStateStr);
+                    if (localState.team) state.team = localState.team;
+                    if (localState.tickets) state.tickets = localState.tickets;
+                    if (localState.contacts) state.contacts = localState.contacts;
+                } catch(e){}
+            }
+
+            try {
+                // משיכת סטייט עדכני מהשרת
+                const res = await fetch(CONFIG.API_URL + '?file=mch_state');
+                if (res.ok) {
+                    const server = await res.json();
+                    state.team = server.team || [];
+                    state.tickets = server.tickets || [];
+                    state.contacts = server.contacts || [];
+                    
+                    // שמירה ב-mch_state לטובת סנכרון לוקלי
+                    localStorage.setItem('mch_state', JSON.stringify(server));
+                }
+                
+                // משיכת מאמרי ידע מהשרת
+                const kbRes = await fetch(CONFIG.API_URL + '?file=sync_store&key=kb_articles');
+                if (kbRes.ok) {
+                    const kbData = await kbRes.json();
+                    if (kbData && kbData.value) {
+                        kbArticles = JSON.parse(kbData.value);
+                        localStorage.setItem('kb_articles', kbData.value);
+                    }
+                }
+            } catch (e) {
+                console.warn("סנכרון מול השרת נכשל. עבודה במצב מקומי/אופליין:", e);
+            }
+            
+            renderArticlesList();
+        }
+
+        // Render articles
+        function renderArticlesList() {
+            const query = document.getElementById('search-solutions').value.trim().toLowerCase();
+            const container = document.getElementById('articles-container');
+            
+            let filtered = kbArticles;
+            
+            // Filter by subcategory badge (since UI filter displays subcategories)
+            if (currentFilterCat !== 'all') {
+                filtered = filtered.filter(a => a.subCategory === currentFilterCat);
+            }
+
+            // Filter by search text
+            if (query) {
+                filtered = filtered.filter(a => 
+                    (a.title && a.title.toLowerCase().includes(query)) ||
+                    (a.description && a.description.toLowerCase().includes(query)) ||
+                    (a.tags && a.tags.some(t => t.toLowerCase().includes(query))) ||
+                    (a.author && a.author.name && a.author.name.toLowerCase().includes(query)) ||
+                    (a.subCategory && a.subCategory.toLowerCase().includes(query)) ||
+                    (a.component && a.component.toLowerCase().includes(query))
+                );
+            }
+
+            document.getElementById('results-count').textContent = `נמצאו ${filtered.length} מאמרים`;
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center font-bold text-gray-400 dark:text-slate-500 py-12 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-3xl border-dashed">
+                        לא נמצאו מאמרי פתרון תואמים
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filtered.map(a => {
+                let authorPidDisplay = '—';
+                if (a.author) {
+                    const authorIsKeva = ['רס״ל', 'רס"ל', 'רס״ר', 'רס"ר', 'רס״ם', 'רס"ם', 'רס״ב', 'רס"ב', 'רנ״ג', 'רנ"ג', 'סג״ם', 'סג"ם', 'סג״מ', 'סגן', 'סרן', 'רס״ן', 'רס"ן', 'סא״ל', 'סא"ל', 'אל״ם', 'אל"ם'].includes(a.author.rank);
+                    authorPidDisplay = formatPersonalIdDisplay(a.author.personalId, a.author.rank, authorIsKeva);
+                }
+
+                const stepsHtml = (a.steps || []).map((s, i) => {
+                    const stepTitle = s.title || (typeof s === 'string' ? `שלב ${i + 1}` : '');
+                    const stepText = s.text || (typeof s === 'string' ? s : '');
+                    const stepImg = s.image || '';
+                    const stepImgDesc = s.imageDesc || '';
+                    
+                    const stepImgAlign = s.imageAlign || 'right';
+                    const stepImgSize = s.imageSize || 'medium';
+                    
+                    let imgWidthClass = 'w-48 h-28'; // medium (default)
+                    if (stepImgSize === 'small') imgWidthClass = 'w-32 h-20';
+                    if (stepImgSize === 'large') imgWidthClass = 'w-full h-auto';
+                    
+                    let alignClass = '';
+                    if (stepImgAlign === 'center') alignClass = 'mx-auto flex flex-col items-center text-center';
+                    else if (stepImgAlign === 'left') alignClass = 'mr-auto flex flex-col items-start';
+                    else alignClass = 'ml-auto flex flex-col items-start'; // right
+
+                    return `
+                        <div class="p-3 bg-slate-50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-800/60 rounded-2xl space-y-2">
+                            <div class="flex gap-2 items-center">
+                                <span class="w-5 h-5 flex-shrink-0 rounded-full bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400 flex items-center justify-center font-extrabold text-[10px]">${i + 1}</span>
+                                <h5 class="text-xs font-extrabold text-slate-850 dark:text-slate-200">${stepTitle}</h5>
+                            </div>
+                            ${stepText ? `<p class="text-xs font-medium text-slate-650 dark:text-slate-400 leading-relaxed pr-7 whitespace-pre-line">${stepText}</p>` : ''}
+                            ${stepImg ? `
+                                <div class="pr-7 pt-1 ${stepImgSize === 'large' ? 'w-full' : ''}">
+                                    <div class="${alignClass}">
+                                        <div class="relative ${imgWidthClass} rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm cursor-pointer" onclick="openImageLightbox('${stepImg}')">
+                                            <img src="${stepImg}" class="w-full h-full object-contain bg-white dark:bg-slate-900">
+                                        </div>
+                                        ${stepImgDesc ? `<p class="text-[10px] text-slate-500 mt-1 font-bold">${stepImgDesc}</p>` : ''}
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('');
+
+                const tagsHtml = (a.tags || []).map(t => `
+                    <span class="px-2 py-0.5 bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400 rounded text-[10px] font-black">${t}</span>
+                `).join('');
+
+                const contactsHtml = (a.contacts || []).map(c => `
+                    <div class="bg-slate-50 dark:bg-slate-950/40 p-2 rounded-xl border border-slate-150 dark:border-slate-800 flex items-center justify-between text-xs gap-3">
+                        <span class="font-extrabold text-slate-700 dark:text-slate-300">${c.name}</span>
+                        <span class="font-mono text-[10px] text-gray-500">${c.phone}</span>
+                    </div>
+                `).join('');
+
+                // Category color mapping
+                const catColorMap = {
+                    'באג ידוע': 'bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-300 border-rose-200/50 dark:border-rose-900/40',
+                    'נהלי עבודה': 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 border-purple-200/50 dark:border-purple-900/40',
+                    'מדריך לפתרון תקלות': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 border-blue-200/50 dark:border-blue-900/40',
+                    'מדריך': 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 border-emerald-200/50 dark:border-emerald-900/40',
+                    'כללי': 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-350 border-slate-200/50 dark:border-slate-700/40'
+                };
+                const catColor = catColorMap[a.category] || 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300 border-slate-200/50 dark:border-slate-700/40';
+
+                return `
+                    <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800/80 rounded-3xl p-5 lg:p-6 shadow-sm hover:shadow-md transition-shadow relative">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-gray-100 dark:border-slate-800 pb-3 mb-4">
+                            <div>
+                                <div class="flex flex-wrap gap-1.5 items-center mb-1">
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black border ${catColor}">${a.category}</span>
+                                    ${a.subCategory ? `<span class="px-2 py-0.5 bg-slate-50 dark:bg-slate-950/20 text-slate-505 rounded-md text-[10px] font-black border border-slate-150 dark:border-slate-850 dark:text-slate-400">${a.subCategory}</span>` : ''}
+                                    ${a.component ? `<span class="px-2 py-0.5 bg-blue-50/50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 rounded-md text-[10px] font-black border border-blue-150/40 dark:border-blue-900/30">${a.component}</span>` : ''}
+                                    ${tagsHtml}
+                                </div>
+                                <h3 class="text-lg font-extrabold text-slate-900 dark:text-white">${a.title}</h3>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 line-clamp-2 max-w-2xl font-medium leading-relaxed">${a.description || 'אין תיאור מפורט'}</p>
+                                <div class="text-[10px] font-bold text-slate-450 dark:text-slate-500 mt-2 flex items-center gap-1 select-none">
+                                    <ui-icon name="user" class="w-3.5 h-3.5 text-slate-400"></ui-icon>
+                                    <span>פותר: ${a.author ? `${a.author.rank} ${a.author.name} (${authorPidDisplay})` : 'לא ידוע'}</span>
+                                    ${a.author && a.author.role ? `<span class="mx-1 text-slate-200 dark:text-slate-800">|</span> <span>תפקיד: ${a.author.role}</span>` : ''}
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button onclick="editArticle('${a.id}')" class="p-2 text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-xl dark:bg-blue-950/20 dark:hover:bg-blue-900/30 transition-colors" title="ערוך מאמר">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                                </button>
+                                <button onclick="deleteArticle('${a.id}')" class="p-2 text-rose-500 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-xl dark:bg-rose-950/20 dark:hover:bg-rose-900/30 transition-colors" title="מחק מאמר פתרון">
+                                    <ui-icon name="trash-2" class="w-4 h-4"></ui-icon>
+                                </button>
+                                <button onclick="toggleArticleCollapse('${a.id}', this)" class="px-4 py-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-700 rounded-xl font-bold text-xs transition-colors flex items-center gap-1">
+                                    <span>צפה בפתרון</span>
+                                    <ui-icon name="chevron-down" class="w-4 h-4 transform transition-transform" id="chevron-${a.id}"></ui-icon>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Collapse container -->
+                        <div id="collapse-${a.id}" class="hidden space-y-4 pt-1 transition-all duration-300">
+                            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                                <!-- Left/Main: Description and Steps -->
+                                <div class="lg:col-span-8 space-y-4">
+                                    <div>
+                                        <h4 class="text-xs font-black text-gray-400 mb-1">תיאור התקלה:</h4>
+                                        <p class="text-sm font-semibold text-slate-700 dark:text-slate-300 whitespace-pre-line leading-relaxed">${a.description || 'אין תיאור מפורט'}</p>
+                                    </div>
+                                    <div class="space-y-2 border-t border-gray-100 dark:border-slate-800 pt-3">
+                                        <h4 class="text-xs font-black text-gray-400 mb-1">שלבי פתרון:</h4>
+                                        <div class="space-y-2">
+                                            ${stepsHtml || 'לא הוגדרו שלבים.'}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Right: Author and Contacts -->
+                                <div class="lg:col-span-4 bg-slate-50/50 dark:bg-slate-950/30 p-4 border border-slate-100 dark:border-slate-850 rounded-2xl space-y-4 self-start">
+                                    <!-- Author details -->
+                                    <div class="space-y-1">
+                                        <h4 class="text-[10px] font-black text-gray-400">נכתב ע״י:</h4>
+                                        <div class="flex items-center gap-2">
+                                            <span class="p-1 bg-white dark:bg-slate-850 rounded border border-gray-200 dark:border-slate-750 text-slate-600 dark:text-slate-400"><ui-icon name="user" class="w-4 h-4"></ui-icon></span>
+                                            <div class="text-xs font-extrabold text-slate-800 dark:text-slate-200">
+                                                ${a.author ? `${a.author.rank} ${a.author.name} (${authorPidDisplay})` : 'לא ידוע'}
+                                            </div>
+                                        </div>
+                                        ${a.author && a.author.role ? `<div class="text-[10px] text-gray-500 dark:text-slate-400 font-bold">תפקיד: ${a.author.role}</div>` : ''}
+                                        <div class="text-[10px] text-gray-400 dark:text-slate-500 font-bold mt-1">תאריך פירסום: ${a.createdAt || ''}</div>
+                                        ${a.linkedTicketId ? `<div class="text-[10px] text-gray-400 dark:text-slate-500 font-bold">קריאה מקושרת: <span class="font-mono bg-white dark:bg-slate-800 px-1 py-0.5 rounded border border-gray-200 dark:border-slate-700">${a.linkedTicketId}</span></div>` : ''}
+                                        
+                                        <div class="pt-3 flex gap-2">
+                                            <button onclick="printArticle('${a.id}')" class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 rounded-xl font-black text-xs transition-colors flex items-center justify-center gap-1.5 shadow-sm border border-slate-200 dark:border-slate-700">
+                                                <ui-icon name="printer" class="w-3.5 h-3.5"></ui-icon>
+                                                <span>ערוך סימוכין אוטומטי לפני הדפסה</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Contacts details -->
+                                    ${contactsHtml.length > 0 ? `
+                                        <div class="space-y-2 border-t border-gray-200/60 dark:border-slate-800 pt-3">
+                                            <h4 class="text-[10px] font-black text-gray-400">אנשי קשר רלוונטיים:</h4>
+                                            <div class="grid grid-cols-1 gap-1.5">
+                                                ${contactsHtml}
+                                            </div>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Filter Category
+        function setFilterCategory(cat) {
+            currentFilterCat = cat;
+            const categories = ['all', 'תוכנה', 'חומרה', 'רשת ותקשורת', 'טלפוניה', 'כללי'];
+            categories.forEach(c => {
+                const btn = document.getElementById(c === 'רשת ותקשורת' ? 'filter-cat-רשת' : `filter-cat-${c}`);
+                if (btn) {
+                    if (c === cat) {
+                        btn.className = "px-3 py-1.5 rounded-full text-xs font-black bg-blue-600 text-white shadow-sm transition-all";
+                    } else {
+                        btn.className = "px-3 py-1.5 rounded-full text-xs font-black bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 transition-all";
+                    }
+                }
+            });
+            renderArticlesList();
+        }
+
+        function filterArticles() {
+            renderArticlesList();
+        }
+
+        // Toggle article expand
+        function toggleArticleCollapse(id, btn) {
+            const target = document.getElementById(`collapse-${id}`);
+            const chevron = document.getElementById(`chevron-${id}`);
+            if (target.classList.contains('hidden')) {
+                target.classList.remove('hidden');
+                chevron.classList.add('rotate-180');
+            } else {
+                target.classList.add('hidden');
+                chevron.classList.remove('rotate-180');
+            }
+        }
+
+        // Predefined tags and fault symptoms for quick suggestions
+        const PILLS_SOFTWARE_GENERAL = [
+            'מחשב איטי / קופא', 'בעיה בדפדפן / אתר לא נפתח', 'בעיה ביישומי אופיס / אאוטלוק',
+            'שגיאת רישיון / הפעלת מערכת', 'חוסר הרשאות גישה', 'תוכנה לא מגיבה / קורסת'
+        ];
+        const PILLS_MCH = [
+            'בעיה בהעברת נתונים', 'ציון למבחן לא מתחשב', 'שגיאה בטעינת המבחן', 'מקלדת/עכבר נעולים במבחן'
+        ];
+        const PILLS_MERHAVIM = [
+            'סימולטור לא נטען', 'תקלה במרחב סימולציה', 'תצוגת מרחבים תקועה', 'בעיה בהרצת תרחיש', 'אין תמונה/וידאו במרחב'
+        ];
+        const PILLS_TELEPHONY = [
+            'שגיאה על מסך הטלפון', 'לא מוריד הגדרות / בעיית טעינה', 'בעיית חיבור לרשת בטלפון',
+            'הטלפון לא נדלק (אין אור)', 'תקוע על לוגו Cisco בהפעלה', 'שפופרת לא עובדת (שומעים ברמקול)',
+            'רעשים ורשרושים חזקים בשיחה', 'לחצני מספרים לא מגיבים', 'הטלפון לא מצלצל בשיחה נכנסת',
+            'החיבור של המחשב לטלפון לא עובד', 'הטלפון מראה קו תפוס תמידי'
+        ];
+        const COMMON_FAULTS = {
+            'מסך': ['מרצד', 'לא נדלק', 'אין תצוגה (No Signal)', 'פסים על המסך', 'נזק פיזי'],
+            'עכבר': ['לא מגיב', 'גלילה קופצת', 'קליק שמאלי/ימני תקול', 'כבל קרוע'],
+            'מקלדת': ['מקשים לא מגיבים', 'מקש תקוע/לחוץ', 'נתק במגעים (מתנתק ומתחבר)'],
+            'מצלמה': ['תמונה שחורה', 'לא מזוהה במחשב', 'תמונה מטושטשת/קופאת'],
+            'מדפסת': ['נתקע נייר', 'מדפיס מטושטש', 'נורית שגיאה דולקת', 'לא מושכת נייר'],
+            'אוזניות': ['שומעים בצד אחד בלבד', 'מיקרופון לא עובד', 'רעש סטטי', 'כבל קרוע'],
+            'סטיק': ['לא מגיב לתנועה', 'כפתורים לא עובדים', 'לא מתמרכז', 'ציר (Z) לא תקין'],
+            'מצערת': ['תנועה נוקשה מדי', 'לא מגיבה', 'קפיצות בערכים'],
+            'לוח מקשים כסוף': ['לחצנים לא מגיבים', 'נוריות לא דולקות', 'לא מזוהה'],
+            'מחשב / מארז': ['לא נדלק בכלל', 'עושה רעש חזק', 'כבה מעצמו באמצע עבודה', 'נזק פיזי למארז', 'צפצופים בהדלקה'],
+            'כבלים (חשמל/רשת/מסך)': ['נתק במגעים', 'כבל קרוע/סדוק', 'כבל רשת לא נעול', 'כבל לא מתאים']
+        };
+
+        function updateRecommendedTags() {
+            const sub = document.getElementById('article-subcategory').value;
+            const comp = document.getElementById('article-component').value;
+            const recContainer = document.getElementById('recommended-tags-pills');
+            if (!recContainer) return;
+            
+            let list = [];
+            if (sub === 'תוכנה') {
+                if (comp === 'מ״ח') list = [...PILLS_MCH, ...PILLS_SOFTWARE_GENERAL];
+                else if (comp === 'מרחבים וסימולציה') list = [...PILLS_MERHAVIM, ...PILLS_SOFTWARE_GENERAL];
+                else list = [...PILLS_SOFTWARE_GENERAL];
+            } else if (sub === 'חומרה') {
+                if (comp && COMMON_FAULTS[comp]) {
+                    list = [...COMMON_FAULTS[comp]];
+                } else {
+                    list = ['מרצד', 'לא נדלק', 'אין תצוגה (No Signal)', 'לא מגיב', 'נתק במגעים', 'כבל קרוע'];
+                }
+            } else if (sub === 'רשת ותקשורת') {
+                list = ['אין חיבור לרשת', 'איטיות בגלישה', 'כבל רשת מנותק', 'בעיית IP/DHCP', 'תקלה בשביל החלב', 'שגיאת ClickNet'];
+            } else if (sub === 'טלפוניה') {
+                list = [...PILLS_TELEPHONY];
+            } else {
+                list = ['הנחיות עבודה', 'נהלי עבודה', 'מדריך שימוש', 'תקנון תורנים', 'כללי'];
+            }
+            
+            recContainer.innerHTML = list.map(t => `
+                <button type="button" onclick="addRecommendedTag('${t}')" class="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/40 dark:hover:text-blue-300 rounded text-[10px] font-black text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 transition-colors">
+                    ${t} +
+                </button>
+            `).join('') || '<span class="text-[10px] text-gray-400 font-bold">אין תגיות מומלצות לקטגוריה זו</span>';
+        }
+
+        function addRecommendedTag(tag) {
+            if (!selectedTags.includes(tag)) {
+                selectedTags.push(tag);
+                renderTags();
+                showSuccessAlert(`התגית "${tag}" נוספה בהצלחה!`);
+            }
+        }
+
+        // Ticket search and linkage
+        function searchSystemTickets() {
+            const q = document.getElementById('linked-ticket-id').value.trim().toLowerCase();
+            const dropdown = document.getElementById('ticket-search-dropdown');
+            if (q.length < 1) {
+                dropdown.classList.add('hidden');
+                return;
+            }
+
+            const matches = state.tickets.filter(t => 
+                (t.id && t.id.toLowerCase().includes(q)) || 
+                (t.title && t.title.toLowerCase().includes(q)) ||
+                (t.desc && t.desc.toLowerCase().includes(q))
+            );
+
+            if (matches.length === 0) {
+                dropdown.innerHTML = '<div class="p-2.5 text-xs text-gray-400 font-bold">לא נמצאו תקלות תואמות</div>';
+            } else {
+                dropdown.innerHTML = matches.slice(0, 10).map(t => `
+                    <div onclick="selectLinkedTicket('${t.id}')" class="p-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 cursor-pointer border-b dark:border-slate-800 flex justify-between">
+                        <div>
+                            <span class="text-blue-600 dark:text-blue-400 font-mono">${t.id}</span>
+                            <span class="mr-2">${t.title}</span>
+                        </div>
+                        <span class="text-[10px] text-gray-400">${t.status === 'closed' ? 'סגורה' : 'פתוחה'} (${t.date})</span>
+                    </div>
+                `).join('');
+            }
+            dropdown.classList.remove('hidden');
+        }
+
+        function selectLinkedTicket(id) {
+            document.getElementById('linked-ticket-id').value = id;
+            document.getElementById('ticket-search-dropdown').classList.add('hidden');
+            pullTicketDetails();
+        }
+
+        // Print functionality
+        let activePrintId = null;
+
+        function printArticle(id) {
+            activePrintId = id;
+            document.getElementById('print-issuer-personal-id').value = '';
+            document.getElementById('print-issuer-name').value = '';
+            document.getElementById('print-issuer-rank').value = '';
+            document.getElementById('print-issuer-role').value = '';
+            document.getElementById('print-issuer-phone').value = '';
+            document.getElementById('print-issuer-is-kave').checked = false;
+            document.getElementById('print-issuer-kave-wrapper').classList.add('hidden');
+            
+            // Try to autofill from active profile in localStorage
+            const personalId = localStorage.getItem('mch_last_personal_id') || '';
+            if (personalId) {
+                document.getElementById('print-issuer-personal-id').value = personalId;
+                autocompletePrintIssuer();
+            }
+            
+            document.getElementById('print-config-modal').classList.remove('hidden');
+        }
+
+        function onPrintIssuerRankChange() {
+            const rank = document.getElementById('print-issuer-rank').value;
+            const wrapper = document.getElementById('print-issuer-kave-wrapper');
+            if (!wrapper) return;
+            const isSamar = (rank === 'סמ״ר' || rank === 'סמ"ר');
+            if (isSamar) {
+                wrapper.classList.remove('hidden');
+            } else {
+                wrapper.classList.add('hidden');
+                const isKevaRank = ['רס״ל', 'רס"ל', 'רס״ר', 'רס"ר', 'רס״ם', 'רס"ם', 'רס״ב', 'רס"ב', 'רנ״ג', 'רנ"ג', 'סג״ם', 'סג"ם', 'סג״מ', 'סגן', 'סרן', 'רס״ן', 'רס"ן', 'סא״ל', 'סא"ל', 'אל״ם', 'אל"ם'].includes(rank);
+                document.getElementById('print-issuer-is-kave').checked = isKevaRank;
+            }
+        }
+
+        function autocompletePrintIssuer() {
+            const pid = document.getElementById('print-issuer-personal-id').value.trim();
+            if (pid.length === 7) {
+                // Check if we have profile in local storage
+                const storedUser = localStorage.getItem('user_' + pid);
+                if (storedUser) {
+                    try {
+                        const u = JSON.parse(storedUser);
+                        document.getElementById('print-issuer-name').value = u.name || '';
+                        document.getElementById('print-issuer-rank').value = u.rank || '';
+                        document.getElementById('print-issuer-role').value = u.role || '';
+                        document.getElementById('print-issuer-phone').value = u.sapir || u.phone || '';
+                        onPrintIssuerRankChange();
+                        return;
+                    } catch(e){}
+                }
+                
+                // Fallback to state.team
+                const member = state.team.find(m => m.personalId === pid);
+                if (member) {
+                    document.getElementById('print-issuer-name').value = member.name || '';
+                    document.getElementById('print-issuer-rank').value = member.rank || '';
+                    document.getElementById('print-issuer-role').value = member.profession || '';
+                    document.getElementById('print-issuer-phone').value = member.sapir || member.phone || '';
+                    onPrintIssuerRankChange();
+                }
+            }
+        }
+
+        function formatMilitaryPhone(val) {
+            if (!val) return '';
+            let clean = val.replace(/[^\d]/g, '');
+            if (clean.startsWith('05')) {
+                if (clean.length > 3) return clean.substring(0, 3) + '-' + clean.substring(3, 10);
+                return clean;
+            } else {
+                if (clean.length > 3) return clean.substring(0, 3) + '-' + clean.substring(3, 7);
+                return clean;
+            }
+        }
+
+        function formatPersonalIdDisplay(personalId, rank, isKave) {
+            const pid = (personalId || '').trim();
+            if (!pid || pid === '—') return pid;
+            return 'מ"א ' + pid;
+        }
+
+        function executePrint() {
+            const issuerPersonalId = document.getElementById('print-issuer-personal-id').value.trim();
+            const issuerName = document.getElementById('print-issuer-name').value.trim();
+            const issuerRank = document.getElementById('print-issuer-rank').value;
+            const issuerRole = document.getElementById('print-issuer-role').value.trim();
+            const issuerPhone = document.getElementById('print-issuer-phone').value.trim();
+
+            if (!/^\d{7}$/.test(issuerPersonalId)) {
+                return showCustomAlert('מספר אישי מנפיק חייב להכיל בדיוק 7 ספרות.');
+            }
+            if (!issuerName) return showCustomAlert("נא להזין את שם מנפיק הדו\"ח.");
+            if (!issuerRank) return showCustomAlert("נא לבחור דרגת מנפיק הדו\"ח.");
+            if (!issuerRole) return showCustomAlert("נא להזין את תפקיד מנפיק הדו\"ח.");
+            if (!issuerPhone) return showCustomAlert("נא להזין מספר טלפון לסימוכין (ספיר).");
+
+            // שמירת הפרופיל לשימוש עתידי
+            const isIssuerKave = document.getElementById('print-issuer-is-kave').checked;
+            localStorage.setItem('mch_last_personal_id', issuerPersonalId);
+            localStorage.setItem('user_' + issuerPersonalId, JSON.stringify({
+                id: issuerPersonalId,
+                name: issuerName,
+                rank: issuerRank,
+                role: issuerRole,
+                sapir: issuerPhone
+            }));
+
+            document.getElementById('print-config-modal').classList.add('hidden');
+
+            const art = kbArticles.find(a => a.id === activePrintId);
+            if (!art) return;
+
+            generateArticleReport(art, issuerPersonalId, issuerName, issuerRank, issuerRole, issuerPhone, isIssuerKave, false);
+        }
+
+        function generateArticleReport(art, issuerPersonalId, issuerName, issuerRank, issuerRole, issuerPhone, isKave, isQuick) {
+            const printWindow = window.open('', '_blank');
+            const stepsHtml = (art.steps || []).map((s, idx) => {
+                const stepTitle = s.title || (typeof s === 'string' ? `שלב ${idx + 1}` : '');
+                const stepText = s.text || (typeof s === 'string' ? s : '');
+                const stepImgAlign = s.imageAlign || 'right';
+                const stepImgSize = s.imageSize || 'medium';
+                
+                let imgStyle = 'border-radius: 8px; border: 1px solid #cbd5e1; object-fit: contain; background: white;';
+                if (stepImgSize === 'small') imgStyle += ' width: 150px; height: auto;';
+                else if (stepImgSize === 'large') imgStyle += ' width: 100%; height: auto;';
+                else imgStyle += ' width: 280px; max-height: 180px;';
+                
+                let alignStyle = 'margin-top: 8px;';
+                if (stepImgAlign === 'center') alignStyle += ' text-align: center;';
+                else if (stepImgAlign === 'left') alignStyle += ' text-align: left;';
+                else alignStyle += ' text-align: right;';
+
+                const stepImgDesc = s.imageDesc ? `<div style="font-size: 10px; color: #64748b; margin-top: 4px;">${s.imageDesc}</div>` : '';
+                const stepImgTag = s.image ? `<div style="${alignStyle}"><img src="${s.image}" style="${imgStyle}">${stepImgDesc}</div>` : '';
+                return `
+                    <div style="margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px dashed #e2e8f0; page-break-inside: avoid;">
+                        <div style="font-weight: bold; font-size: 13px; display: flex; align-items: center; gap: 6px; margin-bottom: 4px; color: #0f172a;">
+                            <span style="display: inline-block; width: 18px; height: 18px; line-height: 18px; text-align: center; border-radius: 50%; background: #f1f5f9; font-size: 10px; font-weight: bold; margin-left: 6px; border: 1px solid #e2e8f0;">${idx + 1}</span>
+                            <span>${stepTitle}</span>
+                        </div>
+                        ${stepText ? `<div style="margin-right: 26px; color: #334155; font-size: 12px; line-height: 1.5; white-space: pre-line; margin-bottom: 6px;">${stepText}</div>` : ''}
+                        ${stepImgTag ? `<div style="margin-right: 26px;">${stepImgTag}</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            const contactsHtml = (art.contacts || []).map(c => `
+                <span>${c.name} (${c.phone})</span>
+            `).join(', ') || 'אין אנשי קשר משויכים';
+
+            const tagsHtml = (art.tags || []).join(', ') || 'אין תגיות';
+
+            let subtitlePrefix = 'מדריך';
+            const cat = art.category || '';
+            if (cat === 'תוכנה') subtitlePrefix = 'באג ידוע';
+            else if (cat === 'חומרה') subtitlePrefix = 'מדריך פתרון תקלה';
+            const subtitle = `${subtitlePrefix}: ${art.title}`;
+
+            let authorPidDisplay = '—';
+            if (art.author) {
+                const authorIsKeva = ['רס״ל', 'רס"ל', 'רס״ר', 'רס"ר', 'רס״ם', 'רס"ם', 'רס״ב', 'רס"ב', 'רנ״ג', 'רנ"ג', 'סג״ם', 'סג"ם', 'סג״מ', 'סגן', 'סרן', 'רס״ן', 'רס"ן', 'סא״ל', 'סא"ל', 'אל״ם', 'אל"ם'].includes(art.author.rank);
+                authorPidDisplay = formatPersonalIdDisplay(art.author.personalId, art.author.rank, authorIsKeva);
+            }
+            const issuerPidDisplay = formatPersonalIdDisplay(issuerPersonalId, issuerRank, isKave);
+
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html lang="he" dir="rtl">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>דו"ח מאגרי ידע - ${art.title}</title>
+                    <style>
+                        @page { margin: 0; size: A4 portrait; }
+                        html, body { height: auto !important; width: auto !important; margin: 0 !important; padding: 20mm 15mm !important; background: white !important; direction: rtl; font-family: 'Assistant', 'Segoe UI', Tahoma, sans-serif; color: #000 !important; }
+                        .print-table { width: 100%; border-collapse: collapse; margin-top: 20px; color: #000; }
+                        .print-table th, .print-table td { border: 1px solid #000; padding: 8px 10px; text-align: right; font-size: 13px; }
+                        .print-table th { background-color: #f1f5f9; font-weight: bold; }
+                        .section { margin-top: 25px; }
+                        .section h3 { border-right: 4px solid #000; padding-right: 8px; font-size: 14px; font-weight: bold; margin-bottom: 10px; }
+                        .steps { border: 1px solid #000; padding: 12px; background-color: #f8fafc; }
+                    </style>
+                </head>
+                <body>
+                    ${isQuick ? '' : `
+                    <!-- כותרת ראשית בפורמט דו"ח דשבורד של חיל האוויר -->
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; border-bottom: 2px solid #000; padding-bottom: 15px; width: 100%;">
+                        <!-- צד ימין: לוגואים -->
+                        <div style="width: 35%; display: flex; align-items: center; gap: 12px;">
+                            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 70px;">
+                                <img src="images/IAF_New_Logo_2018.png" alt="חיל האוויר" style="width: 55px; height: 55px; object-fit: contain;" onerror="this.style.display='none'">
+                                <span style="font-size: 9px; font-weight: bold; color: #475569; margin-top: 4px; text-align: center; white-space: nowrap;">חיל האוויר</span>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 70px;">
+                                <img src="images/IAF_Headquarters.png" alt="חותם מיון חה&quot;א" style="width: 55px; height: 55px; object-fit: contain;" onerror="this.style.display='none'">
+                                <span style="font-size: 9px; font-weight: bold; color: #475569; margin-top: 4px; text-align: center; white-space: nowrap;">חותם מיון חה"א</span>
+                            </div>
+                        </div>
+                        
+                        <!-- מרכז: כותרות (סיווג סודי הוסר מכאן) -->
+                        <div style="width: 30%; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                            <h1 style="font-size: 18px; font-weight: 900; margin: 0; color: #000; border-bottom: 2px solid #000; padding-bottom: 3px; display: inline-block;">דו"ח מאגרי ידע</h1>
+                            <h2 style="font-size: 13px; font-weight: bold; margin-top: 8px; color: #000; max-width: 100%; word-wrap: break-word;">${subtitle}</h2>
+                            <div style="font-size: 11px; font-weight: bold; margin-top: 4px; color: #334155;">תאריך הנפקה: ${new Date().toLocaleDateString('he-IL')}</div>
+                        </div>
+                        
+                        <!-- צד שמאל: סימוכין וסיווג סודי כחותמת גומי בזווית -->
+                        <div style="width: 35%; font-size: 12px; line-height: 1.45; color: #000; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; text-align: left;">
+                            <!-- חותמת גומי סודי בזווית מעל הסימוכין - גדולה ובולטת יותר -->
+                            <div style="color: #ef4444; border: 3px solid #ef4444; padding: 4px 16px; font-weight: 900; font-size: 20px; border-radius: 4px; letter-spacing: 3px; transform: rotate(-8deg); margin-bottom: 12px; display: inline-block; font-family: 'Assistant', sans-serif; align-self: flex-start; margin-left: 5px;">סודי</div>
+                            <div style="text-align: left; width: 100%; direction: rtl;">
+                                <div style="font-weight: bold; text-decoration: underline; margin-bottom: 4px;">סימוכין:</div>
+                                <div>חיל האוויר</div>
+                                <div>ממח"א 111</div>
+                                <div>מחלקת חות"ם</div>
+                                <div>ענף מיון חיילי</div>
+                                <div>ספיר: <span dir="ltr">${issuerPhone}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    `}
+
+                    ${isQuick ? '' : `
+                    <!-- טבלת פרטי הדו"ח (בסגנון הדשבורד) -->
+                    <table class="print-table">
+                        <tr>
+                            <th style="width: 20%;">נושא המאמר:</th>
+                            <td colspan="3"><strong>${art.title}</strong></td>
+                        </tr>
+                        <tr>
+                            <th style="width: 20%;">סיווג המאמר:</th>
+                            <td>${art.category} ${art.subCategory ? ` / ${art.subCategory}` : ''} ${art.component ? ` (${art.component})` : ''}</td>
+                            <th style="width: 20%;">מזהה קריאה מקושר:</th>
+                            <td style="font-family: monospace; font-weight: bold;">${art.linkedTicketId || 'אין'}</td>
+                        </tr>
+                        <!-- פרטי כותב המאמר המקורי -->
+                        <tr>
+                            <th style="width: 20%;">כותב המאמר המקורי:</th>
+                            <td>${art.author ? `${art.author.rank} ${art.author.name} (תפקיד: ${art.author.role || 'טכנאי'})` : 'לא ידוע'}</td>
+                            <th style="width: 20%;">מ"א כותב מקורי:</th>
+                            <td style="font-family: monospace;">${art.author ? authorPidDisplay : '-'}</td>
+                        </tr>
+                        <!-- פרטי מנפיק הדוח הנוכחי -->
+                        <tr>
+                            <th style="width: 20%;">מנפיק הדו"ח הנוכחי:</th>
+                            <td>${issuerRank} ${issuerName} (תפקיד: ${issuerRole})</td>
+                            <th style="width: 20%;">מ"א מנפיק:</th>
+                            <td style="font-family: monospace;">${issuerPidDisplay}</td>
+                        </tr>
+                        <tr>
+                            <th style="width: 20%;">תגיות מאמר:</th>
+                            <td colspan="3">${tagsHtml || 'אין'}</td>
+                        </tr>
+                    </table>
+                    `}
+                    ${isQuick ? `<h1 style="font-size: 24px; font-weight: 900; margin-bottom: 20px; color: #000; border-bottom: 2px solid #000; padding-bottom: 8px;">${art.title}</h1>` : ''}
+
+                    <div class="section">
+                        <h3>תיאור התקלה והרקע</h3>
+                        <div style="font-size: 13px; white-space: pre-line; padding: 5px; border-right: 2px solid #e2e8f0; margin-right: 4px;">${art.description || 'אין תיאור מפורט.'}</div>
+                    </div>
+
+                    <div class="section">
+                        <h3>שלבי פתרון מפורטים</h3>
+                        <div class="steps" style="font-size: 13px;">
+                            ${stepsHtml}
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3>אנשי קשר רלוונטיים להמשך טיפול</h3>
+                        <div style="font-size: 13px; padding: 5px; border-right: 2px solid #e2e8f0; margin-right: 4px;">${contactsHtml}</div>
+                    </div>
+
+                    <!-- קו מפריד תחתון ללא חתימות וללא הערת הפקה -->
+                    <div style="margin-top: 30px; border-top: 1px dashed #cbd5e1; width: 100%;"></div>
+
+                    <script>
+                        window.onload = function() {
+                            window.print();
+                            setTimeout(function() { window.close(); }, 500);
+                        }
+                    <\/script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+        }
+
+        // Delete article
+        function deleteArticle(id) {
+            const art = kbArticles.find(a => a.id === id);
+            if (!art) return;
+
+            if (confirm(`האם למחוק את המאמר "${art.title}"?`)) {
+                kbArticles = kbArticles.filter(a => a.id !== id);
+                localStorage.setItem('kb_articles', JSON.stringify(kbArticles));
+                renderArticlesList();
+                fetch(CONFIG.API_URL + '?file=sync_store', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ key: 'kb_articles', value: JSON.stringify(kbArticles) })
+                });
+            }
+        }
+
+        // Edit article
+        function editArticle(id) {
+            const art = kbArticles.find(a => a.id === id);
+            if (!art) return;
+            
+            window.editingArticleId = id;
+            
+            document.getElementById('author-personal-id').value = art.author?.personalId || '';
+            document.getElementById('author-name').value = art.author?.name || '';
+            document.getElementById('author-rank').value = art.author?.rank || '';
+            document.getElementById('author-role').value = art.author?.role || '';
+            
+            document.getElementById('article-title').value = art.title || '';
+            document.getElementById('article-category').value = art.category || '';
+            
+            if(typeof onArticleCategoryChange === 'function') onArticleCategoryChange();
+            
+            setTimeout(() => {
+                document.getElementById('article-subcategory').value = art.subCategory || '';
+                if(typeof onArticleSubcategoryChange === 'function') onArticleSubcategoryChange();
+                setTimeout(() => {
+                    document.getElementById('article-component').value = art.component || '';
+                }, 50);
+            }, 50);
+            
+            document.getElementById('article-description').value = art.description || '';
+            document.getElementById('linked-ticket-id').value = art.linkedTicketId || '';
+            
+            selectedTags = [...(art.tags || [])];
+            renderTags();
+            
+            selectedContacts = [...(art.contacts || [])];
+            renderContactPills();
+            
+            const stepsContainer = document.getElementById('steps-repeater');
+            stepsContainer.innerHTML = '';
+            if (art.steps && art.steps.length > 0) {
+                art.steps.forEach(s => addStepInput(s));
+            } else {
+                addStepInput();
+            }
+            
+            switchTab('form');
+        }
+
+        // Publish article
+        async function publishArticle() {
+            const authorId = document.getElementById('author-personal-id').value.trim();
+            const authorName = document.getElementById('author-name').value.trim();
+            const authorRank = document.getElementById('author-rank').value;
+            const authorRole = document.getElementById('author-role').value.trim();
+            const title = document.getElementById('article-title').value.trim();
+            const category = document.getElementById('article-category').value;
+            const subCategory = document.getElementById('article-subcategory').value;
+            const component = document.getElementById('article-component').value;
+            const desc = document.getElementById('article-description').value.trim();
+            const linkedTicketId = document.getElementById('linked-ticket-id').value.trim();
+
+            if (!authorId || !authorName || !authorRank || !authorRole) {
+                return showCustomAlert("אנא מלאו את כל פרטי מחבר הפתרון (מספר אישי, שם, דרגה ותפקיד).");
+            }
+            if (!title) return showCustomAlert("אנא הזינו כותרת מתאימה למאמר.");
+            if (!category) return showCustomAlert("אנא בחרו קטגוריה ראשית.");
+            if (!subCategory) return showCustomAlert("אנא בחרו קטגוריה משנית.");
+            if ((subCategory === 'חומרה' || subCategory === 'תוכנה') && !component) {
+                return showCustomAlert("אנא בחרו רכיב או תת-נושא מתאים.");
+            }
+            if (!desc) return showCustomAlert("אנא תארו את התקלה.");
+
+            // Collect steps
+            const stepRows = document.querySelectorAll('.step-row');
+            const steps = Array.from(stepRows).map(row => {
+                const titleVal = row.querySelector('.step-title').value.trim();
+                const textVal = row.querySelector('.step-text').value.trim();
+                const imageVal = row.querySelector('.step-image-url').value.trim();
+                const descContainer = row.querySelector('.step-image-desc');
+                const imageDescVal = descContainer ? descContainer.value.trim() : '';
+                return { title: titleVal, text: textVal, image: imageVal, imageDesc: imageDescVal };
+            }).filter(s => s.title || s.text);
+            
+            if (steps.length === 0) return showCustomAlert("נא להוסיף לפחות שלב פתרון אחד מפורט.");
+            
+            const missingTitle = steps.some(s => !s.title);
+            if (missingTitle) {
+                return showCustomAlert("אנא הזינו כותרת עבור כל שלב פעיל.");
+            }
+
+            const dateNow = new Date();
+            const dateStr = `${String(dateNow.getDate()).padStart(2, '0')}/${String(dateNow.getMonth() + 1).padStart(2, '0')}/${dateNow.getFullYear()}`;
+
+            if (window.editingArticleId) {
+                const idx = kbArticles.findIndex(a => a.id === window.editingArticleId);
+                if (idx !== -1) {
+                    kbArticles[idx] = { 
+                        ...kbArticles[idx], 
+                        title, category, subCategory, component, 
+                        tags: selectedTags, description: desc, steps, 
+                        author: { personalId: authorId, name: authorName, rank: authorRank, role: authorRole }, 
+                        linkedTicketId, contacts: selectedContacts 
+                    };
+                }
+                window.editingArticleId = null;
+            } else {
+                const article = {
+                    id: 'kb-' + Date.now(),
+                    title, category, subCategory, component, tags: selectedTags, description: desc, steps,
+                    author: { personalId: authorId, name: authorName, rank: authorRank, role: authorRole },
+                    linkedTicketId, contacts: selectedContacts, createdAt: dateStr
+                };
+                kbArticles.push(article);
+            }
+            
+            // שמירה מקומית מידית
+            localStorage.setItem('kb_articles', JSON.stringify(kbArticles));
+            renderArticlesList();
+
+            // סנכרון לשרת במידה וזמין
+            try {
+                const res = await fetch(CONFIG.API_URL + '?file=sync_store', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        key: 'kb_articles',
+                        value: JSON.stringify(kbArticles)
+                    })
+                });
+                if (res.ok) {
+                    showSuccessAlert("המאמר פורסם ונשמר בשרת בהצלחה!");
+                } else {
+                    showSuccessAlert("המאמר נשמר במחשב מקומית (השרת לא זמין).");
+                }
+            } catch(e) {
+                console.warn("Could not sync with server. Saved locally.", e);
+                showSuccessAlert("המאמר נשמר במחשב מקומית (מצב אופליין).");
+            }
+            switchTab('list');
+        }
+
+        // Delete article
+        function deleteArticle(id) {
+            const art = kbArticles.find(a => a.id === id);
+            if (!art) return;
+
+            showCustomConfirm(`האם אתה בטוח שברצונך למחוק את מאמר הפתרון "${art.title}" מהמאגר?`, async () => {
+                kbArticles = kbArticles.filter(a => a.id !== id);
+                localStorage.setItem('kb_articles', JSON.stringify(kbArticles));
+                renderArticlesList();
+                
+                try {
+                    const res = await fetch(CONFIG.API_URL + '?file=sync_store', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            key: 'kb_articles',
+                            value: JSON.stringify(kbArticles)
+                        })
+                    });
+                    if (res.ok) {
+                        showSuccessAlert("המאמר נמחק מהמאגר בהצלחה.");
+                    } else {
+                        showSuccessAlert("המאמר נמחק מהמחשב מקומית.");
+                    }
+                } catch(e) {
+                    console.warn("Server delete failed. Deleted locally.", e);
+                    showSuccessAlert("המאמר נמחק מהמחשב מקומית (אופליין).");
+                }
+            });
+        }
+
+        // Reset form
+        function resetForm() {
+            window.editingArticleId = null;
+            document.getElementById('author-personal-id').value = '';
+            document.getElementById('author-name').value = '';
+            document.getElementById('author-rank').value = '';
+            document.getElementById('author-role').value = '';
+            document.getElementById('linked-ticket-id').value = '';
+            document.getElementById('article-title').value = '';
+            document.getElementById('article-category').value = '';
+            document.getElementById('article-subcategory').value = '';
+            
+            // Reset component select
+            const compWrapper = document.getElementById('article-component-wrapper');
+            compWrapper.classList.add('hidden');
+            const compSelect = document.getElementById('article-component');
+            compSelect.innerHTML = '<option value="">-- בחר קטגוריה משנית תחילה --</option>';
+            
+            document.getElementById('tag-input').value = '';
+            document.getElementById('article-description').value = '';
+            
+            // Clear step list and add 1 empty step
+            document.getElementById('steps-repeater').innerHTML = '';
+            addStepInput();
+
+            document.getElementById('contact-search').value = '';
+            document.getElementById('contact-new-name').value = '';
+            document.getElementById('contact-new-phone').value = '';
+
+            selectedTags = [];
+            selectedContacts = [];
+            renderTags();
+            renderContactPills();
+            updateRecommendedTags();
+        }
+
+        // Initial setup on load
+        window.onload = async () => {
+            await loadAllData();
+            resetForm();
+            
+            // בדיקה של פרמטר חיפוש בשאילתה
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchParam = urlParams.get('search');
+            if (searchParam) {
+                document.getElementById('search-solutions').value = decodeURIComponent(searchParam);
+                filterArticles();
+            }
+            
+        }
+    </script>
+
+    <!-- Print Config Modal -->
+    <div id="print-config-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-sm shadow-2xl p-6 text-right">
+            <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3 mb-4">
+                <button onclick="document.getElementById('print-config-modal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 text-2xl font-bold leading-none p-1 ml-auto mr-0">&times;</button>
+                <h3 class="text-sm font-extrabold text-slate-900 dark:text-white mr-4">הגדרת הפקת דו"ח סימוכין</h3>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold mb-1 text-gray-500 dark:text-slate-400">מספר אישי מנפיק <span class="text-red-500">*</span></label>
+                    <input type="text" id="print-issuer-personal-id" placeholder="לדוגמה: 1234567" class="w-full p-2.5 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 rounded-xl font-bold focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none text-right dark:text-white" maxlength="7" oninput="this.value = this.value.replace(/[^\d]/g, ''); autocompletePrintIssuer();">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold mb-1 text-gray-500 dark:text-slate-400">שם מנפיק הדו"ח (נוכחי) <span class="text-red-500">*</span></label>
+                    <input type="text" id="print-issuer-name" placeholder="שם מלא" class="w-full p-2.5 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 rounded-xl font-bold focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none text-right dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold mb-1 text-gray-500 dark:text-slate-400">דרגה <span class="text-red-500">*</span></label>
+                    <select id="print-issuer-rank" class="w-full p-2.5 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 rounded-xl font-bold focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none text-right dark:text-white" onchange="onPrintIssuerRankChange()">
+                        <option value="">-- בחר דרגה --</option>
+                        <option value="טוראי">טוראי</option>
+                        <option value="רב״ט">רב״ט</option>
+                        <option value="סמל">סמל</option>
+                        <option value="סמ״ר">סמ״ר</option>
+                        <option value="רס״ל">רס״ל</option>
+                        <option value="רס״ר">רס״ר</option>
+                        <option value="רס״ם">רס״ם</option>
+                        <option value="רנ״ג">רנ״ג</option>
+                        <option value="סג״ם">סג״ם</option>
+                        <option value="סגן">סגן</option>
+                        <option value="סרן">סרן</option>
+                        <option value="רס״ן">רס״ן</option>
+                        <option value="סא״ל">סא״ל</option>
+                        <option value="אל״ם">אל״ם</option>
+                        <option value="אע״צ">אע״צ</option>
+                    </select>
+                </div>
+                <div id="print-issuer-kave-wrapper" class="hidden flex items-center gap-2 select-none">
+                    <input type="checkbox" id="print-issuer-is-kave" class="rounded text-blue-600 focus:ring-blue-500 border-slate-300">
+                    <label for="print-issuer-is-kave" class="text-xs font-black text-slate-700 dark:text-slate-300">האם בשירות קבע?</label>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold mb-1 text-gray-500 dark:text-slate-400">תפקיד מנפיק הדו"ח <span class="text-red-500">*</span></label>
+                    <input type="text" id="print-issuer-role" placeholder="לדוגמה: טכנאי מחשוב" class="w-full p-2.5 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 rounded-xl font-bold focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none text-right dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold mb-1 text-gray-500 dark:text-slate-400">מספר טלפון לסימוכין (ספיר) <span class="text-red-500">*</span></label>
+                    <input type="text" id="print-issuer-phone" placeholder="לדוגמה: 518-XXXX" class="w-full p-2.5 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 rounded-xl font-bold focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none text-left font-mono dark:text-white" dir="ltr" oninput="this.value = formatMilitaryPhone(this.value);">
+                </div>
+            </div>
+            <div class="mt-6 flex justify-end gap-3">
+                <button onclick="document.getElementById('print-config-modal').classList.add('hidden')" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-gray-200 rounded-xl font-bold text-xs transition-colors">
+                    ביטול
+                </button>
+                <button onclick="executePrint()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs transition-colors">
+                    הפק והדפס
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,2431 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתיחת קריאת שירות - צוות מחשוב</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/tailwind.js"></script>
+    
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3776AB',
+                        primaryHover: '#2b5d87',
+                        secondary: '#4cb5f5'
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="js/config.js"></script>
+<script src="js/common.js"></script>
+    <style>
+        body {
+            font-family: 'Assistant', 'Segoe UI', Tahoma, sans-serif;
+            letter-spacing: -0.01em;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+        .tile-active {
+            border-color: #3776AB;
+            background-color: rgba(55, 118, 171, 0.08);
+            box-shadow: 0 0 0 2px rgba(55, 118, 171, 0.2);
+        }
+        .dark .tile-active {
+            border-color: #38bdf8;
+            background-color: rgba(56, 189, 248, 0.08);
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+        }
+        .spinner {
+            width: 1.5rem;
+            height: 1.5rem;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        #fault-recommended-solution-text {
+            color: #000000;
+        }
+        .dark #fault-recommended-solution-text {
+            color: #ffffff;
+        }
+        #fault-recommended-solution-text a {
+            color: #3776AB !important;
+            text-decoration: underline;
+            font-weight: 800;
+        }
+        .dark #fault-recommended-solution-text a {
+            color: #38bdf8 !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-200">
+
+    <!-- Header -->
+    <header class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-4 flex justify-between items-center border-b border-slate-200/60 dark:border-slate-800/80">
+        <div class="flex items-center gap-4">
+            <a href="אתר מחשוב.html" class="px-4 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-extrabold text-sm hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-all flex items-center gap-2 shadow-sm" title="חזרה לאתר מחשוב">
+                <ui-icon name="arrow-back" class="w-4 h-4"></ui-icon>
+                <span>חזרה לאתר מחשוב</span>
+            </a>
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">פתיחת קריאת שירות</h1>
+                <p class="text-[#3776AB] dark:text-[#38bdf8] font-bold text-xs sm:text-sm mt-0.5">צוות מחשוב ואינטגרציה</p>
+            </div>
+        </div>
+        <div>
+            <button onclick="toggleDarkMode()" class="flex items-center justify-center p-2.5 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-all border border-slate-200 dark:border-slate-800 shadow-sm" title="שינוי ערכת נושא">
+                <ui-icon name="moon" class="w-5 h-5"></ui-icon>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Smart Search Card (מאגר מידע ופתרונות מהירים) -->
+        <div id="kb-smart-search-card" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 rounded-3xl p-6 shadow-sm mb-8 text-slate-800 dark:text-slate-200">
+            <h2 class="text-xl font-extrabold mb-2 flex items-center gap-2 text-slate-900 dark:text-white">
+                <ui-icon name="guides" class="w-6 h-6 text-blue-600 dark:text-blue-400"></ui-icon>
+                <span>חיפוש מהיר במאגר הידע (לפני פתיחת קריאה)</span>
+            </h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-4 font-semibold">נתקלתם בבעיה בעמדה? חפשו פתרון מהיר במאגר הידע שלנו לפני פתיחת קריאה חדשה כדי לחסוך זמן טיפול!</p>
+            <div class="relative">
+                <input type="text" id="kb-smart-search" oninput="runSmartSearch()" placeholder="הקלידו מילות מפתח לחיפוש פתרון (למשל: מדפסת, סיסמה, מסך)..." class="w-full p-4 pr-11 rounded-2xl text-slate-900 font-bold bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800 transition-all placeholder-slate-400 dark:text-slate-100">
+                <div class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500">
+                    <ui-icon name="search" class="w-5 h-5"></ui-icon>
+                </div>
+            </div>
+            
+            <!-- Smart Search Results Area -->
+            <div id="kb-smart-results" class="hidden mt-4 bg-slate-100 dark:bg-slate-950 rounded-2xl p-4 max-h-[300px] overflow-y-auto border border-slate-200 dark:border-slate-800 space-y-3 custom-scrollbar text-right">
+                <!-- dynamic results -->
+            </div>
+        </div>
+        
+        <!-- Form and Summary Wrapper -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start" id="main-grid-layout">
+            
+            <!-- Left & Center: Form Fields -->
+            <div class="lg:col-span-2 space-y-8">
+                
+                <!-- Card 1: פרטי פותח הקריאה -->
+                <div class="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl p-6 shadow-sm">
+                    <h2 class="text-lg font-extrabold text-slate-900 dark:text-white mb-5 flex items-center gap-2">
+                        <ui-icon name="user" class="w-5 h-5 text-[#3776AB] dark:text-[#38bdf8]"></ui-icon>
+                        פרטי פותח הקריאה
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-5">
+                        <!-- מספר אישי -->
+                        <div>
+                            <label class="block text-xs font-extrabold text-slate-500 dark:text-slate-400 mb-2">מספר אישי <span class="text-red-500">*</span></label>
+                            <input type="text" id="auth-id" placeholder="הזן מס' אישי" class="w-full font-mono font-bold bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all" maxlength="9" oninput="checkUser(); handleFormChange();">
+                        </div>
+                        <!-- שם מלא -->
+                        <div>
+                            <label class="block text-xs font-extrabold text-slate-500 dark:text-slate-400 mb-2">שם מלא <span class="text-red-500">*</span></label>
+                            <input type="text" id="auth-name" placeholder="שם מלא" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all" oninput="handleFormChange();">
+                        </div>
+                        <!-- דרגה -->
+                        <div>
+                            <label class="block text-xs font-extrabold text-slate-500 dark:text-slate-400 mb-2">דרגה <span class="text-red-500">*</span></label>
+                            <select id="auth-rank" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-3 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all cursor-pointer" onchange="handleFormChange();">
+                                <option value="">-- בחר --</option>
+                                <option value="טוראי">טוראי</option>
+                                <option value="רב״ט">רב״ט</option>
+                                <option value="סמל">סמל</option>
+                                <option value="סמ״ר">סמ״ר</option>
+                                <option value="רס״ל">רס״ל</option>
+                                <option value="רס״ר">רס״ר</option>
+                                <option value="רס״מ">רס״מ</option>
+                                <option value="רס״ב">רס״ב</option>
+                                <option value="רנ״ג">רנ״ג</option>
+                                <option value="סג״ם">סג״ם</option>
+                                <option value="סגן">סגן</option>
+                                <option value="סרן">סרן</option>
+                                <option value="רס״ן">רס״ן</option>
+                                <option value="סא״ל">סא״ל</option>
+                                <option value="אל״מ">אל״מ</option>
+                                <option value="אע״צ">אע״צ</option>
+                            </select>
+                        </div>
+                        <!-- תפקיד -->
+                        <div>
+                            <label class="block text-xs font-extrabold text-slate-500 dark:text-slate-400 mb-2">תפקיד</label>
+                            <input list="roles-list" type="text" id="auth-role" placeholder="הקלד או בחר תפקיד" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all" oninput="handleFormChange();">
+                            <datalist id="roles-list">
+                                <option value="מנהל/ת רשת">
+                                <option value="טכנאי/ת">
+                                <option value="קצין/ת מחשוב">
+                                <option value="רמ״ד">
+                                <option value="ראש צוות">
+                                <option value="משתמש קצה">
+                            </datalist>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: מיקום ועמדה -->
+                <div class="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl p-6 shadow-sm">
+                    <h2 class="text-lg font-extrabold text-slate-900 dark:text-white mb-5 flex items-center gap-2">
+                        <ui-icon name="map-pin" class="w-5 h-5 text-[#3776AB] dark:text-[#38bdf8]"></ui-icon>
+                        מיקום העמדה וסוגה
+                    </h2>
+
+                    <!-- מיקום: בניין וחדר -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
+                        <div>
+                            <label class="block text-xs font-extrabold text-slate-500 dark:text-slate-400 mb-2">בניין <span class="text-red-500">*</span></label>
+                            <select id="sel-building" onchange="onBuildingChange();" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-3 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all cursor-pointer">
+                                <option value="">-- בחר בניין --</option>
+                                <option value="snunit">סנונית</option>
+                                <option value="lavie">לביא</option>
+                                <option value="ofroni">עפרוני</option>
+                                <option value="medutz">מדו"צ</option>
+                                <option value="yerpa">ירפ"א</option>
+                                <option value="bcha21">בחא 21</option>
+                            </select>
+                        </div>
+                        <div id="room-select-wrapper" class="hidden">
+                            <label class="block text-xs font-extrabold text-slate-500 dark:text-slate-400 mb-2">חדר <span class="text-red-500">*</span></label>
+                            <select id="sel-room" onchange="onRoomChange();" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-3 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all cursor-pointer">
+                                <option value="">-- בחר חדר --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- סוג עמדה (אריחים) -->
+                    <div id="station-type-section" class="hidden border-t border-slate-100 dark:border-slate-800 pt-6 mb-6">
+                        <label class="block text-xs font-extrabold text-slate-500 dark:text-slate-400 mb-3">סוג העמדה <span class="text-red-500">*</span></label>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4" id="station-type-tiles">
+                            <!-- עמדה משרדית -->
+                            <div class="border border-slate-200 dark:border-slate-800 rounded-2xl p-5 text-center bg-white dark:bg-slate-900 cursor-pointer transition-all hover:shadow-md hover:border-[#3776AB] flex flex-col items-center justify-center gap-3" onclick="selectStationType('office', this)" id="tile-office">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-400 dark:text-slate-500 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="4" width="18" height="12" rx="2" ry="2"></rect>
+                                    <line x1="12" y1="20" x2="12" y2="16"></line>
+                                    <line x1="8" y1="20" x2="16" y2="20"></line>
+                                </svg>
+                                <span class="text-sm font-extrabold text-slate-700 dark:text-slate-300" id="lbl-office-tile">עמדה משרדית</span>
+                            </div>
+                            <!-- עמדת בחינה -->
+                            <div class="border border-slate-200 dark:border-slate-800 rounded-2xl p-5 text-center bg-white dark:bg-slate-900 cursor-pointer transition-all hover:shadow-md hover:border-[#3776AB] flex flex-col items-center justify-center gap-3" onclick="selectStationType('exam', this)" id="tile-exam">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-400 dark:text-slate-500 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                                    <path d="M6 12v5c0 2 2.5 3 6 3s6-1 6-3v-5"></path>
+                                </svg>
+                                <span class="text-sm font-extrabold text-slate-700 dark:text-slate-300">עמדת בחינה</span>
+                            </div>
+                            <!-- עמדת מולטי-מדיה -->
+                            <div class="border border-slate-200 dark:border-slate-800 rounded-2xl p-5 text-center bg-white dark:bg-slate-900 cursor-pointer transition-all hover:shadow-md hover:border-[#3776AB] flex flex-col items-center justify-center gap-3" onclick="selectStationType('multimedia', this)" id="tile-multimedia">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-400 dark:text-slate-500 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14v-4z"></path>
+                                    <rect x="3" y="6" width="12" height="12" rx="2" ry="2"></rect>
+                                </svg>
+                                <span class="text-sm font-extrabold text-slate-700 dark:text-slate-300">עמדת מולטי-מדיה</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- מספר עמדה (גריד) -->
+                    <div id="station-number-section" class="hidden border-t border-slate-100 dark:border-slate-800 pt-6">
+                        <label class="block text-xs font-extrabold text-slate-500 dark:text-slate-400 mb-3">מספר עמדה <span class="text-red-500">*</span></label>
+                        <div id="station-buttons-grid" class="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2">
+                            <!-- כפתורים דינמיים -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: פרטי התקלה -->
+                <div class="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl p-6 shadow-sm">
+                    <h2 class="text-lg font-extrabold text-slate-900 dark:text-white mb-5 flex items-center gap-2">
+                        <ui-icon name="info" class="w-5 h-5 text-[#3776AB] dark:text-[#38bdf8]"></ui-icon>
+                        פרטי התקלה
+                    </h2>
+
+                    <!-- סוג תקלה -->
+                    <div class="mb-6">
+                        <label class="block text-xs font-extrabold text-slate-500 dark:text-slate-400 mb-3">סוג התקלה <span class="text-red-500">*</span></label>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4" id="fault-type-tiles">
+                            <!-- חומרה -->
+                            <div class="border border-slate-200 dark:border-slate-800 rounded-2xl p-4 text-center bg-white dark:bg-slate-900 cursor-pointer transition-all hover:shadow-md hover:border-[#3776AB] flex flex-col items-center justify-center gap-2" onclick="selectFaultType('hardware', this)">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-slate-400 dark:text-slate-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/>
+                                </svg>
+                                <span class="text-xs sm:text-sm font-extrabold text-slate-700 dark:text-slate-300">חומרה</span>
+                            </div>
+                            <!-- תוכנה -->
+                            <div class="border border-slate-200 dark:border-slate-800 rounded-2xl p-4 text-center bg-white dark:bg-slate-900 cursor-pointer transition-all hover:shadow-md hover:border-[#3776AB] flex flex-col items-center justify-center gap-2" onclick="selectFaultType('software', this)">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-slate-400 dark:text-slate-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                                </svg>
+                                <span class="text-xs sm:text-sm font-extrabold text-slate-700 dark:text-slate-300">תוכנה</span>
+                            </div>
+                            <!-- טלפוניה ורשת -->
+                            <div class="border border-slate-200 dark:border-slate-800 rounded-2xl p-4 text-center bg-white dark:bg-slate-900 cursor-pointer transition-all hover:shadow-md hover:border-[#3776AB] flex flex-col items-center justify-center gap-2" onclick="selectFaultType('network', this)">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-slate-400 dark:text-slate-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                </svg>
+                                <span class="text-xs sm:text-sm font-extrabold text-slate-700 dark:text-slate-300">טלפוניה ורשת</span>
+                            </div>
+                            <!-- שירות חומרה -->
+                            <div class="border border-slate-200 dark:border-slate-800 rounded-2xl p-4 text-center bg-white dark:bg-slate-900 cursor-pointer transition-all hover:shadow-md hover:border-[#3776AB] flex flex-col items-center justify-center gap-2" onclick="selectFaultType('service_hardware', this)">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-slate-400 dark:text-slate-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.492-3.053 5.084 1.877-2.14-2.14 2.14-2.14-1.877-5.084 3.053-2.492M11.42 15.17l-3.053 2.492-5.084-1.877 2.14 2.14-2.14 2.14 1.877 5.084 2.492-3.053"/>
+                                </svg>
+                                <span class="text-xs sm:text-sm font-extrabold text-slate-700 dark:text-slate-300">שירות חומרה</span>
+                            </div>
+                            <!-- שירות תוכנה -->
+                            <div class="border border-slate-200 dark:border-slate-800 rounded-2xl p-4 text-center bg-white dark:bg-slate-900 cursor-pointer transition-all hover:shadow-md hover:border-[#3776AB] flex flex-col items-center justify-center gap-2" onclick="selectFaultType('service_software', this)">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-slate-400 dark:text-slate-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 11h8M8 15h8M4 5a2 2 0 012-2h12a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V5z"/>
+                                </svg>
+                                <span class="text-xs sm:text-sm font-extrabold text-slate-700 dark:text-slate-300">שירות תוכנה</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- רכיבי חומרה (מוצג רק בחומרה) -->
+                    <div id="hardware-components-section" class="hidden border-t border-slate-100 dark:border-slate-800 pt-6 mb-6">
+                        <label class="block text-xs font-extrabold text-slate-500 dark:text-slate-400 mb-3">רכיבים תקולים <span class="text-slate-400 dark:text-slate-500 font-normal">(סמן את הרכיבים שלא עובדים)</span></label>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="hardware-checkboxes-grid">
+                            <!-- תיבות סימון דינמיות -->
+                        </div>
+                        
+                        <!-- פירוט תקלות נפוצות (Pills) -->
+                        <div id="sub-faults-wrapper" class="mt-5 space-y-4">
+                            <!-- קטגוריות וכדורי בחירה ייכתבו כאן -->
+                        </div>
+                    </div>
+
+                    <!-- תת-קטגוריית תוכנה (מוצג רק בתוכנה ועמדת בחינה) -->
+                    <div id="software-sub-section" class="hidden border-t border-slate-100 dark:border-slate-800 pt-6 mb-6">
+                        <label class="block text-xs font-extrabold text-slate-500 dark:text-slate-400 mb-3 text-center">תת-נושא תוכנה <span class="text-red-500">*</span></label>
+                        <div class="flex flex-col sm:flex-row justify-center gap-4 max-w-lg mx-auto" id="software-sub-tiles">
+                            <!-- מערכת מ"ח -->
+                            <div class="flex-1 border border-slate-200 dark:border-slate-800 rounded-2xl py-3 px-4 text-center bg-white dark:bg-slate-900 cursor-pointer transition-all hover:shadow-md hover:border-[#3776AB] flex flex-col items-center justify-center gap-1.5" onclick="selectSoftwareSubType('mch', this)">
+                                <ui-icon name="database" class="w-7 h-7 text-slate-400 dark:text-slate-500 transition-colors"></ui-icon>
+                                <span class="text-[11px] sm:text-xs font-extrabold text-slate-700 dark:text-slate-300">מ"ח</span>
+                            </div>
+
+                            <!-- מערכת מרחבים -->
+                            <div class="flex-1 border border-slate-200 dark:border-slate-800 rounded-2xl py-3 px-4 text-center bg-white dark:bg-slate-900 cursor-pointer transition-all hover:shadow-md hover:border-[#3776AB] flex flex-col items-center justify-center gap-1.5" onclick="selectSoftwareSubType('merhavim', this)">
+                                <ui-icon name="spaces" class="w-7 h-7 text-slate-400 dark:text-slate-500 transition-colors"></ui-icon>
+                                <span class="text-[11px] sm:text-xs font-extrabold text-slate-700 dark:text-slate-300">מרחבים</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- כפתורי תקלות נפוצות מורחבות (תוכנה, מ"ח, טלפוניה) -->
+                    <div id="general-fault-pills-section" class="hidden border-t border-slate-100 dark:border-slate-800 pt-6 mb-6">
+                        <label class="block text-xs font-extrabold text-slate-500 dark:text-slate-400 mb-3" id="lbl-general-pills-title">תקלות נפוצות</label>
+                        <div class="flex flex-wrap gap-2.5 mb-4" id="general-fault-pills-grid">
+                            <!-- כפתורים דינמיים -->
+                        </div>
+                        
+                        <!-- כרטיס פתרון מומלץ מעוצב -->
+                        <div id="fault-recommended-solution-container" class="hidden mt-4 bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800/60 p-4 rounded-xl text-xs text-slate-900 dark:text-slate-100 leading-relaxed font-bold">
+                            <div class="flex items-center gap-1.5 mb-1.5 text-blue-900 dark:text-blue-200">
+                                <ui-icon name="info" class="w-4 h-4 text-blue-600 dark:text-blue-400"></ui-icon>
+                                <span>פתרון מומלץ / הנחיות לפתרון:</span>
+                            </div>
+                            <div id="fault-recommended-solution-text" class="text-[11px] leading-relaxed"></div>
+                        </div>
+                    </div>
+
+                    <!-- פרטי מתמיין (חומרה + עמדת בחינה) -->
+                    <div id="candidate-details-section" class="hidden border-t border-slate-100 dark:border-slate-800 pt-6 mb-6 bg-slate-50/50 dark:bg-slate-950/40 p-4 rounded-2xl border border-slate-100 dark:border-slate-800/60">
+                        <h3 class="text-xs font-extrabold text-[#3776AB] dark:text-[#38bdf8] uppercase mb-4 tracking-wider">פרטי מתמיין/ת</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-[11px] font-extrabold text-slate-500 dark:text-slate-400 mb-1.5">שם מלא</label>
+                                <input type="text" id="exam-name" placeholder="שם המתמיין" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all" oninput="handleFormChange();">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-extrabold text-slate-500 dark:text-slate-400 mb-1.5">תעודת זהות</label>
+                                <input type="text" id="exam-id" placeholder="תעודת זהות" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all" maxlength="9" oninput="handleFormChange();">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-extrabold text-slate-500 dark:text-slate-400 mb-1.5">סוג מבחן</label>
+                                <select id="exam-type" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all cursor-pointer" onchange="handleFormChange();">
+                                    <option value="">-- בחר סוג --</option>
+                                    <option value="פסיכוטכני">פסיכוטכני</option>
+                                    <option value="סימולטור">סימולטור</option>
+                                    <option value="ירפ\"א">ירפ"א</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- שאלות בדיקת עמדה (מתמיין) -->
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4 pt-4 border-t border-slate-150 dark:border-slate-800/80">
+                            <div>
+                                <label class="block text-[11px] font-extrabold text-slate-500 dark:text-slate-400 mb-1.5">האם צפית במתמיין מבצע צעד? <span class="text-red-500">*</span></label>
+                                <select id="candidate-observed-step" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all cursor-pointer" onchange="handleFormChange();">
+                                    <option value="">-- בחר --</option>
+                                    <option value="כן">כן</option>
+                                    <option value="לא">לא</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-extrabold text-slate-500 dark:text-slate-400 mb-1.5">האם בוצע כיול? <span class="text-red-500">*</span></label>
+                                <select id="candidate-calibrated" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all cursor-pointer" onchange="handleFormChange();">
+                                    <option value="">-- בחר --</option>
+                                    <option value="כן תקין">כן תקין</option>
+                                    <option value="כן, לא תקין">כן, לא תקין</option>
+                                    <option value="לא">לא</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-extrabold text-slate-500 dark:text-slate-400 mb-1.5">האם בוצע הפעלה מחדש? <span class="text-red-500">*</span></label>
+                                <select id="candidate-restarted" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all cursor-pointer" onchange="handleFormChange();">
+                                    <option value="">-- בחר --</option>
+                                    <option value="כן">כן</option>
+                                    <option value="לא">לא</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- שדות מ"ח ייחודיים (קוד מבחן, קוד ציון וכו') -->
+                        <div id="mch-fields-container" class="hidden mt-4 pt-4 border-t border-slate-150 dark:border-slate-800/80 space-y-4">
+                            <!-- הסבר מעוצב וקישור לחיץ -->
+                            <div class="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800/60 p-4 rounded-xl text-xs text-blue-800 dark:text-blue-300 leading-relaxed font-bold">
+                                <div class="flex items-center gap-1.5 mb-1.5 text-blue-900 dark:text-blue-200">
+                                    <ui-icon name="info" class="w-4 h-4 text-blue-600 dark:text-blue-400"></ui-icon>
+                                    <span>כיצד למצוא את הקודים במערכת מערבל ציונים?</span>
+                                </div>
+                                <p>יש להיכנס למערכת <a href="https://he.wikipedia.org" target="_blank" class="text-blue-600 dark:text-blue-400 underline font-black hover:text-blue-800">מערבל ציונים</a>, עברו לתפריט <span class="text-gray-800 dark:text-gray-200">"כלים שימושיים"</span> ובחרו ב-<span class="text-gray-800 dark:text-gray-200">"איתור קודים ומאפייני מבחן"</span>. העתיקו את שמות וקודי המבחן והציון הרלוונטיים והזינו אותם מטה.</p>
+                            </div>
+                            
+                            <!-- מכולה לשורות הדינמיות -->
+                            <div id="mch-rows-container" class="space-y-4"></div>
+                            
+                            <!-- לחצן להוספת שורה חדשה -->
+                            <button type="button" onclick="addMchRow()" class="mt-2 px-4 py-2 text-xs font-extrabold text-blue-600 bg-blue-50 border border-blue-200 rounded-xl hover:bg-blue-100 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800/60 dark:hover:bg-blue-900/40 transition-all flex items-center gap-1.5">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                                <span>הוסף מבחן וציון נוסף</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- טלפון צבאי (תקלת רשת) -->
+                    <div id="phone-details-section" class="hidden border-t border-slate-100 dark:border-slate-800 pt-6 mb-6">
+                        <div class="max-w-xs">
+                            <label class="block text-xs font-extrabold text-slate-500 dark:text-slate-400 mb-2">מספר טלפון צבאי עמדה <span class="text-red-500">*</span></label>
+                            <input type="text" id="inp-phone" maxlength="8" placeholder="518-0000" oninput="fmtPhone(this); handleFormChange();" class="w-full font-mono text-left bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all" dir="ltr">
+                        </div>
+                    </div>
+
+                    <!-- תיאור חופשי -->
+                    <div class="border-t border-slate-100 dark:border-slate-800 pt-6">
+                        <label class="block text-xs font-extrabold text-slate-500 dark:text-slate-400 mb-2">תיאור תקלה מפורט <span class="text-red-500">*</span></label>
+                        <textarea id="fault-desc" rows="4" placeholder="תאר/י את הבעיה בפירוט..." class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-y" oninput="handleFormChange();"></textarea>
+                    </div>
+                    <!-- KB Auto Suggestions Area -->
+                    <div id="kb-auto-suggestions-container" class="hidden"></div>
+                </div>
+
+                <!-- Card 4: סוג רשת (מוצג רק למשרדית) -->
+                <div class="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl p-6 shadow-sm hidden" id="network-card">
+                    <h2 class="text-lg font-extrabold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                        <ui-icon name="phone" class="w-5 h-5 text-[#3776AB] dark:text-[#38bdf8]"></ui-icon>
+                        רשת תקשורת
+                    </h2>
+                    
+                    <div>
+                        <label class="block text-xs font-extrabold text-slate-500 dark:text-slate-400 mb-3">סוג הרשת <span class="text-red-500">*</span></label>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="network-tiles">
+                            <!-- שביל החלב -->
+                            <div class="border border-slate-200 dark:border-slate-800 rounded-xl py-3 text-center text-sm font-bold text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-950 cursor-pointer transition-all hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center" onclick="selectNetwork('shvil', this)" id="net-shvil">שביל החלב</div>
+                            <!-- קליק-נט -->
+                            <div class="border border-slate-200 dark:border-slate-800 rounded-xl py-3 text-center text-sm font-bold text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-950 cursor-pointer transition-all hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center" onclick="selectNetwork('clicknet', this)" id="net-clicknet">קליק-נט</div>
+                            <!-- דב"ש -->
+                            <div class="border border-slate-200 dark:border-slate-800 rounded-xl py-3 text-center text-sm font-bold text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-950 cursor-pointer transition-all hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center" onclick="selectNetwork('dvash', this)" id="net-dvash">דב"ש</div>
+                            <!-- אזרחית -->
+                            <div class="border border-slate-200 dark:border-slate-800 rounded-xl py-3 text-center text-sm font-bold text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-950 cursor-pointer transition-all hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center" onclick="selectNetwork('civilian', this)" id="net-civilian">אזרחית</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Column: Summary Panel -->
+            <div class="lg:col-span-1 lg:sticky lg:top-6 space-y-6">
+                
+                <!-- Summary Card -->
+                <div class="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-3xl p-6 shadow-sm flex flex-col">
+                    <h2 class="text-lg font-extrabold text-slate-900 dark:text-white mb-4">סיכום הבקשה</h2>
+                    
+                    <!-- Live Summary Area -->
+                    <div id="live-summary-container" class="space-y-4 flex-1">
+                        <!-- תוכן סיכום דינמי -->
+                    </div>
+
+                    <!-- Validation Checkmarks -->
+                    <div id="validation-checkmarks-list" class="mt-6 border-t border-slate-100 dark:border-slate-800 pt-4 space-y-2">
+                        <!-- סימוני תקינות -->
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button class="w-full mt-6 py-4 rounded-2xl bg-[#3776AB] hover:bg-primaryHover text-white text-base font-extrabold shadow-lg shadow-blue-500/10 dark:shadow-none hover:shadow-xl hover:translate-y-[-1px] active:translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:shadow-none transition-all flex items-center justify-center gap-2" id="btn-submit" onclick="submitForm();">
+                        <ui-icon name="check" class="w-5 h-5"></ui-icon>
+                        <span>שלח קריאת שירות</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Success Screen -->
+        <div class="hidden max-w-2xl mx-auto py-16 px-6 text-center bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-[2.5rem] shadow-xl shadow-slate-100/50 dark:shadow-none" id="success-screen">
+            <div class="w-24 h-24 bg-emerald-50 dark:bg-emerald-950/30 border-4 border-white dark:border-slate-800 shadow-md rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-emerald-500 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+            </div>
+            <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white mb-2">הקריאה נשלחה בהצלחה!</h2>
+            <p class="text-slate-500 dark:text-slate-400 font-medium text-lg mb-8" id="ticket-number-display"></p>
+            
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="אתר מחשוב.html" class="w-full sm:w-auto bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl px-8 py-3.5 font-bold transition-all text-center">
+                    חזרה למרכז השליטה
+                </a>
+                <button class="w-full sm:w-auto bg-slate-900 hover:bg-slate-850 dark:bg-slate-200 dark:hover:bg-white text-white dark:text-slate-950 rounded-xl px-8 py-3.5 font-extrabold shadow-md transition-all" onclick="resetAll()">
+                    פתיחת קריאה נוספת
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- JS Logic -->
+    <script>
+        function normHeb(s) {
+            if (s === null || s === undefined) return '';
+            return String(s)
+                .toLowerCase()
+                .replace(/[֑-ׇ]/g, '')            // ניקוד וטעמים
+                .replace(/[׳״'"׳״`]/g, '')        // גרש / גרשיים / מרכאות
+                .replace(/ם/g, 'מ').replace(/ן/g, 'נ').replace(/ף/g, 'פ').replace(/ץ/g, 'צ').replace(/ך/g, 'כ'); // סופיות לרגילות
+        }
+        let roomsConfig = null;
+        let BUILDING_LABELS = {
+            snunit: 'סנונית',
+            lavie: 'לביא',
+            ofroni: 'עפרוני',
+            medutz: 'מדו"צ',
+            yerpa: 'ירפ"א',
+            bcha21: 'בחא 21'
+        };
+
+        let BUILDING_ROOMS = {
+            snunit: ['רימון', 'חדר מאבחנות', 'פסיכולוגים 1', 'פסיכולוגים 2', 'פסיכולוגים 3', 'פסיכולוגים 4', 'משרד ס. מ"ג', 'משרד מאיה'],
+            lavie: ['כיתת לביא'],
+            ofroni: ['כיתה ימנית', 'כיתה שמאלית', 'חדר תעונ"ה'],
+            medutz: ['כללי'],
+            yerpa: ['משרד מ"ג', 'משרד מ"ג ענף', 'משרד דנה'],
+            bcha21: ['מרכז הערכה', 'כיתת שביל']
+        };
+
+        function getStationConfig(building, room) {
+            if (!roomsConfig || !roomsConfig.rooms || !roomsConfig.rooms[building]) return null;
+            const rObj = roomsConfig.rooms[building].find(r => r.name === room);
+            if (!rObj) return null;
+            return {
+                countExam: rObj.countExam || 0,
+                countOffice: rObj.countOffice || 0,
+                countDiag: rObj.countDiag || 0,
+                allowOffice: (rObj.countOffice || 0) > 0,
+                allowExam: (rObj.countExam || 0) > 0
+            };
+        }
+
+        async function loadRoomsConfig() {
+            try {
+                const response = await fetch(CONFIG.API_URL + '?file=sync_store&key=rooms_config');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data && data.value) {
+                        roomsConfig = JSON.parse(data.value);
+                        localStorage.setItem('rooms_config', data.value);
+                        applyRoomsConfig();
+                        return;
+                    }
+                }
+            } catch (error) {
+                console.error('שגיאה בטעינת תצורת חדרים מהשרת:', error);
+            }
+
+            // Fallback to localStorage rooms_config
+            const localConfig = localStorage.getItem('rooms_config');
+            if (localConfig) {
+                try {
+                    roomsConfig = JSON.parse(localConfig);
+                    applyRoomsConfig();
+                    return;
+                } catch(e){}
+            }
+
+            // Fallback to localStorage mch_state (roomsConfig)
+            const localState = localStorage.getItem('mch_state');
+            if (localState) {
+                try {
+                    const state = JSON.parse(localState);
+                    if (state && state.roomsConfig) {
+                        roomsConfig = state.roomsConfig;
+                        applyRoomsConfig();
+                        return;
+                    }
+                } catch(e){}
+            }
+        }
+
+        function applyRoomsConfig() {
+            if (!roomsConfig) return;
+            BUILDING_LABELS = {};
+            BUILDING_ROOMS = {};
+            for (const [key, bld] of Object.entries(roomsConfig.buildings)) {
+                BUILDING_LABELS[key] = bld.label;
+            }
+            for (const [key, rms] of Object.entries(roomsConfig.rooms)) {
+                BUILDING_ROOMS[key] = (rms || []).map(r => r.name);
+            }
+            rebuildBuildingSelect();
+        }
+
+        function rebuildBuildingSelect() {
+            const bSelect = document.getElementById('sel-building');
+            if (!bSelect) return;
+            const currentVal = bSelect.value;
+            let html = '<option value="">-- בחר בניין --</option>';
+            for (const [key, label] of Object.entries(BUILDING_LABELS)) {
+                html += `<option value="${key}">${label}</option>`;
+            }
+            bSelect.innerHTML = html;
+            if (currentVal && bSelect.querySelector(`option[value="${currentVal}"]`)) {
+                bSelect.value = currentVal;
+            }
+        }
+
+        const HW_OFFICE = ['עכבר', 'מקלדת', 'מצלמה', 'מסך', 'מדפסת', 'מחשב / מארז', 'כבלים (חשמל/רשת/מסך)', 'בקשת שירות חומרה'];
+        const HW_EXAM = ['עכבר', 'מקלדת', 'מסך', 'אוזניות', 'סטיק', 'מצערת', 'לוח מקשים כסוף', 'מחשב / מארז', 'כבלים (חשמל/רשת/מסך)', 'בקשת שירות חומרה'];
+        const HW_MULTIMEDIA = ['עכבר', 'מקלדת', 'מצלמה', 'מסך', 'מדפסת', 'מחשב / מארז', 'מקרן', 'רמקולים', 'כבלים (חשמל/רשת/מסך)', 'בקשת שירות חומרה'];
+
+        const COMMON_FAULTS = {
+            'מסך': ['מרצד', 'לא נדלק', 'אין תצוגה (No Signal)', 'פסים על המסך', 'נזק פיזי'],
+            'עכבר': ['לא מגיב', 'גלילה קופצת', 'קליק שמאלי/ימני תקול', 'כבל קרוע'],
+            'מקלדת': ['מקשים לא מגיבים', 'מקש תקוע/לחוץ', 'נתק במגעים (מתנתק ומתחבר)'],
+            'מצלמה': ['תמונה שחורה', 'לא מזוהה במחשב', 'תמונה מטושטשת/קופאת'],
+            'מדפסת': ['נתקע נייר', 'מדפיס מטושטש', 'נורית שגיאה דולקת', 'לא מושכת נייר'],
+            'אוזניות': ['שומעים בצד אחד בלבד', 'מיקרופון לא עובד', 'רעש סטטי', 'כבל קרוע'],
+            'סטיק': ['לא מגיב לתנועה', 'כפתורים לא עובדים', 'לא מתמרכז', 'ציר (Z) לא תקין'],
+            'מצערת': ['תנועה נוקשה מדי', 'לא מגיבה', 'קפיצות בערכים'],
+            'לוח מקשים כסוף': ['לחצנים לא מגיבים', 'נוריות לא דולקות', 'לא מזוהה'],
+            'מחשב / מארז': ['לא נדלק בכלל', 'עושה רעש חזק', 'כבה מעצמו באמצע עבודה', 'נזק פיזי למארז', 'צפצופים בהדלקה'],
+            'כבלים (חשמל/רשת/מסך)': ['נתק במגעים', 'כבל קרוע/סדוק', 'כבל רשת לא נעול', 'כבל לא מתאים'],
+            'מקרן': ['לא נדלק', 'תצוגה מטושטשת / מרצדת', 'כבל מנותק', 'נורת אזהרה דולקת'],
+            'רמקולים': ['לא שומעים', 'רעשי רקע / זמזום', 'מנותק', 'עוצמה נמוכה מדי'],
+            'בקשת שירות חומרה': ['החלפת ציוד', 'שינוי מיקום', 'חיבור מקרן', 'התקנת ציוד', 'כללי']
+        };
+
+        const PILLS_MCH = [
+            'בעיה בהעברת נתונים',
+            'ציון למבחן לא מתחשב',
+            'שגיאה בטעינת המבחן',
+            'מקלדת/עכבר נעולים במבחן'
+        ];
+        
+        const PILLS_SOFTWARE_GENERAL = [
+            'מחשב איטי / קופא',
+            'בעיה בדפדפן / אתר לא נפתח',
+            'בעיה ביישומי אופיס / אאוטלוק',
+            'שגיאת רישיון / הפעלת מערכת',
+            'חוסר הרשאות גישה',
+            'תוכנה לא מגיבה / קורסת',
+            'איפוס סיסמה',
+            'יצירת משתמש / הרשאות',
+            'בקשת שירות תוכנה כללית'
+        ];
+        
+        const PILLS_TELEPHONY = [
+            'שגיאה על מסך הטלפון',
+            'לא מוריד הגדרות / בעיית טעינה',
+            'בעיית חיבור לרשת בטלפון',
+            'הטלפון לא נדלק (אין אור)',
+            'תקוע על לוגו Cisco בהפעלה',
+            'שפופרת לא עובדת (שומעים ברמקול)',
+            'רעשים ורשרושים חזקים בשיחה',
+            'לחצני מספרים לא מגיבים',
+            'הטלפון לא מצלצל בשיחה נכנסת',
+            'החיבור של המחשב לטלפון לא עובד',
+            'הטלפון מראה קו תפוס תמידי'
+        ];
+        
+        const TELEPHONY_TECH_MAP = {
+            'שגיאה על מסך הטלפון': 'Phone Unregistered',
+            'לא מוריד הגדרות / בעיית טעינה': 'TFTP Error',
+            'בעיית חיבור לרשת בטלפון': 'DHCP Error',
+            'הטלפון לא נדלק (אין אור)': 'No Power (PoE)',
+            'תקוע על לוגו Cisco בהפעלה': 'Stuck Boot Logo',
+            'שפופרת לא עובדת (שומעים ברמקול)': 'Handset Faulty',
+            'רעשים ורשרושים חזקים בשיחה': 'Static / Audio Noise',
+            'לחצני מספרים לא מגיבים': 'Keypad Unresponsive',
+            'הטלפון לא מצלצל בשיחה נכנסת': 'No Ringer',
+            'החיבור של המחשב לטלפון לא עובד': 'PC Port Inactive',
+            'הטלפון מראה קו תפוס תמידי': 'Off-hook Status'
+        };
+
+        // תקלות מרחבים/סימולציה נפוצות
+        const PILLS_MERHAVIM = [
+            'סימולטור לא נטען',
+            'תקלה במרחב סימולציה',
+            'תצוגת מרחבים תקועה',
+            'בעיה בהרצת תרחיש',
+            'אין תמונה/וידאו במרחב'
+        ];
+
+        // עמדת מאבחנת (office עם הרשאת בחינה) או עמדת בחינה - תומכות בתת-סוגי מ"ח ומרחבים
+        function supportsMchMerhavim() {
+            return S.stationType === 'exam' || (S.stationType === 'office' && S.stationConfig && S.stationConfig.allowExam) || S.stationType === 'multimedia';
+        }
+
+        function selectSoftwareSubType(subType, el) {
+            if (S.softwareSubType === subType) {
+                S.softwareSubType = '';
+                if (el) el.classList.remove('tile-active');
+            } else {
+                S.softwareSubType = subType;
+                document.querySelectorAll('#software-sub-tiles > div').forEach(t => t.classList.remove('tile-active'));
+                if (el) el.classList.add('tile-active');
+            }
+            S.selectedPillFault = '';
+            
+            document.getElementById('hardware-components-section').classList.add('hidden');
+            renderGeneralPills();
+            
+            toggleCandidateSection();
+            handleFormChange();
+        }
+
+        function renderGeneralPills() {
+            const sec = document.getElementById('general-fault-pills-section');
+            const grid = document.getElementById('general-fault-pills-grid');
+            const lbl = document.getElementById('lbl-general-pills-title');
+            
+            let list = [];
+            let titleText = 'תקלות נפוצות';
+            
+            if (S.faultType === 'software') {
+                if (supportsMchMerhavim()) {
+                    list = [...PILLS_SOFTWARE_GENERAL];
+                    titleText = 'תקלות תוכנה נפוצות';
+
+                    if (S.softwareSubType === 'mch') {
+                        list.push(...PILLS_MCH);
+                        titleText = 'תקלות תוכנה ומ"ח נפוצות';
+                    } else if (S.softwareSubType === 'merhavim') {
+                        list.push(...PILLS_MERHAVIM);
+                        titleText = 'תקלות תוכנה ומרחבים נפוצות';
+                    }
+                } else {
+                    list = [...PILLS_SOFTWARE_GENERAL];
+                    titleText = 'תקלות תוכנה נפוצות';
+                }
+            } else if (S.faultType === 'network') {
+                list = [...PILLS_TELEPHONY];
+                titleText = 'תקלות טלפוני סיסקו נפוצות';
+            } else if (S.faultType === 'hardware') {
+                list = [];
+                titleText = 'תקלות חומרה נפוצות';
+            }
+            
+            // Add custom predefined faults matching selections
+            const customFaults = (globalMchState.predefinedFaults || []).filter(f => {
+                if (f.stationType !== S.stationType) return false;
+                if (f.faultType !== S.faultType) return false;
+                if (S.faultType === 'network') {
+                    if (f.networkType && f.networkType !== S.networkType) return false;
+                }
+                if (S.faultType === 'software' && supportsMchMerhavim()) {
+                    const targetSub = S.softwareSubType || 'general';
+                    if (f.softwareSubType && f.softwareSubType !== targetSub) return false;
+                }
+                return true;
+            });
+            
+            customFaults.forEach(f => {
+                if (!list.includes(f.title)) {
+                    list.push(f.title);
+                }
+            });
+            
+            if (list.length === 0) {
+                sec.classList.add('hidden');
+                grid.innerHTML = '';
+                return;
+            }
+            
+            sec.classList.remove('hidden');
+            lbl.textContent = titleText;
+            grid.innerHTML = '';
+            
+            list.forEach(item => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                const isSel = S.selectedPillFault === item;
+                btn.className = `px-3.5 py-2 text-xs font-bold rounded-xl transition-all border ${
+                    isSel 
+                    ? 'bg-[#3776AB] text-white border-[#3776AB] dark:bg-[#38bdf8] dark:text-slate-950 dark:border-[#38bdf8]' 
+                    : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-800 dark:hover:border-slate-700'
+                }`;
+                btn.textContent = item;
+                btn.onclick = () => {
+                    if (S.selectedPillFault === item) {
+                        S.selectedPillFault = '';
+                    } else {
+                        S.selectedPillFault = item;
+                    }
+                    renderGeneralPills();
+                    handleFormChange();
+                };
+                grid.appendChild(btn);
+            });
+            
+            // Render recommended solution if applicable
+            const solutionContainer = document.getElementById('fault-recommended-solution-container');
+            const solutionText = document.getElementById('fault-recommended-solution-text');
+            if (solutionContainer && solutionText) {
+                if (S.selectedPillFault) {
+                    const allPredefined = globalMchState.predefinedFaults || [];
+                    const found = allPredefined.find(f => f.title === S.selectedPillFault && f.stationType === S.stationType && f.faultType === S.faultType);
+                    if (found && found.solution) {
+                        solutionText.innerHTML = found.solution;
+                        solutionContainer.classList.remove('hidden');
+                    } else {
+                        solutionContainer.classList.add('hidden');
+                    }
+                } else {
+                    solutionContainer.classList.add('hidden');
+                }
+            }
+        }
+
+
+        // Global state for predefined faults
+        let globalMchState = { predefinedFaults: [] };
+        try {
+            const saved = localStorage.getItem('mch_state');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                if (parsed && parsed.predefinedFaults) {
+                    globalMchState.predefinedFaults = parsed.predefinedFaults;
+                }
+            }
+        } catch (e) {
+            console.error("Error loading mch_state in פתיחת תקלות.html", e);
+        }
+
+        // Fetch state asynchronously from server
+        fetch(CONFIG.API_URL + '?file=mch_state&_t=' + Date.now())
+            .then(r => r.ok ? r.json() : null)
+            .then(serverState => {
+                if (serverState) {
+                    if (serverState.predefinedFaults) {
+                        globalMchState.predefinedFaults = serverState.predefinedFaults;
+                        renderGeneralPills();
+                    }
+                    if (serverState.tickets) {
+                        globalMchState.tickets = serverState.tickets;
+                    }
+                }
+            })
+            .catch(e => console.error("Error fetching mch_state in פתיחת תקלות.html", e));
+
+        let kbArticles = [];
+        try {
+            const localKb = localStorage.getItem('kb_articles');
+            if (localKb) kbArticles = JSON.parse(localKb);
+        } catch (e) {}
+        
+        fetch(CONFIG.API_URL + '?file=sync_store&key=kb_articles&_t=' + Date.now())
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                if (data && data.value) {
+                    kbArticles = JSON.parse(data.value);
+                    if (typeof checkKbSuggestions === 'function') {
+                        checkKbSuggestions();
+                    }
+                }
+            })
+            .catch(e => console.error("Error fetching kb_articles in פתיחת תקלות.html", e));
+
+        // State Manager
+        let S = {
+            id: '',
+            name: '',
+            rank: '',
+            role: '',
+            building: '',
+            room: '',
+            stationType: '',
+            station: '',
+            faultType: '',
+            hwComps: [],
+            subFaults: {},
+            phone: '',
+            examName: '',
+            examId: '',
+            examType: '',
+            desc: '',
+            networkType: '',
+            stationConfig: null,
+            softwareSubType: '',
+            selectedPillFault: '',
+            examNameField: '',
+            examCode: '',
+            scoreName: '',
+            scoreCode: '',
+            mchRows: [ { examName: '', examCode: '', scoreName: '', scoreCode: '' } ],
+            observedStep: '',
+            calibrated: '',
+            restarted: ''
+        };
+
+        // User Lookup
+        function checkUser() {
+            const idInput = document.getElementById('auth-id');
+            if (!idInput) return;
+            const idVal = idInput.value.trim();
+            if (!idVal) return;
+            
+            S.id = idVal;
+            const saved = localStorage.getItem('user_' + idVal);
+            if (saved) {
+                try {
+                    const user = JSON.parse(saved);
+                    document.getElementById('auth-name').value = user.name || '';
+                    document.getElementById('auth-rank').value = user.rank || '';
+                    document.getElementById('auth-role').value = user.role || '';
+                    
+                    S.name = user.name || '';
+                    S.rank = user.rank || '';
+                    S.role = user.role || '';
+                } catch (e) {
+                    console.error("Error reading saved user data", e);
+                }
+            }
+        }
+
+        function saveUser() {
+            if (S.id && S.name && S.rank) {
+                const profile = {
+                    id: S.id,
+                    name: S.name,
+                    rank: S.rank,
+                    role: S.role
+                };
+                localStorage.setItem('user_' + S.id, JSON.stringify(profile));
+                
+                fetch(CONFIG.API_URL + '?file=user_profiles', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ [S.id]: profile })
+                }).catch(e => console.error("Error syncing user profile", e));
+            }
+        }
+
+        // Dropdown Handlers
+        function onBuildingChange() {
+            const bSelect = document.getElementById('sel-building');
+            const roomWrapper = document.getElementById('room-select-wrapper');
+            const roomSelect = document.getElementById('sel-room');
+            
+            S.building = bSelect.value;
+            S.room = '';
+            S.stationType = '';
+            S.station = '';
+            S.stationConfig = null;
+
+            // Reset components selections
+            S.hwComps = [];
+            S.subFaults = {};
+
+            const rooms = BUILDING_ROOMS[S.building];
+            if (rooms && rooms.length > 1) {
+                roomSelect.innerHTML = '<option value="">-- בחר חדר --</option>';
+                rooms.forEach(r => {
+                    const opt = document.createElement('option');
+                    opt.value = r;
+                    opt.textContent = r;
+                    roomSelect.appendChild(opt);
+                });
+                roomWrapper.classList.remove('hidden');
+                document.getElementById('station-type-section').classList.add('hidden');
+                document.getElementById('station-number-section').classList.add('hidden');
+            } else {
+                roomWrapper.classList.add('hidden');
+                roomSelect.innerHTML = '<option value="">-- בחר חדר --</option>';
+                if (rooms && rooms.length === 1) {
+                    S.room = rooms[0];
+                }
+                S.stationConfig = getStationConfig(S.building, S.room);
+                initStationTypeChoices();
+            }
+            handleFormChange();
+        }
+
+        function onRoomChange() {
+            const roomSelect = document.getElementById('sel-room');
+            S.room = roomSelect.value;
+            S.stationType = '';
+            S.station = '';
+            S.hwComps = [];
+            S.subFaults = {};
+
+            if (S.room) {
+                S.stationConfig = getStationConfig(S.building, S.room);
+                initStationTypeChoices();
+            } else {
+                S.stationConfig = null;
+                document.getElementById('station-type-section').classList.add('hidden');
+                document.getElementById('station-number-section').classList.add('hidden');
+            }
+            handleFormChange();
+        }
+
+        function initStationTypeChoices() {
+            const sec = document.getElementById('station-type-section');
+            if (!S.stationConfig) {
+                sec.classList.add('hidden');
+                return;
+            }
+
+            const totalCount = (S.stationConfig.countExam || 0) + (S.stationConfig.countOffice || 0);
+            if (totalCount === 1) {
+                sec.classList.add('hidden');
+                document.getElementById('station-number-section').classList.add('hidden');
+                if (S.stationConfig.countExam === 1) {
+                    S.stationType = 'exam';
+                    S.station = 1;
+                } else {
+                    S.stationType = 'office';
+                    S.station = 1;
+                }
+                const fakeEl = document.createElement('div');
+                selectStationType(S.stationType, fakeEl);
+                return;
+            }
+
+            sec.classList.remove('hidden');
+            
+            const tileOff = document.getElementById('tile-office');
+            const tileExam = document.getElementById('tile-exam');
+            const tileMultimedia = document.getElementById('tile-multimedia');
+            const lblOff = document.getElementById('lbl-office-tile');
+
+            // Reset styles
+            tileOff.classList.remove('tile-active');
+            tileExam.classList.remove('tile-active');
+            if (tileMultimedia) tileMultimedia.classList.remove('tile-active');
+
+            // Toggle visibility
+            tileOff.style.display = S.stationConfig.allowOffice ? 'flex' : 'none';
+            tileExam.style.display = S.stationConfig.allowExam ? 'flex' : 'none';
+            if (tileMultimedia) tileMultimedia.style.display = (S.stationConfig.countMultimedia > 0) ? 'flex' : 'none';
+
+            // Custom Label Logic (Classroom diagnostician or standard office)
+            if (S.stationConfig.allowOffice && S.stationConfig.allowExam) {
+                lblOff.textContent = 'עמדת מאבחנת';
+            } else {
+                lblOff.textContent = 'עמדה משרדית';
+            }
+
+            // Auto-select if only one option is allowed
+            let allowedTypes = [];
+            if (S.stationConfig.allowOffice && !S.stationConfig.allowExam) allowedTypes.push('office');
+            if (!S.stationConfig.allowOffice && S.stationConfig.allowExam) allowedTypes.push('exam');
+            // Note: If both allowOffice and allowExam are true, we don't auto-select either because the user must choose between Diagnostician and Exam.
+            
+            // For count logic:
+            let actualAllowedTypes = [];
+            if (S.stationConfig.allowOffice) actualAllowedTypes.push('office');
+            if (S.stationConfig.allowExam) actualAllowedTypes.push('exam');
+            if (S.stationConfig.countMultimedia > 0) actualAllowedTypes.push('multimedia');
+
+            if (actualAllowedTypes.length === 1) {
+                if (actualAllowedTypes[0] === 'office') selectStationType('office', tileOff);
+                else if (actualAllowedTypes[0] === 'exam') selectStationType('exam', tileExam);
+                else if (actualAllowedTypes[0] === 'multimedia') selectStationType('multimedia', tileMultimedia);
+            } else {
+                document.getElementById('station-number-section').classList.add('hidden');
+            }
+        }
+
+        function selectStationType(type, el) {
+            S.stationType = type;
+            S.station = '';
+            S.softwareSubType = '';
+            S.selectedPillFault = '';
+            
+            // Remove active classes
+            document.querySelectorAll('#station-type-tiles > div').forEach(t => t.classList.remove('tile-active'));
+            el.classList.add('tile-active');
+
+            // Setup networks card visibility
+            const netCard = document.getElementById('network-card');
+            if (S.stationType === 'office') {
+                netCard.classList.remove('hidden');
+                if (S.stationConfig && S.stationConfig.allowExam) {
+                    const shvilTile = document.getElementById('net-shvil');
+                    selectNetwork('shvil', shvilTile);
+                    document.querySelectorAll('#network-tiles > div').forEach(tile => {
+                        tile.style.pointerEvents = 'none';
+                        if (tile.id !== 'net-shvil') tile.style.opacity = '0.4';
+                    });
+                } else {
+                    handleNetworkLock();
+                }
+            } else {
+                netCard.classList.add('hidden');
+                S.networkType = '';
+            }
+
+            // Hide/Show software sub section if needed
+            const swSub = document.getElementById('software-sub-section');
+            if (swSub) {
+                if (S.faultType === 'software' && supportsMchMerhavim()) {
+                    swSub.classList.remove('hidden');
+                } else {
+                    swSub.classList.add('hidden');
+                }
+            }
+
+            if (S.faultType === 'software') {
+                if (!supportsMchMerhavim()) {
+                    S.softwareSubType = 'general';
+                    document.getElementById('hardware-components-section').classList.add('hidden');
+                    renderGeneralPills();
+                } else {
+                    document.getElementById('hardware-components-section').classList.add('hidden');
+                    document.getElementById('general-fault-pills-section').classList.remove('hidden');
+                    renderGeneralPills();
+                }
+            }
+
+            // Toggle candidate section
+            toggleCandidateSection();
+
+            // Populate station numbers
+            renderStationNumbers();
+            
+            // If hardware fault components are active, re-render checkboxes
+            if (S.faultType === 'hardware') {
+                S.hwComps = [];
+                S.subFaults = {};
+                renderHardwareCheckboxes();
+            }
+
+            handleFormChange();
+        }
+
+        function renderStationNumbers() {
+            const sec = document.getElementById('station-number-section');
+            const grid = document.getElementById('station-buttons-grid');
+            if (!S.stationConfig || !S.stationType) {
+                sec.classList.add('hidden');
+                return;
+            }
+
+            const count = S.stationType === 'exam' ? S.stationConfig.countExam : (S.stationType === 'multimedia' ? S.stationConfig.countMultimedia : S.stationConfig.countOffice);
+            grid.innerHTML = '';
+
+            if (count <= 1) {
+                sec.classList.add('hidden');
+                S.station = 1;
+                return;
+            }
+
+            sec.classList.remove('hidden');
+            for (let i = 1; i <= count; i++) {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.className = `py-2 rounded-xl text-sm font-extrabold border transition-all ${
+                    S.station == i 
+                    ? 'border-[#3776AB] bg-[#3776AB] text-white dark:border-[#38bdf8] dark:bg-[#38bdf8] dark:text-slate-950' 
+                    : 'border-slate-200 dark:border-slate-800 hover:border-[#3776AB] dark:hover:border-[#38bdf8] hover:bg-slate-50 dark:hover:bg-slate-800'
+                }`;
+                b.textContent = i;
+                b.onclick = () => {
+                    S.station = i;
+                    renderStationNumbers();
+                    handleFormChange();
+                };
+                grid.appendChild(b);
+            }
+        }
+
+        // Fault Type Selection
+        function selectFaultType(type, el) {
+            S.faultType = type;
+            S.softwareSubType = '';
+            S.selectedPillFault = '';
+            
+            // Styles
+            document.querySelectorAll('#fault-type-tiles > div').forEach(t => t.classList.remove('tile-active'));
+            el.classList.add('tile-active');
+
+            // Hide/Show details
+            document.getElementById('hardware-components-section').classList.add('hidden');
+            document.getElementById('phone-details-section').classList.toggle('hidden', type !== 'network');
+            
+            const swSub = document.getElementById('software-sub-section');
+            if (swSub) {
+                if (type === 'software' && supportsMchMerhavim()) {
+                    swSub.classList.remove('hidden');
+                    // Reset sub-tiles
+                    document.querySelectorAll('#software-sub-tiles > div').forEach(t => t.classList.remove('tile-active'));
+                } else {
+                    swSub.classList.add('hidden');
+                }
+            }
+
+            if (type === 'hardware') {
+                document.getElementById('hardware-components-section').classList.remove('hidden');
+                
+                // Show general pills section if there are custom hardware issues
+                const customHardware = (globalMchState.predefinedFaults || []).filter(f => f.faultType === 'hardware' && f.stationType === S.stationType);
+                if (customHardware.length > 0) {
+                    document.getElementById('general-fault-pills-section').classList.remove('hidden');
+                } else {
+                    document.getElementById('general-fault-pills-section').classList.add('hidden');
+                }
+                S.hwComps = [];
+                S.subFaults = {};
+                renderHardwareCheckboxes();
+            } else if (type === 'network') {
+                document.getElementById('general-fault-pills-section').classList.remove('hidden');
+                renderGeneralPills();
+            } else if (type === 'software' && !supportsMchMerhavim()) {
+                S.softwareSubType = 'general';
+                renderGeneralPills();
+            } else {
+                document.getElementById('general-fault-pills-section').classList.add('hidden');
+            }
+            
+            toggleCandidateSection();
+            handleNetworkLock();
+            handleFormChange();
+        }
+
+        function handleNetworkLock() {
+            if (S.stationType === 'office' && S.faultType === 'network') {
+                const shvilTile = document.getElementById('net-shvil');
+                selectNetwork('shvil', shvilTile);
+                document.querySelectorAll('#network-tiles > div').forEach(tile => {
+                    tile.style.pointerEvents = 'none';
+                    if (tile.id !== 'net-shvil') tile.style.opacity = '0.4';
+                });
+            } else {
+                document.querySelectorAll('#network-tiles > div').forEach(tile => {
+                    tile.style.pointerEvents = 'auto';
+                    tile.style.opacity = '1';
+                });
+            }
+        }
+
+        function toggleCandidateSection() {
+            const isExam = S.stationType === 'exam';
+            const isHw = S.faultType === 'hardware';
+            
+            const isSwMch = S.faultType === 'software' && S.softwareSubType === 'mch';
+            
+            const cond = isExam && (isHw || isSwMch);
+            const candSec = document.getElementById('candidate-details-section');
+            if (candSec) {
+                candSec.classList.toggle('hidden', !cond);
+            }
+            
+            // Toggle MCH specific fields inside candidate details section
+            const mchContainer = document.getElementById('mch-fields-container');
+            if (mchContainer) {
+                mchContainer.classList.toggle('hidden', !isSwMch);
+            }
+        }
+
+        // Network Selection
+        function selectNetwork(netId, el) {
+            S.networkType = netId;
+            document.querySelectorAll('#network-tiles > div').forEach(t => {
+                t.classList.remove('border-[#3776AB]', 'bg-blue-50/40', 'text-[#3776AB]', 'dark:border-[#38bdf8]', 'dark:bg-sky-950/20', 'dark:text-[#38bdf8]');
+                t.classList.add('border-slate-200', 'bg-slate-50', 'text-slate-600', 'dark:border-slate-800', 'dark:bg-slate-950', 'dark:text-slate-400');
+            });
+            el.classList.remove('border-slate-200', 'bg-slate-50', 'text-slate-600', 'dark:border-slate-800', 'dark:bg-slate-950', 'dark:text-slate-400');
+            el.classList.add('border-[#3776AB]', 'bg-blue-50/40', 'text-[#3776AB]', 'dark:border-[#38bdf8]', 'dark:bg-sky-950/20', 'dark:text-[#38bdf8]');
+            handleFormChange();
+        }
+
+        // Hardware Selection Rendering
+        function renderHardwareCheckboxes() {
+            const list = S.stationType === 'exam' ? HW_EXAM : (S.stationType === 'multimedia' ? HW_MULTIMEDIA : HW_OFFICE);
+            const grid = document.getElementById('hardware-checkboxes-grid');
+            grid.innerHTML = '';
+
+            list.forEach(item => {
+                const label = document.createElement('label');
+                label.className = `flex items-center gap-3 p-3.5 border border-slate-200 dark:border-slate-800 rounded-xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-all ${
+                    S.hwComps.includes(item) ? 'bg-blue-50/10 dark:bg-blue-950/10 border-[#3776AB] dark:border-[#38bdf8]' : ''
+                }`;
+                
+                const chk = document.createElement('input');
+                chk.type = 'checkbox';
+                chk.value = item;
+                chk.checked = S.hwComps.includes(item);
+                chk.className = 'w-4.5 h-4.5 text-[#3776AB] border-slate-300 rounded focus:ring-0 cursor-pointer';
+                chk.onchange = (e) => {
+                    if (e.target.checked) {
+                        S.hwComps.push(item);
+                    } else {
+                        S.hwComps = S.hwComps.filter(x => x !== item);
+                        delete S.subFaults[item];
+                    }
+                    renderHardwareCheckboxes();
+                    renderSubFaultsPanel();
+                    handleFormChange();
+                };
+
+                const span = document.createElement('span');
+                span.className = 'text-sm font-extrabold text-slate-700 dark:text-slate-300';
+                span.textContent = item;
+
+                label.appendChild(chk);
+                label.appendChild(span);
+                grid.appendChild(label);
+            });
+            renderSubFaultsPanel();
+        }
+
+        function toggleSubFault(comp, val) {
+            if (S.subFaults[comp] === val) {
+                delete S.subFaults[comp];
+            } else {
+                S.subFaults[comp] = val;
+            }
+            renderSubFaultsPanel();
+            handleFormChange();
+        }
+
+        function renderSubFaultsPanel() {
+            const wrap = document.getElementById('sub-faults-wrapper');
+            wrap.innerHTML = '';
+
+            if (S.hwComps.length === 0) return;
+
+            S.hwComps.forEach(comp => {
+                const faults = COMMON_FAULTS[comp];
+                if (!faults || faults.length === 0) return;
+
+                const box = document.createElement('div');
+                box.className = 'p-4 bg-slate-50 dark:bg-slate-950/60 border border-slate-200/50 dark:border-slate-800 rounded-2xl';
+
+                const title = document.createElement('div');
+                title.className = 'text-xs font-extrabold text-[#3776AB] dark:text-[#38bdf8] mb-3';
+                title.textContent = `מה התקלה ב${comp}?`;
+                box.appendChild(title);
+
+                const pillsDiv = document.createElement('div');
+                pillsDiv.className = 'flex flex-wrap gap-2';
+
+                faults.forEach(f => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    const isSel = S.subFaults[comp] === f;
+                    
+                    btn.className = `px-3.5 py-2 text-xs font-bold rounded-xl transition-all border ${
+                        isSel 
+                        ? 'bg-[#3776AB] text-white border-[#3776AB] dark:bg-[#38bdf8] dark:text-slate-950 dark:border-[#38bdf8]' 
+                        : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-800 dark:hover:border-slate-700'
+                    }`;
+                    btn.textContent = f;
+                    btn.onclick = () => toggleSubFault(comp, f);
+                    pillsDiv.appendChild(btn);
+                });
+
+                box.appendChild(pillsDiv);
+                wrap.appendChild(box);
+            });
+        }
+
+        // Phone Formatter
+        function fmtPhone(el) {
+            let v = el.value.replace(/\D/g, '');
+            if (v.startsWith('05')) {
+                if (v.length > 3) v = v.slice(0,3) + '-' + v.slice(3,10);
+            } else {
+                if (v.length > 3) v = v.slice(0,3) + '-' + v.slice(3,7);
+            }
+            el.value = v;
+            S.phone = v;
+        }
+
+        // Live Validation list and Summary
+        function getValidationErrors() {
+            const errs = [];
+            
+            // Reporter
+            const pId = document.getElementById('auth-id').value.trim();
+            const pName = document.getElementById('auth-name').value.trim();
+            const pRank = document.getElementById('auth-rank').value;
+            if (!pId || pId.length < 5) errs.push('reporter-id');
+            if (!pName) errs.push('reporter-name');
+            if (!pRank) errs.push('reporter-rank');
+
+            // Location
+            if (!S.building) errs.push('location-building');
+            if (BUILDING_ROOMS[S.building] && !S.room) errs.push('location-room');
+
+            // Station
+            if (S.stationConfig) {
+                if (!S.stationType) errs.push('station-type');
+                if (!S.station) errs.push('station-number');
+            }
+
+            // Fault
+            if (!S.faultType) {
+                errs.push('fault-type');
+            } else {
+                if (S.faultType === 'hardware' && S.hwComps.length === 0) errs.push('fault-hardware-comps');
+                
+                if (S.faultType === 'software') {
+                    if (S.stationType === 'exam') {
+                        if (!S.softwareSubType) {
+                            errs.push('fault-software-subtype');
+                        } else {
+                            
+                            if (S.softwareSubType === 'mch' && !S.selectedPillFault) {
+                                errs.push('fault-mch-pill');
+                            }
+                        }
+                    }
+                }
+                
+                if (S.faultType === 'network' && !S.phone) errs.push('fault-phone');
+            }
+
+            // Network
+            if (S.stationType === 'office' && !S.networkType) errs.push('network-type');
+
+            // Candidate checks
+            const isExam = S.stationType === 'exam';
+            const isHw = S.faultType === 'hardware';
+            const isSwMch = S.faultType === 'software' && S.softwareSubType === 'mch';
+            if (isExam && (isHw || isSwMch)) {
+                const observed = document.getElementById('candidate-observed-step') ? document.getElementById('candidate-observed-step').value : '';
+                const calibrated = document.getElementById('candidate-calibrated') ? document.getElementById('candidate-calibrated').value : '';
+                const restarted = document.getElementById('candidate-restarted') ? document.getElementById('candidate-restarted').value : '';
+                if (!observed) errs.push('candidate-observed-step');
+                if (!calibrated) errs.push('candidate-calibrated');
+                if (!restarted) errs.push('candidate-restarted');
+            }
+
+            // Description
+            const desc = document.getElementById('fault-desc').value.trim();
+            if (!desc) errs.push('desc');
+
+            return errs;
+        }
+
+        function renderMchRows() {
+            const container = document.getElementById('mch-rows-container');
+            if (!container) return;
+
+            container.innerHTML = '';
+            S.mchRows.forEach((row, i) => {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'border border-slate-200 dark:border-slate-800 p-4 rounded-xl space-y-3 bg-white dark:bg-slate-900 relative';
+                rowDiv.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-semibold text-[#3776AB] dark:text-[#38bdf8]">מבחן וציון #${i + 1}</span>
+                        ${i > 0 ? `
+                        <button type="button" onclick="removeMchRow(${i})" class="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-xs font-semibold flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            <span>הסר</span>
+                        </button>
+                        ` : ''}
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                        <div>
+                            <label class="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1">שם מבחן</label>
+                            <input type="text" value="${row.examName || ''}" oninput="updateMchRowField(${i}, 'examName', this.value)" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500" placeholder="לדוגמה: לוגיקה">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1">קוד מבחן</label>
+                            <input type="text" value="${row.examCode || ''}" oninput="updateMchRowField(${i}, 'examCode', this.value)" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500" placeholder="101">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1">שם ציון</label>
+                            <input type="text" value="${row.scoreName || ''}" oninput="updateMchRowField(${i}, 'scoreName', this.value)" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500" placeholder="לדוגמה: ציון גולמי">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1">קוד ציון</label>
+                            <input type="text" value="${row.scoreCode || ''}" oninput="updateMchRowField(${i}, 'scoreCode', this.value)" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500" placeholder="99">
+                        </div>
+                    </div>
+                `;
+                container.appendChild(rowDiv);
+            });
+        }
+
+        function addMchRow() {
+            S.mchRows.push({ examName: '', examCode: '', scoreName: '', scoreCode: '' });
+            renderMchRows();
+            handleFormChange();
+        }
+
+        function removeMchRow(index) {
+            if (S.mchRows.length > 1) {
+                S.mchRows.splice(index, 1);
+                renderMchRows();
+                handleFormChange();
+            }
+        }
+
+        function updateMchRowField(index, field, value) {
+            if (S.mchRows[index]) {
+                S.mchRows[index][field] = value;
+                handleFormChange();
+            }
+        }
+
+        function handleFormChange() {
+            // Update global state object values
+            S.id = document.getElementById('auth-id').value.trim();
+            S.name = document.getElementById('auth-name').value.trim();
+            S.rank = document.getElementById('auth-rank').value;
+            S.role = document.getElementById('auth-role').value.trim();
+            S.desc = document.getElementById('fault-desc').value.trim();
+            
+            const isExam = S.stationType === 'exam';
+            const isHw = S.faultType === 'hardware';
+            const isSwHw = S.faultType === 'software' && S.softwareSubType === 'routine_hw';
+            const isSwMch = S.faultType === 'software' && S.softwareSubType === 'mch';
+            
+            if (isExam && (isHw || isSwHw || isSwMch)) {
+                S.examName = document.getElementById('exam-name') ? document.getElementById('exam-name').value.trim() : '';
+                S.examId = document.getElementById('exam-id') ? document.getElementById('exam-id').value.trim() : '';
+                S.examType = document.getElementById('exam-type') ? document.getElementById('exam-type').value : '';
+                
+                S.observedStep = document.getElementById('candidate-observed-step') ? document.getElementById('candidate-observed-step').value : '';
+                S.calibrated = document.getElementById('candidate-calibrated') ? document.getElementById('candidate-calibrated').value : '';
+                S.restarted = document.getElementById('candidate-restarted') ? document.getElementById('candidate-restarted').value : '';
+
+                if (isSwMch) {
+                    S.examNameField = S.mchRows[0] ? S.mchRows[0].examName : '';
+                    S.examCode = S.mchRows[0] ? S.mchRows[0].examCode : '';
+                    S.scoreName = S.mchRows[0] ? S.mchRows[0].scoreName : '';
+                    S.scoreCode = S.mchRows[0] ? S.mchRows[0].scoreCode : '';
+                } else {
+                    S.examNameField = '';
+                    S.examCode = '';
+                    S.scoreName = '';
+                    S.scoreCode = '';
+                }
+            } else {
+                S.examName = '';
+                S.examId = '';
+                S.examType = '';
+                S.observedStep = '';
+                S.calibrated = '';
+                S.restarted = '';
+                S.examNameField = '';
+                S.examCode = '';
+                S.scoreName = '';
+                S.scoreCode = '';
+            }
+
+            updateLiveSummary();
+            updateValidationIndicators();
+            if (typeof checkKbSuggestions === 'function') {
+                checkKbSuggestions();
+            }
+        }
+
+        function updateLiveSummary() {
+            const summ = document.getElementById('live-summary-container');
+            if (!summ) return;
+
+            let html = '';
+
+            // User
+            if (S.id || S.name) {
+                html += `
+                <div class="bg-slate-50 dark:bg-slate-950/40 p-4.5 rounded-2xl border border-slate-100 dark:border-slate-800/80">
+                    <div class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1.5">פותח הקריאה</div>
+                    <div class="font-semibold text-slate-800 dark:text-slate-200 text-sm break-words">
+                        ${S.rank || ''} ${S.name || '—'}
+                    </div>
+                    ${S.id ? `<div class="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium font-mono break-words">מ.א. ${S.id} ${S.role ? `• ${S.role}` : ''}</div>` : ''}
+                </div>`;
+            }
+
+            // Location
+            if (S.building) {
+                let locStr = BUILDING_LABELS[S.building] || S.building;
+                if (S.room) locStr += ` > חדר ${S.room}`;
+                if (S.station) {
+                    const isDiagnostician = S.stationType === 'office' && S.stationConfig && S.stationConfig.allowExam;
+                    const stName = S.stationType === 'exam' ? 'בחינה' : (S.stationType === 'multimedia' ? 'מולטי-מדיה' : (isDiagnostician ? 'מאבחנת' : 'משרדית'));
+                    locStr += ` > עמדת ${stName} #${S.station}`;
+                }
+
+                html += `
+                <div class="bg-slate-50 dark:bg-slate-950/40 p-4.5 rounded-2xl border border-slate-100 dark:border-slate-800/80">
+                    <div class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1.5">מיקום העמדה</div>
+                    <div class="font-semibold text-slate-800 dark:text-slate-200 text-sm break-words">${locStr}</div>
+                </div>`;
+            }
+
+            // Fault Details
+            if (S.faultType) {
+                let typeStr = S.faultType === 'hardware' ? 'חומרה' : (S.faultType === 'software' ? 'תוכנה' : 'טלפוניה ורשת');
+                if (S.faultType === 'telephony') typeStr = 'טלפוניה';
+                else if (S.faultType === 'service_hardware') typeStr = 'בקשת שירות חומרה';
+                else if (S.faultType === 'service_software') typeStr = 'בקשת שירות תוכנה';
+
+                let hwDetail = '';
+                
+                if (S.faultType === 'hardware' && S.hwComps.length > 0) {
+                    hwDetail = S.hwComps.map(c => S.subFaults[c] ? `${c} (${S.subFaults[c]})` : c).join(', ');
+                } else if (S.faultType === 'software') {
+                    if (S.softwareSubType === 'mch') {
+                        typeStr = 'מערכת מידע מ"ח';
+                        if (S.selectedPillFault) hwDetail = S.selectedPillFault;
+                    } else if (S.softwareSubType === 'general') {
+                        typeStr = 'תוכנה כללית';
+                        if (S.selectedPillFault) hwDetail = S.selectedPillFault;
+                    }
+                } else if (S.faultType === 'network') {
+                    typeStr = 'טלפוניה ורשת';
+                    if (S.selectedPillFault) hwDetail = S.selectedPillFault;
+                } else if (S.faultType === 'telephony' || S.faultType === 'service_hardware' || S.faultType === 'service_software') {
+                    if (S.selectedPillFault) hwDetail = S.selectedPillFault;
+                }
+
+                html += `
+                <div class="bg-slate-50 dark:bg-slate-950/40 p-4.5 rounded-2xl border border-slate-100 dark:border-slate-800/80">
+                    <div class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1.5">סוג תקלה</div>
+                    <div class="font-semibold text-slate-800 dark:text-slate-200 text-sm break-words">${typeStr}</div>
+                    ${hwDetail ? `<div class="text-xs text-[#3776AB] dark:text-[#38bdf8] mt-1 font-semibold break-words">רכיבים/תקלה: ${hwDetail}</div>` : ''}
+                    ${S.phone ? `<div class="text-xs text-slate-500 mt-1 font-mono font-semibold break-words">טלפון צבאי: ${S.phone}</div>` : ''}
+                </div>`;
+            }
+
+            // MCH details display in summary
+            if (S.faultType === 'software' && S.softwareSubType === 'mch' && S.mchRows && S.mchRows.length > 0) {
+                let mchInfo = '';
+                S.mchRows.forEach((row, idx) => {
+                    const parts = [];
+                    if (row.examName || row.examCode) {
+                        parts.push(`מבחן: ${row.examName || '—'}${row.examCode ? ` (${row.examCode})` : ''}`);
+                    }
+                    if (row.scoreName || row.scoreCode) {
+                        parts.push(`ציון: ${row.scoreName || '—'}${row.scoreCode ? ` (${row.scoreCode})` : ''}`);
+                    }
+                    if (parts.length > 0) {
+                        mchInfo += `<div class="break-words font-medium py-1 ${idx > 0 ? 'border-t border-slate-100 dark:border-slate-800/60 mt-1' : ''}">${idx + 1}. ${parts.join(' | ')}</div>`;
+                    }
+                });
+                if (mchInfo) {
+                    html += `
+                    <div class="bg-slate-50 dark:bg-slate-950/40 p-4.5 rounded-2xl border border-slate-100 dark:border-slate-800/80">
+                        <div class="text-[10px] font-semibold text-[#3776AB] dark:text-[#38bdf8] uppercase tracking-wider mb-1.5">פרטי שילוב ציונים</div>
+                        <div class="text-xs text-slate-700 dark:text-slate-300 space-y-1">${mchInfo}</div>
+                    </div>`;
+                }
+            }
+
+            // Network Type
+            if (S.stationType === 'office' && S.networkType) {
+                const NET_LABELS = { shvil: 'שביל החלב', clicknet: 'קליק-נט', dvash: 'דב"ש', civilian: 'אזרחית' };
+                html += `
+                <div class="bg-slate-50 dark:bg-slate-950/40 p-4.5 rounded-2xl border border-slate-100 dark:border-slate-800/80">
+                    <div class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1.5">רשת חיבור</div>
+                    <div class="font-semibold text-slate-800 dark:text-slate-200 text-sm break-words">${NET_LABELS[S.networkType]}</div>
+                </div>`;
+            }
+
+            // Candidate Checks
+            const isExam = S.stationType === 'exam';
+            const isHw = S.faultType === 'hardware';
+            const isSwMch = S.faultType === 'software' && S.softwareSubType === 'mch';
+            if (isExam && (isHw || isSwMch) && (S.observedStep || S.calibrated || S.restarted)) {
+                html += `
+                <div class="bg-slate-50 dark:bg-slate-950/40 p-4.5 rounded-2xl border border-slate-100 dark:border-slate-800/80">
+                    <div class="text-[10px] font-semibold text-[#3776AB] dark:text-[#38bdf8] uppercase tracking-wider mb-1.5">בדיקות מקדימות לעמדה</div>
+                    <div class="text-xs text-slate-700 dark:text-slate-300 space-y-1 font-semibold">
+                        <div>צפייה בביצוע צעד: ${S.observedStep || '—'}</div>
+                        <div>ביצוע כיול: ${S.calibrated || '—'}</div>
+                        <div>הפעלה מחדש: ${S.restarted || '—'}</div>
+                    </div>
+                </div>`;
+            }
+
+            // Fault Description
+            if (S.desc) {
+                html += `
+                <div class="bg-slate-50 dark:bg-slate-950/40 p-4.5 rounded-2xl border border-slate-100 dark:border-slate-800/80">
+                    <div class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1.5">תיאור התקלה</div>
+                    <div class="text-slate-600 dark:text-slate-300 text-sm font-medium break-words leading-relaxed whitespace-pre-line">${S.desc}</div>
+                </div>`;
+            }
+
+            if (!html) {
+                html = `<p class="text-xs text-slate-400 dark:text-slate-500 text-center py-6 leading-relaxed font-medium">הסיכום יתעדכן כאן באופן דינמי בזמן מילוי הפרטים...</p>`;
+            }
+
+            summ.innerHTML = html;
+        }
+
+        function updateValidationIndicators() {
+            const listDiv = document.getElementById('validation-checkmarks-list');
+            const submitBtn = document.getElementById('btn-submit');
+            const errors = getValidationErrors();
+
+            const checkmarks = [
+                { id: 'reporter', label: 'פרטי פותח הקריאה', isOk: !errors.includes('reporter-id') && !errors.includes('reporter-name') && !errors.includes('reporter-rank') },
+                { id: 'location', label: 'בחירת מיקום (בניין וחדר)', isOk: !errors.includes('location-building') && !errors.includes('location-room') },
+                { id: 'station', label: 'בחירת עמדה ומספרה', isOk: !errors.includes('station-type') && !errors.includes('station-number') },
+                { id: 'fault', label: 'סוג ותיאור תקלה תקין', isOk: !errors.includes('fault-type') && !errors.includes('fault-hardware-comps') && !errors.includes('fault-phone') && !errors.includes('desc') && !errors.includes('fault-software-subtype') && !errors.includes('fault-mch-pill') }
+            ];
+
+            const isExam = S.stationType === 'exam';
+            const isHw = S.faultType === 'hardware';
+            const isSwMch = S.faultType === 'software' && S.softwareSubType === 'mch';
+            if (isExam && (isHw || isSwMch)) {
+                checkmarks.push({
+                    id: 'candidate-checks',
+                    label: 'בדיקות מתמיין (צעד, כיול, הפעלה)',
+                    isOk: !errors.includes('candidate-observed-step') && !errors.includes('candidate-calibrated') && !errors.includes('candidate-restarted')
+                });
+            }
+
+            // If office, add network check
+            if (S.stationType === 'office') {
+                checkmarks.push({
+                    id: 'network',
+                    label: 'סוג רשת תקשורת',
+                    isOk: !errors.includes('network-type')
+                });
+            }
+
+            let html = '';
+            checkmarks.forEach(item => {
+                html += `
+                <div class="flex items-center gap-2.5 text-xs font-bold ${item.isOk ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500'}">
+                    <span class="flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center border ${
+                        item.isOk 
+                        ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/20' 
+                        : 'border-slate-300 dark:border-slate-800'
+                    }">
+                        ${item.isOk ? '✓' : ''}
+                    </span>
+                    <span>${item.label}</span>
+                </div>`;
+            });
+
+            listDiv.innerHTML = html;
+
+            // Enable or disable submit
+            if (errors.length === 0) {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-50');
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-50');
+            }
+        }
+
+        // Form Submission
+        async function submitForm() {
+            const errors = getValidationErrors();
+            if (errors.length > 0) {
+                alert("אנא מלא את כל שדות החובה בטופס.");
+                return;
+            }
+
+            // Save user details
+            saveUser();
+
+            const btn = document.getElementById('btn-submit');
+            btn.disabled = true;
+            btn.innerHTML = '<div class="spinner"></div>';
+
+            try {
+                // 1. Fetch current server state
+                let state = { tickets: [], team: [], inventory: [], contacts: [] };
+                try {
+                    const response = await fetch(CONFIG.API_URL + '?file=mch_state');
+                    if (response.ok) {
+                        const serverData = await response.json();
+                        if (serverData && typeof serverData === 'object') {
+                            state = { ...state, ...serverData };
+                        }
+                    }
+                } catch (e) {
+                    console.warn("Could not load data from server API, using local storage backup", e);
+                    const saved = localStorage.getItem('mch_state');
+                    if (saved) {
+                        state = JSON.parse(saved);
+                    }
+                }
+
+                if (!state.tickets) state.tickets = [];
+
+                // Create dates
+                const now = new Date();
+                const dd = String(now.getDate()).padStart(2, '0');
+                const mm = String(now.getMonth() + 1).padStart(2, '0');
+                const yyyy = now.getFullYear();
+                const todayDate = `${dd}/${mm}/${yyyy}`;
+                const todayTime = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+
+                // Generate a logical ticket ID: [BuildingCode]-[YYMMDD]-[TypeLetter][IndexToday]
+                const BUILDING_CODES = { snunit: 'SN', lavie: 'LV', ofroni: 'OF', medutz: 'MD', yerpa: 'YR', bcha21: 'BC' };
+                const bCode = BUILDING_CODES[S.building] || (S.building ? S.building.substring(0, 2).toUpperCase() : 'XX');
+                const yy = String(yyyy).substring(2);
+                const dateCode = `${yy}${mm}${dd}`;
+                
+                const TYPE_LETTERS = { hardware: 'H', software: 'S', network: 'N' };
+                const typeLetter = TYPE_LETTERS[S.faultType] || 'O';
+                
+                const todayTickets = state.tickets.filter(t => t.date && t.date.startsWith(todayDate));
+                let dailyIndex = todayTickets.length + 1;
+                let tId = '';
+                do {
+                    const indexCode = String(dailyIndex).padStart(2, '0');
+                    tId = `${bCode}-${dateCode}-${typeLetter}${indexCode}`;
+                    dailyIndex++;
+                } while (state.tickets.some(t => t.id === tId));
+                
+                let title = '';
+                let componentStr = '';
+                
+                if (S.faultType === 'hardware') {
+                    const parts = [];
+                    if (S.hwComps.length > 0) parts.push(...S.hwComps);
+                    if (S.selectedPillFault) parts.push(S.selectedPillFault);
+                    
+                    title = 'תקלת חומרה - ' + parts.join(', ');
+                    componentStr = S.hwComps.map(c => S.subFaults[c] ? `${c} (${S.subFaults[c]})` : c).join(', ');
+                    if (S.selectedPillFault) {
+                        if (componentStr) componentStr += ', ';
+                        componentStr += S.selectedPillFault;
+                    }
+                } else if (S.faultType === 'software') {
+                    if (S.softwareSubType === 'mch') {
+                        title = 'תקלת מ"ח - ' + (S.selectedPillFault || 'כללי');
+                        componentStr = 'מערכת מידע מ"ח' + (S.selectedPillFault ? ` (${S.selectedPillFault})` : '');
+                    } else if (S.softwareSubType === 'merhavim') {
+                        title = 'תקלת מרחבים - ' + (S.selectedPillFault || 'כללי');
+                        componentStr = 'מרחבים' + (S.selectedPillFault ? ` (${S.selectedPillFault})` : '');
+                    } else {
+                        title = 'תקלת תוכנה' + (S.selectedPillFault ? ` - ${S.selectedPillFault}` : '');
+                        componentStr = 'תוכנה' + (S.selectedPillFault ? ` ('${S.selectedPillFault}')` : '');
+                    }
+                } else if (S.faultType === 'service_hardware') {
+                    title = 'בקשת שירות חומרה - ' + (S.selectedPillFault || 'כללי');
+                    componentStr = 'שירות חומרה' + (S.selectedPillFault ? ` (${S.selectedPillFault})` : '');
+                } else if (S.faultType === 'service_software') {
+                    title = 'בקשת שירות תוכנה - ' + (S.selectedPillFault || 'כללי');
+                    componentStr = 'שירות תוכנה' + (S.selectedPillFault ? ` (${S.selectedPillFault})` : '');
+                } else {
+                    const techTerm = TELEPHONY_TECH_MAP[S.selectedPillFault] || S.selectedPillFault || 'כללי';
+                    title = 'תקלת תקשורת/רשת/טלפוניה' + (techTerm ? ` - ${techTerm}` : '');
+                    componentStr = 'רשת וטלפוניה' + (techTerm ? ` (${techTerm})` : '');
+                }
+
+                // Determine correct station value for dashboard compatibility
+                let stationValToSave = S.station || 1;
+                const cfg = S.stationConfig;
+                if (!cfg) {
+                    stationValToSave = 'כללי';
+                } else {
+                    if (S.stationType === 'multimedia') {
+                        stationValToSave = (cfg.countMultimedia > 1) ? S.station : 'מולטי-מדיה';
+                    } else if (S.stationType === 'office') {
+                        stationValToSave = (cfg.countOffice > 1 || (cfg.countExam > 0 && cfg.countOffice > 0)) ? S.station : 'כללי';
+                    } else if (S.stationType === 'exam') {
+                        stationValToSave = (cfg.countExam > 1 || (cfg.countExam > 0 && cfg.countOffice > 0)) ? S.station : 'מאבחנת';
+                    } else {
+                        stationValToSave = S.station || 'כללי';
+                    }
+                }
+
+                // Construct ticket object
+                const newTicket = {
+                    id: tId,
+                    title: title,
+                    building: S.building,
+                    room: S.room || '',
+                    station: stationValToSave,
+                    status: 'open',
+                    desc: S.desc,
+                    date: `${todayDate} ${todayTime}`,
+                    createdAt: `${todayDate}, ${todayTime}`,
+                    faultType: S.faultType,
+                    component: componentStr,
+                    assignedTo: '',
+                    phone: S.phone || '',
+                    examId: S.examId || '',
+                    examName: S.examName || '',
+                    examType: S.examType || '',
+                    observedStep: S.observedStep || '',
+                    calibrated: S.calibrated || '',
+                    restarted: S.restarted || '',
+                    networkType: S.networkType || '',
+                    reporterId: S.id,
+                    reporterName: `${S.rank} ${S.name}`,
+                    reporterRole: S.role || '',
+                    examNameField: S.examNameField || '',
+                    examCode: S.examCode || '',
+                    scoreName: S.scoreName || '',
+                    scoreCode: S.scoreCode || '',
+                    softwareSubType: S.softwareSubType || '',
+                    selectedPillFault: S.selectedPillFault || '',
+                    mchRows: S.mchRows || [],
+                    history: [{
+                        type: 'create',
+                        date: `${todayDate} ${todayTime}`,
+                        user: `${S.rank} ${S.name}`,
+                        resolution: `נפתח במערכת על ידי ${S.rank} ${S.name}`
+                    }],
+                    events: [{
+                        type: 'create',
+                        date: `${todayDate} ${todayTime}`,
+                        user: `${S.rank} ${S.name}`,
+                        resolution: `נפתח במערכת על ידי ${S.rank} ${S.name}`
+                    }]
+                };
+
+                state.tickets.push(newTicket);
+
+                // 2. Save state to server
+                try {
+                    await fetch(CONFIG.API_URL + '?file=mch_state', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(state)
+                    });
+                } catch (e) {
+                    console.error("Failed writing state to server API", e);
+                }
+
+                // Local backup
+                localStorage.setItem('mch_state', JSON.stringify(state));
+
+                // Switch UI to success screen
+                document.getElementById('main-grid-layout').classList.add('hidden');
+                document.getElementById('kb-smart-search-card').classList.add('hidden');
+                document.getElementById('success-screen').classList.remove('hidden');
+                document.getElementById('ticket-number-display').textContent = 'מספר הקריאה שנפתחה: #' + tId;
+
+            } catch (e) {
+                console.error("Submission failed", e);
+                alert("אירעה שגיאה בשליחת הטופס. אנא נסה שנית.");
+                btn.disabled = false;
+                btn.innerHTML = '<ui-icon name="check" class="w-5 h-5"></ui-icon><span>שלח קריאת שירות</span>';
+            }
+        }
+
+        function resetAll() {
+            location.reload();
+        }
+
+        // Browser Compatibility Check (Google Chrome only)
+
+        // Initialize Page
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadRoomsConfig();
+            renderMchRows();
+            handleFormChange();
+            
+            // Add listeners to input elements to auto-update
+            document.querySelectorAll('input, select, textarea').forEach(el => {
+                el.addEventListener('input', handleFormChange);
+                el.addEventListener('change', handleFormChange);
+            });
+
+            // Parse URL query parameters for auto-population
+            const urlParams = new URLSearchParams(window.location.search);
+            const paramBuilding = urlParams.get('building');
+            const paramRoom = urlParams.get('room');
+            const paramStation = urlParams.get('station');
+
+            if (paramBuilding) {
+                const bSelect = document.getElementById('sel-building');
+                if (bSelect) {
+                    bSelect.value = paramBuilding;
+                    onBuildingChange();
+                    
+                    if (paramRoom) {
+                        const rSelect = document.getElementById('sel-room');
+                        if (rSelect) {
+                            rSelect.value = paramRoom;
+                            onRoomChange();
+                            
+                            if (paramStation) {
+                                let targetType = 'exam';
+                                if (paramStation === 'כללי' || paramStation === 'מאבחנת' || paramStation === '0') {
+                                    targetType = 'office';
+                                } else if (paramStation === 'מולטי-מדיה') {
+                                    targetType = 'multimedia';
+                                } else if (S.stationConfig && S.stationConfig.allowOffice && !S.stationConfig.allowExam) {
+                                    targetType = 'office';
+                                }
+                                
+                                const tileEl = targetType === 'office' ? document.getElementById('tile-office') : (targetType === 'multimedia' ? document.getElementById('tile-multimedia') : document.getElementById('tile-exam'));
+                                if (tileEl && tileEl.style.display !== 'none') {
+                                    selectStationType(targetType, tileEl);
+                                }
+                                
+                                if (paramStation === 'כללי' || paramStation === 'מאבחנת' || paramStation === 'מולטי-מדיה') {
+                                    S.station = paramStation;
+                                } else {
+                                    const stNum = parseInt(paramStation);
+                                    if (!isNaN(stNum)) {
+                                        S.station = stNum;
+                                    }
+                                }
+                                renderStationNumbers();
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Load user profiles from server
+            fetch(CONFIG.API_URL + '?file=user_profiles')
+                .then(r => r.ok ? r.json() : null)
+                .then(profiles => {
+                    if (profiles && typeof profiles === 'object') {
+                        for (const [key, value] of Object.entries(profiles)) {
+                            localStorage.setItem(key, JSON.stringify(value));
+                        }
+                    }
+                })
+                .catch(e => console.error("Error loading user profiles", e));
+        });
+
+        // KB functions for smart lookup and modal display
+        function runSmartSearch() {
+            const query = document.getElementById('kb-smart-search').value.trim().toLowerCase();
+            const resultsDiv = document.getElementById('kb-smart-results');
+            if (query.length < 2) {
+                resultsDiv.classList.add('hidden');
+                resultsDiv.innerHTML = '';
+                return;
+            }
+
+            const queryWords = normHeb(query).split(' ').filter(w => w.length > 1);
+            if (queryWords.length === 0) {
+                resultsDiv.classList.add('hidden');
+                resultsDiv.innerHTML = '';
+                return;
+            }
+
+            const matches = [];
+            kbArticles.forEach(art => {
+                const titleNorm = normHeb(art.title || '').toLowerCase();
+                const descNorm = normHeb(art.description || '').toLowerCase();
+                const categoryNorm = normHeb(art.category || '').toLowerCase();
+                const subCategoryNorm = normHeb(art.subCategory || '').toLowerCase();
+                const tagsNorm = Array.isArray(art.tags) ? art.tags.map(t => normHeb(t).toLowerCase()).join(' ') : normHeb(art.tags || '').toLowerCase();
+                
+                let matchesCount = 0;
+                queryWords.forEach(word => {
+                    if (titleNorm.includes(word) || descNorm.includes(word) || categoryNorm.includes(word) || subCategoryNorm.includes(word) || tagsNorm.includes(word)) {
+                        matchesCount++;
+                    }
+                });
+                
+                if (matchesCount > 0) {
+                    let score = matchesCount * 10;
+                    queryWords.forEach(word => {
+                        if (titleNorm.includes(word)) score += 15;
+                    });
+                    matches.push({ article: art, score: score });
+                }
+            });
+
+            if (globalMchState && globalMchState.tickets) {
+                globalMchState.tickets.forEach(t => {
+                    if (t.status === 'closed' && t.resolution) {
+                        const titleNorm = normHeb(t.title || '').toLowerCase();
+                        const descNorm = normHeb(t.desc || '').toLowerCase();
+                        const resNorm = normHeb(t.resolution || '').toLowerCase();
+                        
+                        let matchesCount = 0;
+                        queryWords.forEach(word => {
+                            if (titleNorm.includes(word) || descNorm.includes(word) || resNorm.includes(word)) {
+                                matchesCount++;
+                            }
+                        });
+                        
+                        if (matchesCount > 0) {
+                            let score = matchesCount * 8;
+                            queryWords.forEach(word => {
+                                if (resNorm.includes(word)) score += 10;
+                            });
+                            const virtArt = {
+                                id: t.id,
+                                title: `פתרון מתקלה #${t.id}: ${t.title || 'תקלה כללית'}`,
+                                description: t.desc || '',
+                                category: 'תקלות עבר',
+                                subCategory: '',
+                                tags: ['מתוך דשבורד'],
+                                steps: [{ title: 'פתרון', text: t.resolution }]
+                            };
+                            matches.push({ article: virtArt, score: score });
+                        }
+                    }
+                });
+            }
+
+            matches.sort((a, b) => b.score - a.score);
+
+            if (matches.length === 0) {
+                resultsDiv.innerHTML = '<div class="text-xs font-bold text-slate-500 text-center py-2">לא נמצאו פתרונות תואמים במאגר</div>';
+            } else {
+                resultsDiv.innerHTML = matches.map(x => {
+                    const a = x.article;
+                    return `
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3 rounded-xl flex justify-between items-center gap-3 transition-colors hover:border-blue-300 dark:hover:border-blue-700 shadow-sm">
+                            <div class="min-w-0 flex-1 text-right">
+                                <div class="flex items-center gap-1.5 flex-wrap mb-1 text-[10px] font-black">
+                                    <span class="bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 px-2 py-0.5 rounded-full border border-blue-100 dark:border-blue-800/50">${a.category}</span>
+                                    ${a.subCategory ? `<span class="bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 px-1.5 py-0.5 rounded">${a.subCategory}</span>` : ''}
+                                </div>
+                                <h4 class="text-sm font-extrabold text-slate-900 dark:text-white truncate">${a.title}</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">${a.description || ''}</p>
+                            </div>
+                            <button type="button" onclick="openKbArticleModal('${a.id}')" class="px-4 py-2 bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-800/50 rounded-xl font-extrabold text-xs transition-colors flex-shrink-0">
+                                צפה בפתרון
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+            }
+            resultsDiv.classList.remove('hidden');
+        }
+
+        function openKbArticleModal(id) {
+            let art = kbArticles.find(a => a.id === id);
+            
+            if (!art) {
+                if (globalMchState && globalMchState.tickets) {
+                    const t = globalMchState.tickets.find(x => x.id === id && x.status === 'closed');
+                    if (t) {
+                        art = {
+                            title: `פתרון מתקלה #${t.id}: ${t.title || 'תקלה כללית'}`,
+                            description: t.desc || 'אין תיאור מפורט.',
+                            category: 'תקלות עבר',
+                            tags: ['מתוך דשבורד'],
+                            steps: [{ title: 'פתרון התקלה', text: t.resolution || '' }]
+                        };
+                    }
+                }
+            }
+            if (!art) return;
+
+            document.getElementById('kb-modal-title').textContent = art.title || '';
+            document.getElementById('kb-modal-desc').textContent = art.description || 'אין תיאור מפורט.';
+            
+            // Badges
+            let badgesHtml = `<span class="px-2.5 py-0.5 bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 rounded-full font-black text-[10px] border border-blue-200/50">${art.category}</span>`;
+            if (art.subCategory) {
+                badgesHtml += `<span class="px-2 py-0.5 bg-slate-100 text-slate-650 dark:bg-slate-800 dark:text-slate-400 rounded-md font-black text-[10px] border border-slate-200/50 mr-1.5">${art.subCategory}</span>`;
+            }
+            if (art.tags && art.tags.length > 0) {
+                badgesHtml += art.tags.map(t => `<span class="px-1.5 py-0.5 bg-slate-50 text-slate-500 rounded text-[9px] font-black mr-1">${t}</span>`).join('');
+            }
+            document.getElementById('kb-modal-badges').innerHTML = badgesHtml;
+
+            // Steps
+            const stepsHtml = (art.steps || []).map((s, i) => {
+                const stepTitle = s.title || (typeof s === 'string' ? `שלב ${i + 1}` : '');
+                const stepText = s.text || (typeof s === 'string' ? s : '');
+                const stepImg = s.image || '';
+                const stepImgDesc = s.imageDesc || '';
+                
+                const stepImgAlign = s.imageAlign || 'right';
+                const stepImgSize = s.imageSize || 'medium';
+                
+                let imgWidthClass = 'w-40 h-24'; // medium (default for this context)
+                if (stepImgSize === 'small') imgWidthClass = 'w-24 h-16';
+                if (stepImgSize === 'large') imgWidthClass = 'w-full h-auto';
+                
+                let alignClass = '';
+                if (stepImgAlign === 'center') alignClass = 'mx-auto flex flex-col items-center text-center';
+                else if (stepImgAlign === 'left') alignClass = 'mr-auto flex flex-col items-start';
+                else alignClass = 'ml-auto flex flex-col items-start'; // right
+
+                return `
+                    <div class="p-3 bg-slate-50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-850 rounded-2xl space-y-2 w-full">
+                        <div class="flex gap-2 items-center">
+                            <span class="w-4 h-4 flex-shrink-0 rounded-full bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400 flex items-center justify-center font-extrabold text-[9px]">${i + 1}</span>
+                            <h5 class="text-xs font-extrabold text-slate-800 dark:text-slate-200">${stepTitle}</h5>
+                        </div>
+                        ${stepText ? `<p class="text-xs font-medium text-slate-500 dark:text-slate-400 pr-6 leading-relaxed whitespace-pre-line">${stepText}</p>` : ''}
+                        ${stepImg ? `
+                            <div class="pr-6 pt-1 ${stepImgSize === 'large' ? 'w-full' : ''}">
+                                <div class="${alignClass}">
+                                    <div class="relative ${imgWidthClass} rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm cursor-pointer" onclick="openImageLightbox('${stepImg}')">
+                                        <img src="${stepImg}" class="w-full h-full object-contain bg-white dark:bg-slate-900">
+                                    </div>
+                                    ${stepImgDesc ? `<p class="text-[10px] text-slate-500 mt-1 font-bold">${stepImgDesc}</p>` : ''}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+            document.getElementById('kb-modal-steps').innerHTML = stepsHtml || '<div class="text-xs font-bold text-gray-400">לא הוגדרו שלבים.</div>';
+
+            // Contacts
+            const contactSection = document.getElementById('kb-modal-contacts-section');
+            const contactsDiv = document.getElementById('kb-modal-contacts');
+            if (art.contacts && art.contacts.length > 0) {
+                contactsDiv.innerHTML = art.contacts.map(c => `
+                    <div class="bg-slate-50 dark:bg-slate-950/40 p-2 rounded-xl border border-slate-150 dark:border-slate-800 flex items-center justify-between text-xs gap-3">
+                        <span class="font-extrabold text-slate-700 dark:text-slate-300">${c.name}</span>
+                        <span class="font-mono text-[10px] text-gray-500">${c.phone}</span>
+                    </div>
+                `).join('');
+                contactSection.classList.remove('hidden');
+            } else {
+                contactsDiv.innerHTML = '';
+                contactSection.classList.add('hidden');
+            }
+
+            document.getElementById('kb-article-modal').classList.remove('hidden');
+        }
+
+        function closeKbArticleModal() {
+            document.getElementById('kb-article-modal').classList.add('hidden');
+        }
+
+        function openImageLightbox(src) {
+            const overlay = document.createElement('div');
+            overlay.className = "fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center cursor-pointer p-4 transition-all duration-300";
+            overlay.innerHTML = `
+                <div class="relative max-w-4xl max-h-[90vh]">
+                    <img src="${src}" class="max-w-full max-h-[90vh] rounded-2xl object-contain border border-white/10 shadow-2xl">
+                    <button type="button" class="absolute top-4 right-4 p-2 bg-black/60 text-white rounded-full hover:bg-black/80 transition-all font-bold text-lg">&times;</button>
+                </div>
+            `;
+            overlay.onclick = () => overlay.remove();
+            document.body.appendChild(overlay);
+        }
+
+        function checkKbSuggestions() {
+            const container = document.getElementById('kb-auto-suggestions-container');
+            if (!container) return;
+
+            // Map UI categories to Hebrew
+            const catMap = {
+                'hardware': 'חומרה',
+                'software': 'תוכנה',
+                'network': 'רשת ותקשורת',
+                'telephony': 'טלפוניה',
+                'service_hardware': 'שירות חומרה',
+                'service_software': 'שירות תוכנה'
+            };
+            const currentCat = catMap[S.faultType] || '';
+            
+            // Map subcategories
+            let currentSubCat = '';
+            if (S.faultType === 'hardware' && S.hwComps && S.hwComps.length > 0) {
+                const hwCompMap = {
+                    'monitor': 'מסך',
+                    'keyboard': 'מקלדת',
+                    'mouse': 'עכבר',
+                    'printer': 'מדפסת',
+                    'pc': 'מחשב',
+                    'simulator': 'סימולטור'
+                };
+                currentSubCat = hwCompMap[S.hwComps[0]] || '';
+            } else if (S.faultType === 'software') {
+                if (S.softwareSubType === 'mch') currentSubCat = 'מ״ח';
+                else if (S.softwareSubType === 'merhavim') currentSubCat = 'מרחבים';
+            } else if (S.faultType === 'network' && S.networkType) {
+                const netMap = { 'shvil': 'שביל החלב', 'clicknet': 'קליק-נט', 'dvash': 'דב״ש', 'internet': 'אזרחית' };
+                currentSubCat = netMap[S.networkType] || '';
+            }
+
+            const descWords = normHeb(S.desc || '').toLowerCase().split(' ').filter(w => w.length > 1);
+            
+            if (!currentCat && descWords.length === 0) {
+                container.innerHTML = '';
+                container.classList.add('hidden');
+                return;
+            }
+
+            // Find matching articles
+            const matches = kbArticles.filter(art => {
+                if (currentCat && art.category !== currentCat) return false;
+                if (currentSubCat && art.subCategory && art.subCategory !== currentSubCat) return false;
+
+                if (descWords.length > 0) {
+                    const titleNorm = normHeb(art.title || '').toLowerCase();
+                    const descNorm = normHeb(art.description || '').toLowerCase();
+                    const tagsNorm = Array.isArray(art.tags) ? art.tags.map(t => normHeb(t).toLowerCase()).join(' ') : normHeb(art.tags || '').toLowerCase();
+                    return descWords.some(word => titleNorm.includes(word) || descNorm.includes(word) || tagsNorm.includes(word));
+                }
+                return true;
+            });
+
+            if (globalMchState && globalMchState.tickets) {
+                const ticketMap = {
+                    'hardware': 'חומרה',
+                    'software': 'תוכנה',
+                    'network': 'תקשורת',
+                    'service_hardware': 'חומרה',
+                    'service_software': 'תוכנה'
+                };
+                const tcat = ticketMap[S.faultType] || '';
+                globalMchState.tickets.forEach(t => {
+                    if (t.status === 'closed' && t.resolution) {
+                        if (tcat && t.type !== tcat && t.type !== S.faultType) return;
+                        
+                        let isMatch = false;
+                        if (descWords.length > 0) {
+                            const titleNorm = normHeb(t.title || '').toLowerCase();
+                            const descNorm = normHeb(t.desc || '').toLowerCase();
+                            const resNorm = normHeb(t.resolution || '').toLowerCase();
+                            isMatch = descWords.some(word => titleNorm.includes(word) || descNorm.includes(word) || resNorm.includes(word));
+                        } else {
+                            isMatch = true;
+                        }
+
+                        if (isMatch) {
+                            matches.push({
+                                id: t.id,
+                                title: `פתרון מתקלה #${t.id}: ${t.title || 'תקלה כללית'}`,
+                                category: 'תקלות עבר',
+                                subCategory: t.type || ''
+                            });
+                        }
+                    }
+                });
+            }
+
+            if (matches.length > 0) {
+                container.innerHTML = `
+                    <div class="mt-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-900/40 dark:to-slate-800/40 border border-blue-200 dark:border-slate-800 p-4 rounded-2xl text-right animate-fade-in">
+                        <div class="flex items-center gap-1.5 mb-2 text-blue-900 dark:text-blue-200 font-extrabold text-xs">
+                            <ui-icon name="bulb" class="w-4 h-4 text-amber-500 animate-pulse"></ui-icon>
+                            <span>נמצאו פתרונות מהירים רלוונטיים במוצר / תקלה זו:</span>
+                        </div>
+                        <div class="space-y-2">
+                            ${matches.slice(0, 3).map(a => `
+                                <div class="flex justify-between items-center bg-white dark:bg-slate-900/60 p-2.5 rounded-xl border border-slate-150 dark:border-slate-850 gap-3">
+                                    <div class="min-w-0">
+                                        <div class="text-[10px] font-black text-slate-400 mb-0.5">${a.category} ${a.subCategory ? ` &rsaquo; ${a.subCategory}` : ''}</div>
+                                        <div class="text-xs font-black text-slate-850 dark:text-slate-100 truncate">${a.title}</div>
+                                    </div>
+                                    <button type="button" onclick="openKbArticleModal('${a.id}')" class="px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-950 dark:text-blue-300 rounded-lg text-[10px] font-black flex-shrink-0 transition-colors">
+                                        צפה בפתרון
+                                    </button>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                container.classList.remove('hidden');
+            } else {
+                container.innerHTML = '';
+                container.classList.add('hidden');
+            }
+        }
+        // Auto-refresh data when focusing on search inputs to ensure KB and closed tickets are up to date
+        function refreshKbData() {
+            fetch(CONFIG.API_URL + '?file=sync_store&key=kb_articles&_t=' + Date.now())
+                .then(r => r.ok ? r.json() : null)
+                .then(data => {
+                    if (data && data.value) {
+                        kbArticles = JSON.parse(data.value);
+                    }
+                }).catch(e => console.error("Error refreshing KB data", e));
+            
+            fetch(CONFIG.API_URL + '?file=mch_state&_t=' + Date.now())
+                .then(r => r.ok ? r.json() : null)
+                .then(data => {
+                    if (data) {
+                        globalMchState = data;
+                    }
+                }).catch(e => console.error("Error refreshing MCH state", e));
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const kbSearch = document.getElementById('kb-smart-search');
+            if (kbSearch) {
+                kbSearch.addEventListener('focus', refreshKbData);
+            }
+            const faultDesc = document.getElementById('fault-desc');
+            if (faultDesc) {
+                faultDesc.addEventListener('focus', refreshKbData);
+            }
+        });
+    </script>
+    <!-- KB Article Details Modal -->
+    <div id="kb-article-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-2xl shadow-2xl p-6 overflow-y-auto max-h-[90vh] text-right">
+            <div class="flex justify-between items-start border-b border-slate-100 dark:border-slate-800 pb-3 mb-4">
+                <button onclick="closeKbArticleModal()" class="text-slate-400 hover:text-slate-650 text-2xl font-bold leading-none p-1 ml-auto mr-0">&times;</button>
+                <div class="flex-1 mr-4">
+                    <div class="flex items-center gap-1.5 flex-wrap mb-1 text-[10px] font-black text-slate-500" id="kb-modal-badges"></div>
+                    <h3 class="text-lg font-extrabold text-slate-900 dark:text-white" id="kb-modal-title"></h3>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <h4 class="text-xs font-black text-gray-400 mb-1">תיאור התקלה:</h4>
+                    <p class="text-xs font-bold text-slate-700 dark:text-slate-350 whitespace-pre-line leading-relaxed" id="kb-modal-desc"></p>
+                </div>
+                <div class="space-y-2 border-t border-slate-100 dark:border-slate-800 pt-3">
+                    <h4 class="text-xs font-black text-gray-400 mb-1">שלבי פתרון מומלצים:</h4>
+                    <div class="space-y-2" id="kb-modal-steps"></div>
+                </div>
+                <div id="kb-modal-contacts-section" class="space-y-2 border-t border-slate-100 dark:border-slate-800 pt-3 hidden">
+                    <h4 class="text-xs font-black text-gray-400 mb-1">אנשי קשר רלוונטיים:</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" id="kb-modal-contacts"></div>
+                </div>
+            </div>
+            <div class="mt-6 flex justify-end">
+                <button onclick="closeKbArticleModal()" class="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-gray-200 rounded-xl font-extrabold text-xs transition-colors">
+                    סגור
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

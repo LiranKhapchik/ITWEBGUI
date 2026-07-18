@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -iv \"^\\\\s*$\")",
+      "Bash(php --version)",
+      "Bash(python -m http.server 8899)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"http://localhost:8899/\")",
+      "Bash(pkill -f \"http.server 8899\")",
+      "Bash(python -m http.server 8899 --bind 127.0.0.1)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"http://127.0.0.1:8899/\")",
+      "Bash(kill %1)",
+      "Bash(grep -n \"tablesHTML\\\\|bodyContent\\\\|bodyHTML\\\\|reportBody\\\\|let tablesHTML\\\\|contentBody\\\\|customBody\\\\|return reportHeader\\\\|return \\\\`\\\\|dsMode\\\\|invMode\\\\|inventoryViewMode\" \"דשבורד.html\")",
+      "Bash(grep -n '\\\\${reportContentHTML}\\\\|reportContentHTML}' \"דשבורד.html\")",
+      "Bash(grep -n '\\\\${subtitle}\\\\|\\\\${repDate}' \"דשבורד.html\")"
+    ]
+  }
+}
