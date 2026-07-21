@@ -827,214 +827,126 @@
                     </div>
                     
                     <div class="flex-1 flex flex-col gap-4 min-h-0 overflow-hidden">
-                        <!-- STEP 1: גלריית סוגי הדוחות (בחירה לפי קטגוריות עם ציורים) -->
-                        <div id="gen-step-gallery" class="w-full flex-1 flex flex-col gap-3 bg-white border border-gray-200 rounded-2xl p-5 shadow-sm min-h-0 overflow-y-auto custom-scrollbar">
-                            <div>
-                                <label class="block text-base font-black mb-3 text-gray-800">בחר סוג דו"ח להנפקה <span class="text-xs font-bold text-slate-400">(בחירה תפתח חלון קצר להזנת נתונים)</span></label>
-                                <select id="rep-type-select" onchange="selectReportType(this.value)" class="hidden">
-                                    <optgroup label="דוחות שירות ותקשורת">
-                                        <option value="candidate">דו"ח מתמיין</option>
-                                        <option value="daily">דו"ח ריכוז תקלות יומי</option>
-                                        <option value="daily_summary">דו"ח סיכום יום</option>
-                                    </optgroup>
-                                    <optgroup label="דוחות מלאי ולוגיסטיקה">
-                                        <option value="inventory">דו"ח מלאי</option>
-                                        <option value="disqualified">חומרה פסולה</option>
-                                        <option value="loans">דו"ח השאלות</option>
-                                    </optgroup>
-                                    <optgroup label="דוחות סטטיסטיקה וביצועים">
-                                        <option value="stats">דו"ח סטטיסטיקות ומדדים</option>
-                                    </optgroup>
-                                </select>
+                        <!-- STEP 1: גלריית סוגי הדוחות (מוסתרת כעת, משמשת רק כ-DOM Container לשדות הקלט) -->
+                        <div id="gen-step-gallery" class="hidden">
+                            <select id="rep-type-select" onchange="selectReportType(this.value)" class="hidden">
+                                <optgroup label="דוחות שירות ותקשורת">
+                                    <option value="candidate">דו"ח מתמיין</option>
+                                    <option value="daily">דו"ח ריכוז תקלות יומי</option>
+                                    <option value="daily_summary">דו"ח סיכום יום</option>
+                                </optgroup>
+                                <optgroup label="דוחות מלאי ולוגיסטיקה">
+                                    <option value="inventory">דו"ח מלאי</option>
+                                    <option value="disqualified">חומרה פסולה</option>
+                                    <option value="loans">דו"ח השאלות</option>
+                                </optgroup>
+                                <optgroup label="דוחות סטטיסטיקה וביצועים">
+                                    <option value="stats">דו"ח סטטיסטיקות ומדדים</option>
+                                </optgroup>
+                            </select>
 
-                                <div id="rep-type-cards" class="space-y-5">
-                                    <div>
-                                        <h5 class="text-xs font-bold text-slate-400 mb-2 border-b border-slate-100 pb-1 flex items-center gap-1 dark:border-slate-800">
-                                            <ui-icon name="ticket" class="w-3.5 h-3.5"></ui-icon>
-                                            <span>דוחות שירות ותקשורת</span>
-                                        </h5>
-                                        <div class="grid grid-cols-2 gap-3">
-                                            <div onclick="selectReportType('candidate')" id="rep-card-candidate" class="cursor-pointer border-2 border-primary bg-primary/5 rounded-xl p-2 transition-all flex items-center gap-1.5 hover:shadow-md h-auto min-h-[4rem]">
-                                                <span class="p-1.5 bg-white rounded-lg shadow-sm text-primary flex-shrink-0"><ui-icon name="user" class="w-4 h-4"></ui-icon></span>
-                                                <div class="flex-1 min-w-0 flex flex-col justify-center gap-0.5">
-                                                    <div class="font-extrabold text-xs text-gray-900 leading-tight">דו"ח מתמיין</div>
-                                                    <div class="text-[9px] text-gray-400 font-bold leading-tight">לפי מתמיין ספציפי</div>
-                                                </div>
-                                                <span class="w-2 h-2 rounded-full bg-primary flex-shrink-0" id="rep-dot-candidate"></span>
-                                            </div>
-                                            <div onclick="selectReportType('daily')" id="rep-card-daily" class="cursor-pointer border-2 border-gray-200 rounded-xl p-2 transition-all flex items-center gap-1.5 hover:border-primary/50 hover:shadow-md h-auto min-h-[4rem]">
-                                                <span class="p-1.5 bg-white rounded-lg shadow-sm text-primary flex-shrink-0"><ui-icon name="board" class="w-4 h-4"></ui-icon></span>
-                                                <div class="flex-1 min-w-0 flex flex-col justify-center gap-0.5">
-                                                    <div class="font-extrabold text-xs text-gray-900 leading-tight">דו"ח ריכוז תקלות יומי</div>
-                                                    <div class="text-[9px] text-gray-400 font-bold leading-tight">תקלות ביום מסוים</div>
-                                                </div>
-                                                <span class="w-2 h-2 rounded-full bg-transparent flex-shrink-0" id="rep-dot-daily"></span>
-                                            </div>
-                                            <div onclick="selectReportType('daily_summary')" id="rep-card-daily_summary" class="cursor-pointer border-2 border-gray-200 rounded-xl p-2 transition-all flex items-center gap-1.5 hover:border-primary/50 hover:shadow-md h-auto min-h-[4rem]">
-                                                <span class="p-1.5 bg-white rounded-lg shadow-sm text-primary flex-shrink-0"><ui-icon name="file-text" class="w-4 h-4"></ui-icon></span>
-                                                <div class="flex-1 min-w-0 flex flex-col justify-center gap-0.5">
-                                                    <div class="font-extrabold text-xs text-gray-900 leading-tight">דו"ח סיכום יום</div>
-                                                    <div class="text-[9px] text-gray-400 font-bold leading-tight">תורנויות, חריגים ומדדים</div>
-                                                </div>
-                                                <span class="w-2 h-2 rounded-full bg-transparent flex-shrink-0" id="rep-dot-daily_summary"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div>
-                                        <h5 class="text-xs font-bold text-slate-400 mb-2 border-b border-slate-100 pb-1 flex items-center gap-1 dark:border-slate-800">
-                                            <ui-icon name="database" class="w-3.5 h-3.5"></ui-icon>
-                                            <span>דוחות מלאי ולוגיסטיקה</span>
-                                        </h5>
-                                        <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
-                                            <div onclick="selectReportType('inventory')" id="rep-card-inventory" class="cursor-pointer border-2 border-gray-200 rounded-xl p-2 transition-all flex items-center gap-1.5 hover:border-primary/50 hover:shadow-md h-auto min-h-[4rem]">
-                                                <span class="p-1.5 bg-white rounded-lg shadow-sm text-primary flex-shrink-0"><ui-icon name="database" class="w-4 h-4"></ui-icon></span>
-                                                <div class="flex-1 min-w-0 flex flex-col justify-center gap-0.5">
-                                                    <div class="font-extrabold text-xs text-gray-900 leading-tight">דו"ח מלאי</div>
-                                                    <div class="text-[9px] text-gray-400 font-bold leading-tight">תמונת מצב מחסן</div>
-                                                </div>
-                                                <span class="w-2 h-2 rounded-full bg-transparent flex-shrink-0" id="rep-dot-inventory"></span>
-                                            </div>
-                                            <div onclick="selectReportType('disqualified')" id="rep-card-disqualified" class="cursor-pointer border-2 border-gray-200 rounded-xl p-2 transition-all flex items-center gap-1.5 hover:border-primary/50 hover:shadow-md h-auto min-h-[4rem]">
-                                                <span class="p-1.5 bg-white rounded-lg shadow-sm text-primary flex-shrink-0"><ui-icon name="equipment" class="w-4 h-4"></ui-icon></span>
-                                                <div class="flex-1 min-w-0 flex flex-col justify-center gap-0.5">
-                                                    <div class="font-extrabold text-xs text-gray-900 leading-tight">חומרה פסולה</div>
-                                                    <div class="text-[9px] text-gray-400 font-bold leading-tight">בלאי וציוד שנפסל</div>
-                                                </div>
-                                                <span class="w-2 h-2 rounded-full bg-transparent flex-shrink-0" id="rep-dot-disqualified"></span>
-                                            </div>
-                                            <div onclick="selectReportType('loans')" id="rep-card-loans" class="cursor-pointer border-2 border-gray-200 rounded-xl p-2 transition-all flex items-center gap-1.5 hover:border-primary/50 hover:shadow-md h-auto min-h-[4rem]">
-                                                <span class="p-1.5 bg-white rounded-lg shadow-sm text-primary flex-shrink-0"><ui-icon name="users" class="w-4 h-4"></ui-icon></span>
-                                                <div class="flex-1 min-w-0 flex flex-col justify-center gap-0.5">
-                                                    <div class="font-extrabold text-xs text-gray-900 leading-tight">דו"ח השאלות</div>
-                                                    <div class="text-[9px] text-gray-400 font-bold leading-tight">ציוד מושאל ואנשים</div>
-                                                </div>
-                                                <span class="w-2 h-2 rounded-full bg-transparent flex-shrink-0" id="rep-dot-loans"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="mt-4">
-                                        <h5 class="text-xs font-bold text-slate-400 mb-2 border-b border-slate-100 pb-1 flex items-center gap-1 dark:border-slate-800">
-                                            <ui-icon name="board" class="w-3.5 h-3.5"></ui-icon>
-                                            <span>דוחות סטטיסטיקה וביצועים</span>
-                                        </h5>
-                                        <div class="grid grid-cols-2 lg:grid-cols-3 gap-3">
-                                            <div onclick="selectReportType('stats')" id="rep-card-stats" class="cursor-pointer border-2 border-gray-200 rounded-xl p-2 transition-all flex items-center gap-1.5 hover:border-primary/50 hover:shadow-md h-auto min-h-[4rem]">
-                                                <span class="p-1.5 bg-white rounded-lg shadow-sm text-primary flex-shrink-0"><ui-icon name="board" class="w-4 h-4"></ui-icon></span>
-                                                <div class="flex-1 min-w-0 flex flex-col justify-center gap-0.5">
-                                                    <div class="font-extrabold text-xs text-gray-900 leading-tight">דו"ח סטטיסטיקות ומדדים</div>
-                                                    <div class="text-[9px] text-gray-400 font-bold leading-tight">ניתוח פעילות ומדדי ביצוע</div>
-                                                </div>
-                                                <span class="w-2 h-2 rounded-full bg-transparent flex-shrink-0" id="rep-dot-stats"></span>
-                                            </div>
-                                        </div>
-                                    </div>
+                            <div id="gen-form-grid" class="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
+                                <label class="col-span-full hidden text-sm font-black text-gray-700 -mb-1 dark:text-slate-300">פרטי המנפיק ושדות הדו"ח</label>
+                                <div>
+                                    <label class="block text-xs font-bold mb-1.5 text-gray-600 dark:text-slate-400">שם מנפיק הדו"ח</label>
+                                    <input type="text" id="tab-rep-issuer-name" placeholder="הזן שם מלא" oninput="updateReportPreview();" class="w-full p-2.5 border border-gray-200 dark:border-slate-700 rounded-xl font-bold bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none" value="">
                                 </div>
-                            </div>
-                            
-                            <div id="gen-form-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 items-end">
-                                <label class="col-span-full block text-sm font-black text-gray-700 -mb-1">פרטי המנפיק ושדות הדו"ח</label>
-                                    <div>
-                                        <label class="block text-xs font-bold mb-1.5 text-gray-600">שם מנפיק הדו"ח</label>
-                                        <input type="text" id="tab-rep-issuer-name" placeholder="הזן שם מלא" oninput="updateReportPreview();" class="w-full p-2.5 border border-gray-200 rounded-xl font-bold bg-slate-50 focus:ring-1 focus:ring-primary focus:border-primary outline-none" value="">
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-bold mb-1.5 text-gray-600">דרגה</label>
-                                        <select id="tab-rep-issuer-rank" onchange="onIssuerRankChange(); updateReportPreview();" class="w-full p-2.5 border border-gray-200 rounded-xl font-bold bg-slate-50 focus:ring-1 focus:ring-primary focus:border-primary outline-none">
-                                            <option value="טוראי">טוראי</option>
-                                            <option value='רב"ט'>רב"ט</option>
-                                            <option value='סמל'>סמל</option>
-                                            <option value='סמ"ר'>סמ"ר</option>
-                                            <option value='רס"ל'>רס"ל</option>
-                                            <option value='רס"ר'>רס"ר</option>
-                                            <option value='רס"ם'>רס"ם</option>
-                                            <option value='רס"ב'>רס"ב</option>
-                                            <option value='רנ"ג'>רנ"ג</option>
-                                            <option value='סג"ם'>סג"ם</option>
-                                            <option value="סגן">סגן</option>
-                                            <option value='סרן'>סרן</option>
-                                            <option value='רס"ן'>רס"ן</option>
-                                            <option value='סא"ל'>סא"ל</option>
-                                            <option value='אל"ם'>אל"ם</option>
-                                            <option value="אעצ">אע"צ</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-bold mb-1.5 text-gray-600">מספר אישי / ת.ז</label>
-                                        <input type="text" id="tab-rep-issuer-personal-id" placeholder="מ.א. מנפיק" oninput="this.value = this.value.replace(/[^\d]/g, '').substring(0, 9); checkReportIssuer(); updateReportPreview();" class="w-full p-2.5 border border-gray-200 rounded-xl font-bold bg-slate-50 focus:ring-1 focus:ring-primary focus:border-primary outline-none text-left" dir="ltr">
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-bold mb-1.5 text-gray-600">תפקיד המנפיק</label>
-                                        <input type="text" id="tab-rep-issuer-role" list="role-suggestions" placeholder="הזן תפקיד" oninput="updateReportPreview();" class="w-full p-2.5 border border-gray-200 rounded-xl font-bold bg-slate-50 focus:ring-1 focus:ring-primary focus:border-primary outline-none">
-                                    </div>
-                                    <div id="tab-rep-issuer-kave-wrapper" class="col-span-2 hidden mt-1">
-                                        <label class="inline-flex items-center gap-2 cursor-pointer select-none">
-                                            <input type="checkbox" id="tab-rep-issuer-is-kave" onchange="updateReportPreview();" class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
-                                            <span class="text-xs font-bold text-gray-600">שירות קבע?</span>
-                                        </label>
-                                    </div>
-                                    <div class="col-span-2">
-                                        <label class="block text-xs font-bold mb-1.5 text-gray-600">לכבוד</label>
-                                        <input type="text" id="tab-rep-recipient" placeholder="רשימת תפוצה - סגל מיון" oninput="updateReportPreview();" class="w-full p-2.5 border border-gray-200 rounded-xl font-bold bg-slate-50 focus:ring-1 focus:ring-primary focus:border-primary outline-none" value="רשימת תפוצה - סגל מיון">
-                                    </div>
-
-                                <div id="tab-rep-phone-field">
-                                    <label class="block text-xs font-bold mb-1.5 text-gray-600">מספר טלפון לסימוכין (ספיר)</label>
-                                    <input type="text" id="tab-rep-phone" placeholder="518-XXXX" oninput="this.value=formatMilitaryPhone(this.value); updateReportPreview();" class="w-full p-2.5 border border-gray-200 rounded-xl font-bold font-mono bg-slate-50 focus:ring-1 focus:ring-primary focus:border-primary outline-none text-left" dir="ltr" value="518-XXXX">
+                                <div>
+                                    <label class="block text-xs font-bold mb-1.5 text-gray-600 dark:text-slate-400">דרגה</label>
+                                    <select id="tab-rep-issuer-rank" onchange="onIssuerRankChange(); updateReportPreview();" class="w-full p-2.5 border border-gray-200 dark:border-slate-700 rounded-xl font-bold bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none">
+                                        <option value="טוראי">טוראי</option>
+                                        <option value='רב"ט'>רב"ט</option>
+                                        <option value='סמל'>סמל</option>
+                                        <option value='סמ"ר'>סמ"ר</option>
+                                        <option value='רס"ל'>רס"ל</option>
+                                        <option value='רס"ר'>רס"ר</option>
+                                        <option value='רס"ם'>רס"ם</option>
+                                        <option value='רס"ב'>רס"ב</option>
+                                        <option value='רנ"ג'>רנ"ג</option>
+                                        <option value='סג"ם'>סג"ם</option>
+                                        <option value="סגן">סגן</option>
+                                        <option value='סרן'>סרן</option>
+                                        <option value='רס"ן'>רס"ן</option>
+                                        <option value='סא"ל'>סא"ל</option>
+                                        <option value='אל"ם'>אל"ם</option>
+                                        <option value="אעצ">אע"צ</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold mb-1.5 text-gray-600 dark:text-slate-400">מספר אישי / ת.ז</label>
+                                    <input type="text" id="tab-rep-issuer-personal-id" placeholder="מ.א. מנפיק" oninput="this.value = this.value.replace(/[^\d]/g, '').substring(0, 9); checkReportIssuer(); updateReportPreview();" class="w-full p-2.5 border border-gray-200 dark:border-slate-700 rounded-xl font-bold bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none text-left" dir="ltr">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold mb-1.5 text-gray-600 dark:text-slate-400">תפקיד המנפיק</label>
+                                    <input type="text" id="tab-rep-issuer-role" list="role-suggestions" placeholder="הזן תפקיד" oninput="updateReportPreview();" class="w-full p-2.5 border border-gray-200 dark:border-slate-700 rounded-xl font-bold bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none">
+                                </div>
+                                <div id="tab-rep-issuer-kave-wrapper" class="col-span-2 hidden mt-1">
+                                    <label class="inline-flex items-center gap-2 cursor-pointer select-none">
+                                        <input type="checkbox" id="tab-rep-issuer-is-kave" onchange="updateReportPreview();" class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
+                                        <span class="text-xs font-bold text-gray-600 dark:text-slate-400">שירות קבע?</span>
+                                    </label>
+                                </div>
+                                <div class="col-span-full">
+                                    <label class="block text-xs font-bold mb-1.5 text-gray-600 dark:text-slate-400">לכבוד</label>
+                                    <input type="text" id="tab-rep-recipient" placeholder="רשימת תפוצה - סגל מיון" oninput="updateReportPreview();" class="w-full p-2.5 border border-gray-200 dark:border-slate-700 rounded-xl font-bold bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none" value="רשימת תפוצה - סגל מיון">
                                 </div>
 
-                                <div id="tab-rep-candidate-id-field">
-                                    <label class="block text-xs font-bold mb-1.5 text-gray-600">תעודת זהות של המתמיין (9 ספרות)</label>
-                                    <input type="text" id="tab-rep-candidate-id" placeholder="הזן ת.ז מתמיין" oninput="this.value=this.value.replace(/[^\d]/g,'').substring(0,9); updateReportPreview();" class="w-full p-2.5 border border-gray-200 rounded-xl font-bold bg-slate-50 focus:ring-1 focus:ring-primary focus:border-primary outline-none text-left" dir="ltr">
+                                <div id="tab-rep-phone-field" class="w-full">
+                                    <label class="block text-xs font-bold mb-1.5 text-gray-600 dark:text-slate-400">מספר טלפון לסימוכין (ספיר)</label>
+                                    <input type="text" id="tab-rep-phone" placeholder="518-XXXX" oninput="this.value=formatMilitaryPhone(this.value); updateReportPreview();" class="w-full p-2.5 border border-gray-200 dark:border-slate-700 rounded-xl font-bold font-mono bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none text-left" dir="ltr" value="518-XXXX">
                                 </div>
 
-                                <div id="tab-rep-daily-field" class="hidden">
-                                    <label class="block text-xs font-bold mb-1.5 text-gray-600">בחר תאריך</label>
-                                    <input type="date" id="tab-rep-daily-date" onchange="updateReportPreview();" class="w-full p-2.5 border border-gray-200 rounded-xl font-bold bg-slate-50 focus:ring-1 focus:ring-primary focus:border-primary outline-none text-left" dir="ltr">
+                                <div id="tab-rep-candidate-id-field" class="w-full">
+                                    <label class="block text-xs font-bold mb-1.5 text-gray-600 dark:text-slate-400">תעודת זהות של המתמיין (9 ספרות)</label>
+                                    <input type="text" id="tab-rep-candidate-id" placeholder="הזן ת.ז מתמיין" oninput="this.value=this.value.replace(/[^\d]/g,'').substring(0,9); updateReportPreview();" class="w-full p-2.5 border border-gray-200 dark:border-slate-700 rounded-xl font-bold bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none text-left" dir="ltr">
                                 </div>
 
-                                <div id="tab-rep-inventory-view-field" class="hidden col-span-full">
-                                    <label class="block text-xs font-bold mb-1.5 text-gray-600">תצוגת הדו"ח</label>
-                                    <select id="tab-rep-inv-view" onchange="updateReportPreview();" class="w-full p-2.5 border border-gray-200 rounded-xl font-bold bg-slate-50 focus:ring-1 focus:ring-primary focus:border-primary outline-none">
+                                <div id="tab-rep-daily-field" class="hidden w-full">
+                                    <label class="block text-xs font-bold mb-1.5 text-gray-600 dark:text-slate-400">בחר תאריך</label>
+                                    <input type="date" id="tab-rep-daily-date" onchange="updateReportPreview();" class="w-full p-2.5 border border-gray-200 dark:border-slate-700 rounded-xl font-bold bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none text-left" dir="ltr">
+                                </div>
+
+                                <div id="tab-rep-inventory-view-field" class="hidden col-span-full w-full">
+                                    <label class="block text-xs font-bold mb-1.5 text-gray-600 dark:text-slate-400">תצוגת הדו"ח</label>
+                                    <select id="tab-rep-inv-view" onchange="updateReportPreview();" class="w-full p-2.5 border border-gray-200 dark:border-slate-700 rounded-xl font-bold bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none">
                                         <option value="stock">מלאי מחסן — לפי קטגוריות</option>
                                         <option value="distribution">פיזור ציוד בעמדות — מבנה ← חדר ← עמדה (מקרו→מיקרו)</option>
                                     </select>
                                 </div>
 
-                                <div id="tab-rep-daily-summary-field" class="hidden col-span-full space-y-4">
-                                    <div class="bg-primary/5 border border-primary/20 p-3 rounded-xl">
+                                <div id="tab-rep-daily-summary-field" class="hidden col-span-full space-y-4 w-full">
+                                    <div class="bg-primary/5 dark:bg-primary/10 border border-primary/20 p-3 rounded-xl">
                                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
                                             <div>
                                                 <label class="block text-[10px] font-black mb-1.5 text-primary">תאריך הדו"ח</label>
-                                                <input type="date" id="tab-rep-ds-date" onchange="loadDailySummaryData(); updateReportPreview();" class="w-full p-2.5 border border-primary/30 rounded-xl font-bold bg-white focus:ring-1 focus:ring-primary focus:border-primary outline-none text-left" dir="ltr">
+                                                <input type="date" id="tab-rep-ds-date" onchange="loadDailySummaryData(); updateReportPreview();" class="w-full p-2.5 border border-primary/30 rounded-xl font-bold bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none text-left" dir="ltr">
                                             </div>
-                                            <p class="text-[10px] font-bold text-slate-500 leading-tight">הנתונים נשמרים אוטומטית לפי תאריך. בחירת תאריך שכבר הוזן בעבר תשחזר את כל המידע שהוקלד לו (כולל סימוכין).</p>
+                                            <p class="text-[10px] font-bold text-slate-500 dark:text-slate-400 leading-tight">הנתונים נשמרים אוטומטית לפי תאריך. בחירת תאריך שכבר הוזן בעבר תשחזר את כל המידע שהוקלד לו (כולל סימוכין).</p>
                                         </div>
                                     </div>
                                     <div class="grid grid-cols-2 gap-3">
                                         <div>
-                                            <label class="block text-[10px] font-bold mb-1.5 text-gray-600">מוזמנים למחר - חלק א'</label>
-                                            <input type="number" id="tab-rep-ds-invites-a" placeholder="מספר" oninput="updateReportPreview();" class="w-full p-2.5 border border-gray-200 rounded-xl font-bold bg-slate-50 focus:ring-1 focus:ring-primary focus:border-primary outline-none">
+                                            <label class="block text-[10px] font-bold mb-1.5 text-gray-600 dark:text-slate-400">מוזמנים למחר - חלק א'</label>
+                                            <input type="number" id="tab-rep-ds-invites-a" placeholder="מספר" oninput="updateReportPreview();" class="w-full p-2.5 border border-gray-200 dark:border-slate-700 rounded-xl font-bold bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none">
                                         </div>
                                         <div>
-                                            <label class="block text-[10px] font-bold mb-1.5 text-gray-600">מוזמנים למחר - חלק ב'</label>
-                                            <input type="number" id="tab-rep-ds-invites-b" placeholder="מספר" oninput="updateReportPreview();" class="w-full p-2.5 border border-gray-200 rounded-xl font-bold bg-slate-50 focus:ring-1 focus:ring-primary focus:border-primary outline-none">
+                                            <label class="block text-[10px] font-bold mb-1.5 text-gray-600 dark:text-slate-400">מוזמנים למחר - חלק ב'</label>
+                                            <input type="number" id="tab-rep-ds-invites-b" placeholder="מספר" oninput="updateReportPreview();" class="w-full p-2.5 border border-gray-200 dark:border-slate-700 rounded-xl font-bold bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none">
                                         </div>
                                     </div>
-                                    <div class="border border-slate-100 p-3 rounded-xl bg-slate-50/50">
+                                    <div class="border border-slate-100 dark:border-slate-800 p-3 rounded-xl bg-slate-50/50 dark:bg-slate-800/10">
                                         <div class="flex items-center justify-between mb-2">
-                                            <label class="block text-[11px] font-bold text-gray-700">האם יש מועמדים ששוחררו?</label>
+                                            <label class="block text-[11px] font-bold text-gray-700 dark:text-slate-300">האם יש מועמדים ששוחררו?</label>
                                             <div class="flex items-center gap-2">
                                                 <span class="text-xs font-bold text-gray-500">אין</span>
                                                 <label class="relative inline-flex items-center cursor-pointer">
                                                     <input type="checkbox" id="tab-rep-ds-released-toggle" class="sr-only peer" onchange="toggleReleasedCandidates(this.checked); updateReportPreview();">
-                                                    <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+                                                    <div class="w-9 h-5 bg-gray-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
                                                 </label>
                                                 <span class="text-xs font-bold text-primary">יש</span>
                                             </div>
                                         </div>
-                                        <div id="released-candidates-container" class="hidden flex-col gap-2 mt-3 border-t border-gray-200 pt-3">
+                                        <div id="released-candidates-container" class="hidden flex-col gap-2 mt-3 border-t border-gray-200 dark:border-slate-800 pt-3">
                                             <div id="released-candidates-list" class="flex flex-col gap-2"></div>
                                             <button type="button" onclick="addReleasedCandidateRow()" class="mt-2 w-full text-xs font-bold text-primary bg-primary/10 hover:bg-primary/20 py-2 rounded-lg transition-colors flex items-center justify-center gap-1">
                                                 <span>+</span> הוסף מועמד ששוחרר
@@ -1042,55 +954,54 @@
                                         </div>
                                     </div>
                                     <div>
-                                        <label class="block text-[10px] font-bold mb-1.5 text-gray-600">הערות / חריגים לסיכום היום</label>
-                                        <textarea id="tab-rep-ds-notes" rows="2" placeholder="יש לפרט..." oninput="updateReportPreview();" class="w-full p-2.5 border border-gray-200 rounded-xl font-bold bg-slate-50 focus:ring-1 focus:ring-primary focus:border-primary outline-none resize-none"></textarea>
+                                        <label class="block text-[10px] font-bold mb-1.5 text-gray-600 dark:text-slate-400">הערות / חריגים לסיכום היום</label>
+                                        <textarea id="tab-rep-ds-notes" rows="2" placeholder="יש לפרט..." oninput="updateReportPreview();" class="w-full p-2.5 border border-gray-200 dark:border-slate-700 rounded-xl font-bold bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none resize-none"></textarea>
                                     </div>
-                                    <div class="border border-slate-100 p-3 rounded-xl bg-slate-50/50">
+                                    <div class="border border-slate-100 dark:border-slate-800 p-3 rounded-xl bg-slate-50/50 dark:bg-slate-800/10">
                                         <div class="flex items-center gap-2 mb-2">
                                             <input type="checkbox" id="tab-rep-ds-status-a" onchange="updateReportPreview();" class="w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary">
-                                            <label class="text-[11px] font-bold text-gray-700">סטטוס התייצבויות חלק א' הוזן</label>
+                                            <label class="text-[11px] font-bold text-gray-700 dark:text-slate-300">סטטוס התייצבויות חלק א' הוזן</label>
                                         </div>
-                                        <input type="text" id="tab-rep-ds-status-a-user" placeholder="מי הזין (שם ותפקיד)?" oninput="updateReportPreview();" class="w-full p-2 text-xs border border-gray-200 rounded-xl font-bold bg-white focus:ring-1 focus:ring-primary focus:border-primary outline-none">
+                                        <input type="text" id="tab-rep-ds-status-a-user" placeholder="מי הזין (שם ותפקיד)?" oninput="updateReportPreview();" class="w-full p-2 text-xs border border-gray-200 dark:border-slate-700 rounded-xl font-bold bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none">
                                     </div>
-                                    <div class="border border-slate-100 p-3 rounded-xl bg-slate-50/50">
+                                    <div class="border border-slate-100 dark:border-slate-800 p-3 rounded-xl bg-slate-50/50 dark:bg-slate-800/10">
                                         <div class="flex items-center gap-2 mb-2">
                                             <input type="checkbox" id="tab-rep-ds-status-b" onchange="updateReportPreview();" class="w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary">
-                                            <label class="text-[11px] font-bold text-gray-700">סטטוס התייצבויות חלק ב' הוזן</label>
+                                            <label class="text-[11px] font-bold text-gray-700 dark:text-slate-300">סטטוס התייצבויות חלק ב' הוזן</label>
                                         </div>
-                                        <input type="text" id="tab-rep-ds-status-b-user" placeholder="מי הזין (שם ותפקיד)?" oninput="updateReportPreview();" class="w-full p-2 text-xs border border-gray-200 rounded-xl font-bold bg-white focus:ring-1 focus:ring-primary focus:border-primary outline-none">
+                                        <input type="text" id="tab-rep-ds-status-b-user" placeholder="מי הזין (שם ותפקיד)?" oninput="updateReportPreview();" class="w-full p-2 text-xs border border-gray-200 dark:border-slate-700 rounded-xl font-bold bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none">
                                     </div>
-                                    <div class="border border-slate-100 p-3 rounded-xl bg-slate-50/50">
+                                    <div class="border border-slate-100 dark:border-slate-800 p-3 rounded-xl bg-slate-50/50 dark:bg-slate-800/10">
                                         <div class="flex items-center gap-2 mb-2">
                                             <input type="checkbox" id="tab-rep-ds-files" onchange="updateReportPreview();" class="w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary">
-                                            <label class="text-[11px] font-bold text-gray-700">הזנת תיקים של אתמול בוצעה</label>
+                                            <label class="text-[11px] font-bold text-gray-700 dark:text-slate-300">הזנת תיקים של אתמול בוצעה</label>
                                         </div>
                                         <div class="grid grid-cols-2 gap-2">
-                                            <input type="number" id="tab-rep-ds-files-count" placeholder="אם לא, כמה הוזנו?" oninput="updateReportPreview();" class="w-full p-2 text-xs border border-gray-200 rounded-xl font-bold bg-white focus:ring-1 focus:ring-primary focus:border-primary outline-none">
-                                            <input type="text" id="tab-rep-ds-files-user" placeholder="מי ביצע?" oninput="updateReportPreview();" class="w-full p-2 text-xs border border-gray-200 rounded-xl font-bold bg-white focus:ring-1 focus:ring-primary focus:border-primary outline-none">
+                                            <input type="number" id="tab-rep-ds-files-count" placeholder="אם לא, כמה הוזנו?" oninput="updateReportPreview();" class="w-full p-2 text-xs border border-gray-200 dark:border-slate-700 rounded-xl font-bold bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none">
+                                            <input type="text" id="tab-rep-ds-files-user" placeholder="מי ביצע?" oninput="updateReportPreview();" class="w-full p-2 text-xs border border-gray-200 dark:border-slate-700 rounded-xl font-bold bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none">
                                         </div>
                                     </div>
-                                    <div class="border border-slate-100 p-3 rounded-xl bg-slate-50/50">
-                                        <label class="block text-[11px] font-bold text-gray-700 mb-2">בדיקות עיניים של אתמול</label>
+                                    <div class="border border-slate-100 dark:border-slate-800 p-3 rounded-xl bg-slate-50/50 dark:bg-slate-800/10">
+                                        <label class="block text-[11px] font-bold text-gray-700 dark:text-slate-300 mb-2">בדיקות עיניים של אתמול</label>
                                         <div class="grid grid-cols-2 gap-2">
-                                            <input type="number" id="tab-rep-ds-eyes-quota" placeholder="מכסה" oninput="updateReportPreview();" class="w-full p-2 text-xs border border-gray-200 rounded-xl font-bold bg-white focus:ring-1 focus:ring-primary focus:border-primary outline-none">
-                                            <input type="number" id="tab-rep-ds-eyes-released" placeholder="שוחררו" oninput="updateReportPreview();" class="w-full p-2 text-xs border border-gray-200 rounded-xl font-bold bg-white focus:ring-1 focus:ring-primary focus:border-primary outline-none">
+                                            <input type="number" id="tab-rep-ds-eyes-quota" placeholder="מכסה" oninput="updateReportPreview();" class="w-full p-2 text-xs border border-gray-200 dark:border-slate-700 rounded-xl font-bold bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none">
+                                            <input type="number" id="tab-rep-ds-eyes-released" placeholder="שוחררו" oninput="updateReportPreview();" class="w-full p-2 text-xs border border-gray-200 dark:border-slate-700 rounded-xl font-bold bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none">
                                         </div>
                                     </div>
-
                                 </div>
 
-                                <div class="mt-2 pt-3 border-t border-gray-100 col-span-full">
-                                    <label class="block text-xs font-black mb-1.5 text-gray-700">3. מיון נתונים בדוח</label>
+                                <div class="mt-2 pt-3 border-t border-gray-100 dark:border-slate-800 col-span-full w-full">
+                                    <label class="block text-xs font-black mb-1.5 text-gray-700 dark:text-slate-300">3. מיון נתונים בדוח</label>
                                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
                                         <div>
-                                            <label class="block text-[10px] font-bold mb-1 text-gray-500">מיין לפי</label>
-                                            <select id="tab-rep-sort-field" onchange="updateReportPreview();" class="w-full p-2 text-xs border border-gray-200 rounded-xl font-bold bg-slate-50 focus:ring-1 focus:ring-primary focus:border-primary outline-none">
+                                            <label class="block text-[10px] font-bold mb-1 text-gray-500 dark:text-slate-400">מיין לפי</label>
+                                            <select id="tab-rep-sort-field" onchange="updateReportPreview();" class="w-full p-2 text-xs border border-gray-200 dark:border-slate-700 rounded-xl font-bold bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none">
                                                 <!-- Dynamic options -->
                                             </select>
                                         </div>
                                         <div>
-                                            <label class="block text-[10px] font-bold mb-1 text-gray-500">סדר מיון</label>
-                                            <select id="tab-rep-sort-dir" onchange="updateReportPreview();" class="w-full p-2 text-xs border border-gray-200 rounded-xl font-bold bg-slate-50 focus:ring-1 focus:ring-primary focus:border-primary outline-none">
+                                            <label class="block text-[10px] font-bold mb-1 text-gray-500 dark:text-slate-400">סדר מיון</label>
+                                            <select id="tab-rep-sort-dir" onchange="updateReportPreview();" class="w-full p-2 text-xs border border-gray-200 dark:border-slate-700 rounded-xl font-bold bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-primary focus:border-primary outline-none">
                                                 <option value="asc">עולה (א-ת / 0-9)</option>
                                                 <option value="desc">יורד (ת-א / 9-0)</option>
                                             </select>
@@ -1098,24 +1009,10 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Actions block (moved into preview action bar by JS) -->
-                            <div id="gen-actions" class="pt-3 border-t border-gray-100 flex flex-col sm:flex-row gap-3 col-span-full">
-                                <button onclick="printReportFromTab()" class="flex-1 py-3 bg-primary hover:bg-primaryHover text-white rounded-xl font-extrabold transition-colors shadow-sm flex items-center justify-center gap-2">
-                                    <ui-icon name="printer" class="w-5 h-5"></ui-icon>
-                                    <span>הנפק והדפס דו"ח</span>
-                                </button>
-                                <button onclick="exportReportToExcel()" class="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-extrabold text-sm transition-colors shadow-sm flex items-center justify-center gap-2 transform active:scale-95">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12l-3-3m0 0l-3 3m3-3v6m-1.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
-                                    </svg>
-                                    <span>ייצוא לקובץ אקסל (Excel)</span>
-                                </button>
-                            </div>
                         </div>
 
                         <!-- STEP 3: תצוגה מקדימה מלאה + הנפקה (הדפסה / אקסל) -->
-                        <div id="gen-step-preview" class="hidden w-full flex-1 min-h-0 flex-col bg-slate-100 border border-gray-200 rounded-2xl p-4 shadow-inner relative">
+                        <div id="gen-step-preview" class="w-full flex-1 min-h-0 flex flex-col bg-slate-100 dark:bg-slate-900/60 border border-gray-200 dark:border-slate-800 rounded-2xl p-4 shadow-inner relative">
                             <div class="flex items-center gap-2 flex-wrap mb-3 flex-shrink-0" dir="rtl">
                                 <button onclick="exportReportToExcel()" class="flex items-center gap-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black transition-all shadow-sm">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12l-3-3m0 0l-3 3m3-3v6m-1.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
@@ -1125,13 +1022,9 @@
                                     <ui-icon name="printer" class="w-4 h-4"></ui-icon>
                                     <span>הנפק והדפס דו"ח</span>
                                 </button>
-                                <button onclick="openReportForm()" class="flex items-center gap-1.5 px-3 py-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 rounded-xl text-xs font-black transition-all shadow-sm">
+                                <button onclick="openWizardEditDetails()" class="flex items-center gap-1.5 px-3 py-2 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-black transition-all shadow-sm">
                                     <ui-icon name="edit" class="w-4 h-4"></ui-icon>
-                                    <span>עריכת נתונים</span>
-                                </button>
-                                <button onclick="backToReportGallery()" class="flex items-center gap-1.5 px-3 py-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 rounded-xl text-xs font-black transition-all shadow-sm">
-                                    <ui-icon name="arrow-right" class="w-4 h-4"></ui-icon>
-                                    <span>בחר דו"ח אחר</span>
+                                    <span>עריכת דו"ח / שינוי סוג דו"ח</span>
                                 </button>
                                 <span class="text-xs font-black text-slate-500 mr-auto" id="gen-preview-title"></span>
                                 <div id="gen-preview-actions-slot" class="hidden"></div>
@@ -1143,27 +1036,190 @@
                             </div>
                         </div>
 
-                        <!-- STEP 2: חלון קופץ להזנת נתוני הדו"ח -->
+                        <!-- 3-Step Stepper Wizard Modal -->
                         <div id="gen-form-modal" class="hidden fixed inset-0 z-[60] items-center justify-center p-4" dir="rtl">
-                            <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onclick="closeReportForm()"></div>
-                            <div class="relative bg-white w-full max-w-3xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden">
-                                <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100 flex-shrink-0">
-                                    <h3 class="text-lg font-black text-slate-800 flex items-center gap-2">
-                                        <span class="p-1.5 bg-primary/10 text-primary rounded-lg"><ui-icon name="edit" class="w-5 h-5"></ui-icon></span>
-                                        <span>הזנת נתונים — <span id="gen-form-modal-title" class="text-primary">דו"ח</span></span>
+                            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeReportForm()"></div>
+                            <div class="relative bg-white dark:bg-slate-900 w-full max-w-4xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-slate-200 dark:border-slate-800">
+                                
+                                <!-- Modal Header with Stepper Progress -->
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex-shrink-0 gap-4 bg-slate-50/50 dark:bg-slate-900/50">
+                                    <h3 class="text-base font-black text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                        <span class="p-1.5 bg-primary/10 text-primary rounded-lg">
+                                            <ui-icon name="edit" class="w-4.5 h-4.5"></ui-icon>
+                                        </span>
+                                        <span id="gen-form-modal-title">בחירת דו"ח</span>
                                     </h3>
-                                    <button onclick="closeReportForm()" class="text-slate-400 hover:text-slate-600 text-2xl font-bold leading-none p-1" title="סגור">&times;</button>
+                                    
+                                    <!-- Stepper Progress Dots -->
+                                    <div class="flex items-center gap-2" id="wizard-stepper-progress">
+                                        <!-- Step 1 Dot -->
+                                        <div id="step-dot-1" class="flex items-center gap-1.5">
+                                            <span class="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black bg-primary text-white transition-all shadow-sm">1</span>
+                                            <span class="text-xs font-bold text-slate-700 dark:text-slate-300">סוג דו"ח</span>
+                                        </div>
+                                        <div id="step-line-1" class="w-6 h-0.5 bg-slate-200 dark:bg-slate-800 transition-all"></div>
+                                        
+                                        <!-- Step 2 Dot -->
+                                        <div id="step-dot-2" class="flex items-center gap-1.5">
+                                            <span class="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black bg-slate-200 dark:bg-slate-800 text-slate-500 transition-all">2</span>
+                                            <span class="text-xs font-bold text-slate-500 dark:text-slate-400">סימוכין</span>
+                                        </div>
+                                        <div id="step-line-2" class="w-6 h-0.5 bg-slate-200 dark:bg-slate-800 transition-all hidden"></div>
+                                        
+                                        <!-- Step 3 Dot -->
+                                        <div id="step-dot-3" class="flex items-center gap-1.5 hidden">
+                                            <span class="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black bg-slate-200 dark:bg-slate-800 text-slate-500 transition-all">3</span>
+                                            <span class="text-xs font-bold text-slate-500 dark:text-slate-400">מידע משלים</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <button onclick="closeReportForm()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 text-2xl font-bold leading-none p-1 transition-all mr-auto sm:mr-0" title="סגור">&times;</button>
                                 </div>
-                                <div id="gen-form-modal-body" class="flex-1 overflow-y-auto custom-scrollbar p-5">
-                                    <!-- gen-form-grid יועבר לכאן ע"י JS -->
+                                
+                                <!-- Modal Body (Scrollable container for the steps) -->
+                                <div id="gen-form-modal-body" class="flex-1 overflow-y-auto custom-scrollbar p-6">
+                                    
+                                    <!-- STEP 1 VIEW: Category Tree Selection -->
+                                    <div id="wizard-step-1-view" class="w-full flex flex-col md:flex-row gap-6 h-full min-h-[350px]">
+                                        <!-- Sidebar category menu (Right side) -->
+                                        <div class="w-full md:w-56 flex-shrink-0 flex flex-col gap-2 border-l border-slate-100 dark:border-slate-800 pr-0 pl-4">
+                                            <span class="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">קטגוריות</span>
+                                            <button id="btn-wiz-cat-all" onclick="filterWizardCategory('all')" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-black text-right transition-all bg-primary text-white shadow-sm w-full">
+                                                <ui-icon name="board" class="w-4 h-4"></ui-icon>
+                                                <span>כל הדוחות</span>
+                                            </button>
+                                            <button id="btn-wiz-cat-comm" onclick="filterWizardCategory('comm')" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 text-right hover:bg-slate-100 dark:hover:bg-slate-800 transition-all w-full">
+                                                <ui-icon name="user" class="w-4 h-4"></ui-icon>
+                                                <span>שירות ותקשורת</span>
+                                            </button>
+                                            <button id="btn-wiz-cat-logistics" onclick="filterWizardCategory('logistics')" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 text-right hover:bg-slate-100 dark:hover:bg-slate-800 transition-all w-full">
+                                                <ui-icon name="database" class="w-4 h-4"></ui-icon>
+                                                <span>מלאי ולוגיסטיקה</span>
+                                            </button>
+                                            <button id="btn-wiz-cat-stats" onclick="filterWizardCategory('stats')" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 text-right hover:bg-slate-100 dark:hover:bg-slate-800 transition-all w-full">
+                                                <ui-icon name="mixer" class="w-4 h-4"></ui-icon>
+                                                <span>סטטיסטיקה וביצועים</span>
+                                            </button>
+                                        </div>
+                                        
+                                        <!-- Report Cards list (Left side) -->
+                                        <div class="flex-1">
+                                            <span class="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 block">בחר סוג דו"ח</span>
+                                            <div id="wizard-cards-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 max-h-[450px] overflow-y-auto pr-1">
+                                                
+                                                <!-- Candidate report card -->
+                                                <div id="wiz-card-candidate" data-cat="comm" onclick="wizardSelectReport('candidate')" class="wizard-report-card cursor-pointer border border-slate-200 dark:border-slate-800 hover:border-primary/50 hover:bg-primary/5 dark:hover:bg-primary/5 rounded-xl p-3.5 transition-all flex items-center gap-3 text-slate-800 dark:text-slate-100">
+                                                    <div class="w-10 h-10 rounded-lg bg-indigo-500/10 text-indigo-500 flex items-center justify-center flex-shrink-0">
+                                                        <ui-icon name="user" class="w-5 h-5"></ui-icon>
+                                                    </div>
+                                                    <div>
+                                                        <h4 class="font-extrabold text-sm">דו"ח מתמיין</h4>
+                                                        <p class="text-[11px] text-slate-500 dark:text-slate-400">ריכוז תקלות ופרטים של מועמד מוין ספציפי</p>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Daily faults report card -->
+                                                <div id="wiz-card-daily" data-cat="comm" onclick="wizardSelectReport('daily')" class="wizard-report-card cursor-pointer border border-slate-200 dark:border-slate-800 hover:border-primary/50 hover:bg-primary/5 dark:hover:bg-primary/5 rounded-xl p-3.5 transition-all flex items-center gap-3 text-slate-800 dark:text-slate-100">
+                                                    <div class="w-10 h-10 rounded-lg bg-blue-500/10 text-blue-500 flex items-center justify-center flex-shrink-0">
+                                                        <ui-icon name="board" class="w-5 h-5"></ui-icon>
+                                                    </div>
+                                                    <div>
+                                                        <h4 class="font-extrabold text-sm">דו"ח ריכוז תקלות יומי</h4>
+                                                        <p class="text-[11px] text-slate-500 dark:text-slate-400">תקלות שנפתחו/טופלו ביום נבחר לפי בניין וחדר</p>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Daily summary report card -->
+                                                <div id="wiz-card-daily_summary" data-cat="comm" onclick="wizardSelectReport('daily_summary')" class="wizard-report-card cursor-pointer border border-slate-200 dark:border-slate-800 hover:border-primary/50 hover:bg-primary/5 dark:hover:bg-primary/5 rounded-xl p-3.5 transition-all flex items-center gap-3 text-slate-800 dark:text-slate-100">
+                                                    <div class="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center flex-shrink-0">
+                                                        <ui-icon name="file-text" class="w-5 h-5"></ui-icon>
+                                                    </div>
+                                                    <div>
+                                                        <h4 class="font-extrabold text-sm">דו"ח סיכום יום</h4>
+                                                        <p class="text-[11px] text-slate-500 dark:text-slate-400">סיכום סטטוס יומי של תקלות, נוכחות ופעילויות</p>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Inventory report card -->
+                                                <div id="wiz-card-inventory" data-cat="logistics" onclick="wizardSelectReport('inventory')" class="wizard-report-card cursor-pointer border border-slate-200 dark:border-slate-800 hover:border-primary/50 hover:bg-primary/5 dark:hover:bg-primary/5 rounded-xl p-3.5 transition-all flex items-center gap-3 text-slate-800 dark:text-slate-100">
+                                                    <div class="w-10 h-10 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center flex-shrink-0">
+                                                        <ui-icon name="database" class="w-5 h-5"></ui-icon>
+                                                    </div>
+                                                    <div>
+                                                        <h4 class="font-extrabold text-sm">דו"ח מלאי</h4>
+                                                        <p class="text-[11px] text-slate-500 dark:text-slate-400">סטטוס מלאי מחסן מחשוב או פיזור ציוד בעמדות</p>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Disqualified card -->
+                                                <div id="wiz-card-disqualified" data-cat="logistics" onclick="wizardSelectReport('disqualified')" class="wizard-report-card cursor-pointer border border-slate-200 dark:border-slate-800 hover:border-primary/50 hover:bg-primary/5 dark:hover:bg-primary/5 rounded-xl p-3.5 transition-all flex items-center gap-3 text-slate-800 dark:text-slate-100">
+                                                    <div class="w-10 h-10 rounded-lg bg-rose-500/10 text-rose-500 flex items-center justify-center flex-shrink-0">
+                                                        <ui-icon name="equipment" class="w-5 h-5"></ui-icon>
+                                                    </div>
+                                                    <div>
+                                                        <h4 class="font-extrabold text-sm">חומרה פסולה</h4>
+                                                        <p class="text-[11px] text-slate-500 dark:text-slate-400">ריכוז פריטים שסווגו כפסולים עם מספרים סידוריים</p>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Loans card -->
+                                                <div id="wiz-card-loans" data-cat="logistics" onclick="wizardSelectReport('loans')" class="wizard-report-card cursor-pointer border border-slate-200 dark:border-slate-800 hover:border-primary/50 hover:bg-primary/5 dark:hover:bg-primary/5 rounded-xl p-3.5 transition-all flex items-center gap-3 text-slate-800 dark:text-slate-100">
+                                                    <div class="w-10 h-10 rounded-lg bg-teal-500/10 text-teal-500 flex items-center justify-center flex-shrink-0">
+                                                        <ui-icon name="users" class="w-5 h-5"></ui-icon>
+                                                    </div>
+                                                    <div>
+                                                        <h4 class="font-extrabold text-sm">דו"ח השאלות</h4>
+                                                        <p class="text-[11px] text-slate-500 dark:text-slate-400">ריכוז השאלות ציוד פעילות ותאריכי תפוגה</p>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Statistics card -->
+                                                <div id="wiz-card-stats" data-cat="stats" onclick="wizardSelectReport('stats')" class="wizard-report-card cursor-pointer border border-slate-200 dark:border-slate-800 hover:border-primary/50 hover:bg-primary/5 dark:hover:bg-primary/5 rounded-xl p-3.5 transition-all flex items-center gap-3 text-slate-800 dark:text-slate-100">
+                                                    <div class="w-10 h-10 rounded-lg bg-fuchsia-500/10 text-fuchsia-500 flex items-center justify-center flex-shrink-0">
+                                                        <ui-icon name="mixer" class="w-5 h-5"></ui-icon>
+                                                    </div>
+                                                    <div>
+                                                        <h4 class="font-extrabold text-sm">דו"ח סטטיסטיקות ומדדים</h4>
+                                                        <p class="text-[11px] text-slate-500 dark:text-slate-400">סיכום מספרי וגרפי של קצב פתרון וסוגי תקלות</p>
+                                                    </div>
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- STEP 2 VIEW: Credentials / Issuer Details -->
+                                    <div id="wizard-step-2-view" class="hidden w-full min-h-[250px] flex flex-col justify-center">
+                                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                            <!-- Inputs from gen-form-grid will be dynamically appended here by JS -->
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- STEP 3 VIEW: Supplementary Details -->
+                                    <div id="wizard-step-3-view" class="hidden w-full min-h-[250px] flex flex-col justify-center">
+                                        <div class="grid grid-cols-1 gap-4">
+                                            <!-- Specific report parameter fields will be dynamically appended here by JS -->
+                                        </div>
+                                    </div>
+                                    
                                 </div>
-                                <div class="flex items-center justify-end gap-3 px-5 py-4 border-t border-slate-100 flex-shrink-0 bg-slate-50">
-                                    <button onclick="closeReportForm()" class="px-4 py-2.5 rounded-xl font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-100 transition-all">ביטול</button>
-                                    <button onclick="submitReportForm()" class="px-6 py-2.5 rounded-xl font-black text-white bg-primary hover:bg-primaryHover transition-all shadow-sm flex items-center gap-2">
-                                        <ui-icon name="eye" class="w-5 h-5"></ui-icon>
-                                        <span>המשך לתצוגה מקדימה</span>
+                                
+                                <!-- Modal Footer (Actions) -->
+                                <div class="flex items-center justify-between px-6 py-4 border-t border-slate-100 dark:border-slate-800 flex-shrink-0 bg-slate-50 dark:bg-slate-900/60">
+                                    <button id="btn-wizard-back" onclick="navigateWizardBack()" class="px-4 py-2.5 rounded-xl font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all flex items-center gap-1.5">
+                                        <ui-icon name="arrow-right" class="w-4 h-4"></ui-icon>
+                                        <span>הקודם</span>
                                     </button>
+                                    
+                                    <div class="flex items-center gap-3 mr-auto">
+                                        <button onclick="closeReportForm()" class="px-4 py-2.5 rounded-xl font-bold text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">ביטול</button>
+                                        <button id="btn-wizard-next" onclick="navigateWizardNext()" class="px-6 py-2.5 rounded-xl font-black text-white bg-primary hover:bg-primaryHover transition-all shadow-sm flex items-center gap-2">
+                                            <span id="btn-wizard-next-text">המשך</span>
+                                            <ui-icon id="btn-wizard-next-icon" name="arrow-left" class="w-5 h-5"></ui-icon>
+                                        </button>
+                                    </div>
                                 </div>
+                                
                             </div>
                         </div>
                     </div>
@@ -3585,8 +3641,16 @@
             renderStatistics();
         } else {
             initReportWizard();
-            backToReportGallery();
+            closeReportForm();
             updateReportPreview();
+            
+            // הזנת סימוכין בפעם הראשונה צריכה להיות כחלון קופץ
+            const pId = document.getElementById('tab-rep-issuer-personal-id')?.value.trim();
+            if (!pId) {
+                setTimeout(() => {
+                    openWizardEditDetails();
+                }, 300);
+            }
         }
     }
 
@@ -7093,15 +7157,29 @@
         return clean;
     }
 
-    let activeReportType = 'candidate';
+    let activeReportType = 'daily';
+    let currentWizardStep = 1;
+    let isWizardSetup = false;
+
+    const reportTitles = {
+        'candidate': 'דו"ח מתמיין',
+        'daily': 'דו"ח ריכוז תקלות יומי',
+        'daily_summary': 'דו"ח סיכום יום',
+        'inventory': 'דו"ח מלאי',
+        'disqualified': 'חומרה פסולה',
+        'loans': 'דו"ח השאלות',
+        'stats': 'דו"ח סטטיסטיקות ומדדים'
+    };
+
+    function reportHasExtraFields(type) {
+        return ['candidate', 'daily', 'daily_summary', 'inventory'].includes(type);
+    }
 
     function selectReportType(type) {
         activeReportType = type;
-        // סנכרון בורר עץ-הקטגוריות (אם נקרא באופן תוכניתי)
         const repTypeSelect = document.getElementById('rep-type-select');
         if (repTypeSelect && repTypeSelect.value !== type) repTypeSelect.value = type;
 
-        // Dynamically update default recipient based on report type
         const recipientInput = document.getElementById('tab-rep-recipient');
         if (recipientInput) {
             let defaultRecipient = 'רשימת תפוצה - סגל מיון';
@@ -7110,57 +7188,37 @@
             } else if (type === 'inventory' || type === 'disqualified' || type === 'stats') {
                 defaultRecipient = 'צוות מחשוב , אפסנאות טכנית';
             } else if (type === 'loans') {
-                // דו"ח השאלות מרוכז מיועד לרשימת תפוצה כללית — לא לשם של שואל ספציפי
                 defaultRecipient = 'אפסנאות טכנית';
             }
             recipientInput.value = defaultRecipient;
         }
 
-        // Update selection UI of cards
-        const types = ['candidate', 'daily', 'daily_summary', 'inventory', 'disqualified', 'loans', 'stats'];
-        types.forEach(t => {
-            const card = document.getElementById(`rep-card-${t}`);
-            const dot = document.getElementById(`rep-dot-${t}`);
-            if (card && dot) {
-                if (t === type) {
-                    card.className = "cursor-pointer border-2 border-primary bg-primary/5 rounded-xl p-2 transition-all flex items-center gap-1.5 hover:shadow-md h-auto min-h-[4rem]";
-                    dot.className = "w-2 h-2 rounded-full bg-primary flex-shrink-0";
-                } else {
-                    card.className = "cursor-pointer border-2 border-gray-200 rounded-xl p-2 transition-all flex items-center gap-1.5 hover:border-primary/50 hover:shadow-md h-auto min-h-[4rem]";
-                    dot.className = "w-2 h-2 rounded-full bg-transparent flex-shrink-0";
-                }
-            }
-        });
-
-        // כווץ את בורר סוג הדו"ח לאחר בחירה — מפנה מקום כדי שהשדות והתצוגה המקדימה יופיעו מיד
-        collapseReportTypePicker(type);
-
-        // Show/hide fields
+        // Show/hide relevant fields in step 3
         const candidateField = document.getElementById('tab-rep-candidate-id-field');
         const dailyField = document.getElementById('tab-rep-daily-field');
         const dailySummaryField = document.getElementById('tab-rep-daily-summary-field');
-        
-        if (candidateField && dailyField) {
-            candidateField.classList.add('hidden');
-            dailyField.classList.add('hidden');
-            if (dailySummaryField) dailySummaryField.classList.add('hidden');
-            const inventoryViewField = document.getElementById('tab-rep-inventory-view-field');
-            if (inventoryViewField) inventoryViewField.classList.toggle('hidden', type !== 'inventory');
+        const inventoryViewField = document.getElementById('tab-rep-inventory-view-field');
 
-            if (type === 'candidate') {
-                candidateField.classList.remove('hidden');
-            } else if (type === 'daily') {
-                dailyField.classList.remove('hidden');
-                if (!document.getElementById('tab-rep-daily-date').value) {
-                    const todayStr = new Date().toISOString().split('T')[0];
-                    document.getElementById('tab-rep-daily-date').value = todayStr;
-                }
-            } else if (type === 'daily_summary') {
-                if (dailySummaryField) dailySummaryField.classList.remove('hidden');
-                const dsDate = document.getElementById('tab-rep-ds-date');
-                if (dsDate && !dsDate.value) dsDate.value = new Date().toISOString().split('T')[0];
-                loadDailySummaryData();
+        if (candidateField) candidateField.classList.add('hidden');
+        if (dailyField) dailyField.classList.add('hidden');
+        if (dailySummaryField) dailySummaryField.classList.add('hidden');
+        if (inventoryViewField) inventoryViewField.classList.add('hidden');
+
+        if (type === 'candidate' && candidateField) {
+            candidateField.classList.remove('hidden');
+        } else if (type === 'daily' && dailyField) {
+            dailyField.classList.remove('hidden');
+            if (!document.getElementById('tab-rep-daily-date').value) {
+                const todayStr = new Date().toISOString().split('T')[0];
+                document.getElementById('tab-rep-daily-date').value = todayStr;
             }
+        } else if (type === 'daily_summary' && dailySummaryField) {
+            dailySummaryField.classList.remove('hidden');
+            const dsDate = document.getElementById('tab-rep-ds-date');
+            if (dsDate && !dsDate.value) dsDate.value = new Date().toISOString().split('T')[0];
+            loadDailySummaryData();
+        } else if (type === 'inventory' && inventoryViewField) {
+            inventoryViewField.classList.remove('hidden');
         }
 
         // Dynamically update sort options
@@ -7222,115 +7280,334 @@
         }
 
         updateReportPreview();
-        // זרימה חדשה: בחירת סוג דו"ח פותחת את חלון הזנת הנתונים
-        openReportForm();
     }
 
-    // ===== אשף הנפקת דוחות (גלריה → חלון הזנה → תצוגה מקדימה) =====
     function initReportWizard() {
-        const grid = document.getElementById('gen-form-grid');
-        const modalBody = document.getElementById('gen-form-modal-body');
-        if (grid && modalBody && grid.parentElement !== modalBody) {
-            modalBody.appendChild(grid);
+        if (isWizardSetup) return;
+        
+        const step2Container = document.getElementById('wizard-step-2-view');
+        const step3Container = document.getElementById('wizard-step-3-view');
+        
+        if (step2Container && step3Container) {
+            let step2Grid = step2Container.querySelector('.grid');
+            if (!step2Grid) {
+                step2Grid = document.createElement('div');
+                step2Grid.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4";
+                step2Container.appendChild(step2Grid);
+            }
+
+            let step3Grid = step3Container.querySelector('.grid');
+            if (!step3Grid) {
+                step3Grid = document.createElement('div');
+                step3Grid.className = "grid grid-cols-1 gap-4";
+                step3Container.appendChild(step3Grid);
+            }
+
+            // Helper to get element's wrapping parent/wrapper safely
+            const getFieldWrapper = (id) => {
+                const el = document.getElementById(id);
+                if (!el) return null;
+                if (id.endsWith('-field') || id.endsWith('-wrapper')) return el;
+                return el.parentElement;
+            };
+
+            // Issuer/Credentials fields (Step 2)
+            const issuerIds = [
+                'tab-rep-issuer-personal-id',
+                'tab-rep-issuer-name',
+                'tab-rep-issuer-rank',
+                'tab-rep-issuer-role',
+                'tab-rep-phone',
+                'tab-rep-recipient',
+                'tab-rep-issuer-kave-wrapper'
+            ];
+
+            issuerIds.forEach(id => {
+                const el = getFieldWrapper(id);
+                if (el) {
+                    if (id === 'tab-rep-issuer-kave-wrapper') {
+                        el.className = 'col-span-full mt-1 flex items-center';
+                    } else if (el.classList.contains('col-span-2') || id === 'tab-rep-recipient') {
+                        el.classList.remove('col-span-2');
+                        el.classList.add('col-span-full');
+                    }
+                    step2Grid.appendChild(el);
+                }
+            });
+
+            // Extra fields (Step 3)
+            const extraIds = [
+                'tab-rep-candidate-id-field',
+                'tab-rep-daily-field',
+                'tab-rep-inventory-view-field',
+                'tab-rep-daily-summary-field'
+            ];
+
+            extraIds.forEach(id => {
+                const el = getFieldWrapper(id);
+                if (el) {
+                    el.className = "col-span-full space-y-4";
+                    step3Grid.appendChild(el);
+                }
+            });
+
+            isWizardSetup = true;
         }
-        // כפתורי ההנפקה מוצגים כעת בשורת הפעולה של התצוגה המקדימה — מסתירים את הבלוק הישן
+
+        // Hide standard actions block
         const actions = document.getElementById('gen-actions');
         if (actions) actions.classList.add('hidden');
-        // "קודם כל מספר אישי" — מציב את שדה המספר האישי מיד אחרי כותרת המקטע
-        const g = document.getElementById('gen-form-grid');
-        const pidInput = document.getElementById('tab-rep-issuer-personal-id');
-        const pidWrap = pidInput ? pidInput.closest('div') : null;
-        const label = g ? g.querySelector('label.col-span-full') : null;
-        if (g && pidWrap && label && label.nextElementSibling !== pidWrap) {
-            label.insertAdjacentElement('afterend', pidWrap);
-        }
     }
 
     function reportTypeTitle() {
-        const card = document.getElementById('rep-card-' + activeReportType);
-        const t = card ? card.querySelector('.font-extrabold') : null;
-        return t ? t.textContent.trim() : 'דו"ח';
+        return reportTitles[activeReportType] || 'דו"ח';
     }
 
-    function openReportForm() {
+    function openWizardSelectReport() {
         initReportWizard();
-        const titleEl = document.getElementById('gen-form-modal-title');
-        if (titleEl) titleEl.textContent = reportTypeTitle();
+        openReportForm(1);
+    }
+
+    function openWizardEditDetails() {
+        initReportWizard();
+        openReportForm(1);
+    }
+
+    function openReportForm(startStep = 1) {
+        initReportWizard();
         const modal = document.getElementById('gen-form-modal');
-        if (modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); }
-        setTimeout(() => { const el = document.getElementById('tab-rep-issuer-personal-id'); if (el) el.focus(); }, 60);
+        if (modal) { 
+            modal.classList.remove('hidden'); 
+            modal.classList.add('flex'); 
+        }
+        
+        // Highlight active report card in wizard
+        const cards = document.querySelectorAll('.wizard-report-card');
+        cards.forEach(c => {
+            const isSelected = c.id === 'wiz-card-' + activeReportType;
+            c.className = isSelected 
+                ? "wizard-report-card cursor-pointer border-2 border-primary bg-primary/5 rounded-xl p-3.5 transition-all flex items-center gap-3 shadow-md text-slate-800 dark:text-slate-100"
+                : "wizard-report-card cursor-pointer border border-slate-200 dark:border-slate-800 hover:border-primary/50 hover:bg-primary/5 dark:hover:bg-primary/5 rounded-xl p-3.5 transition-all flex items-center gap-3 text-slate-800 dark:text-slate-100";
+        });
+
+        filterWizardCategory('all');
+        goToWizardStep(startStep);
     }
 
     function closeReportForm() {
         const modal = document.getElementById('gen-form-modal');
-        if (modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); }
+        if (modal) { 
+            modal.classList.add('hidden'); 
+            modal.classList.remove('flex'); 
+        }
+    }
+
+    function goToWizardStep(step) {
+        currentWizardStep = step;
+        
+        // Toggle step views
+        const v1 = document.getElementById('wizard-step-1-view');
+        const v2 = document.getElementById('wizard-step-2-view');
+        const v3 = document.getElementById('wizard-step-3-view');
+        
+        if (v1) v1.classList.toggle('hidden', step !== 1);
+        if (v2) v2.classList.toggle('hidden', step !== 2);
+        if (v3) v3.classList.toggle('hidden', step !== 3);
+
+        // Update stepper indicators
+        const d1 = document.getElementById('step-dot-1');
+        const d2 = document.getElementById('step-dot-2');
+        const d3 = document.getElementById('step-dot-3');
+        const l1 = document.getElementById('step-line-1');
+        const l2 = document.getElementById('step-line-2');
+
+        const titleEl = document.getElementById('gen-form-modal-title');
+        
+        if (step === 1) {
+            if (titleEl) titleEl.textContent = 'בחירת דו"ח';
+            if (d1) d1.querySelector('span').className = "w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black bg-primary text-white";
+            if (d2) d2.querySelector('span').className = "w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black bg-slate-200 dark:bg-slate-800 text-slate-500";
+            if (d3) d3.querySelector('span').className = "w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black bg-slate-200 dark:bg-slate-800 text-slate-500";
+            if (l1) l1.className = "w-6 h-0.5 bg-slate-200 dark:bg-slate-800";
+            if (l2) l2.className = "w-6 h-0.5 bg-slate-200 dark:bg-slate-800 hidden";
+            if (d3) d3.classList.add('hidden');
+        } else if (step === 2) {
+            if (titleEl) titleEl.textContent = 'הזנת סימוכין — ' + reportTypeTitle();
+            if (d1) d1.querySelector('span').className = "w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black bg-emerald-500 text-white";
+            if (d2) d2.querySelector('span').className = "w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black bg-primary text-white";
+            if (d3) d3.querySelector('span').className = "w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black bg-slate-200 dark:bg-slate-800 text-slate-500";
+            if (l1) l1.className = "w-6 h-0.5 bg-primary";
+            
+            const hasExtra = reportHasExtraFields(activeReportType);
+            if (hasExtra) {
+                if (l2) l2.className = "w-6 h-0.5 bg-slate-200 dark:bg-slate-800";
+                if (d3) { d3.classList.remove('hidden'); d3.querySelector('span').className = "w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black bg-slate-200 dark:bg-slate-800 text-slate-500"; }
+            } else {
+                if (l2) l2.className = "w-6 h-0.5 bg-slate-200 dark:bg-slate-800 hidden";
+                if (d3) d3.classList.add('hidden');
+            }
+
+            setTimeout(() => {
+                const pIdInput = document.getElementById('tab-rep-issuer-personal-id');
+                if (pIdInput) pIdInput.focus();
+            }, 60);
+        } else if (step === 3) {
+            if (titleEl) titleEl.textContent = 'מידע משלים — ' + reportTypeTitle();
+            if (d1) d1.querySelector('span').className = "w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black bg-emerald-500 text-white";
+            if (d2) d2.querySelector('span').className = "w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black bg-emerald-500 text-white";
+            if (d3) d3.querySelector('span').className = "w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black bg-primary text-white";
+            if (l1) l1.className = "w-6 h-0.5 bg-emerald-500";
+            if (l2) l2.className = "w-6 h-0.5 bg-primary";
+            if (d3) d3.classList.remove('hidden');
+        }
+
+        // Update navigation buttons
+        const btnBack = document.getElementById('btn-wizard-back');
+        if (btnBack) {
+            btnBack.classList.toggle('hidden', step === 1);
+        }
+
+        const btnNextText = document.getElementById('btn-wizard-next-text');
+        const btnNextIcon = document.getElementById('btn-wizard-next-icon');
+        
+        if (btnNextText && btnNextIcon) {
+            const hasExtra = reportHasExtraFields(activeReportType);
+            if (step === 3 || (step === 2 && !hasExtra)) {
+                btnNextText.textContent = 'הנפק דו"ח';
+                btnNextIcon.setAttribute('name', 'check');
+            } else {
+                btnNextText.textContent = 'המשך';
+                btnNextIcon.setAttribute('name', 'arrow-back');
+            }
+        }
+    }
+
+    function navigateWizardNext() {
+        if (currentWizardStep === 1) {
+            if (!activeReportType) {
+                return showCustomAlert('אנא בחר סוג דו"ח מהרשימה.');
+            }
+            goToWizardStep(2);
+        } else if (currentWizardStep === 2) {
+            // Validate step 2 fields
+            const pId = document.getElementById('tab-rep-issuer-personal-id')?.value.trim();
+            const name = document.getElementById('tab-rep-issuer-name')?.value.trim();
+            const role = document.getElementById('tab-rep-issuer-role')?.value.trim();
+            const phone = document.getElementById('tab-rep-phone')?.value.trim();
+            
+            if (!pId || pId.length < 7) {
+                return showCustomAlert('חובה להזין מספר אישי תקין (לפחות 7 ספרות).');
+            }
+            if (!name) {
+                return showCustomAlert('חובה להזין שם מנפיק.');
+            }
+            if (!role) {
+                return showCustomAlert('חובה להזין תפקיד.');
+            }
+
+            const hasExtra = reportHasExtraFields(activeReportType);
+            if (hasExtra) {
+                goToWizardStep(3);
+            } else {
+                submitReportForm();
+            }
+        } else if (currentWizardStep === 3) {
+            // Validate step 3 fields based on report type
+            if (activeReportType === 'candidate') {
+                const candidateId = document.getElementById('tab-rep-candidate-id')?.value.trim();
+                if (!candidateId || candidateId.length !== 9) {
+                    return showCustomAlert('חובה להזין תעודת זהות של המתמיין (9 ספרות).');
+                }
+            } else if (activeReportType === 'daily') {
+                const date = document.getElementById('tab-rep-daily-date')?.value;
+                if (!date) {
+                    return showCustomAlert('אנא בחר תאריך עבור הדו"ח.');
+                }
+            } else if (activeReportType === 'daily_summary') {
+                const date = document.getElementById('tab-rep-ds-date')?.value;
+                if (!date) {
+                    return showCustomAlert('אנא בחר תאריך עבור דו"ח סיכום היום.');
+                }
+            }
+            submitReportForm();
+        }
+    }
+
+    function navigateWizardBack() {
+        if (currentWizardStep === 3) {
+            goToWizardStep(2);
+        } else if (currentWizardStep === 2) {
+            goToWizardStep(1);
+        }
+    }
+
+    function filterWizardCategory(cat) {
+        const cats = ['all', 'comm', 'logistics', 'stats'];
+        cats.forEach(c => {
+            const btn = document.getElementById('btn-wiz-cat-' + c);
+            if (btn) {
+                if (c === cat) {
+                    btn.className = "flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-black text-right transition-all bg-primary text-white shadow-sm w-full";
+                } else {
+                    btn.className = "flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 text-right hover:bg-slate-100 dark:hover:bg-slate-800 transition-all w-full";
+                }
+            }
+        });
+
+        const cards = document.querySelectorAll('.wizard-report-card');
+        cards.forEach(card => {
+            if (cat === 'all' || card.dataset.cat === cat) {
+                card.classList.remove('hidden');
+            } else {
+                card.classList.add('hidden');
+            }
+        });
+    }
+
+    function wizardSelectReport(type) {
+        activeReportType = type;
+        selectReportType(type);
+
+        const cards = document.querySelectorAll('.wizard-report-card');
+        cards.forEach(c => {
+            const isSelected = c.id === 'wiz-card-' + type;
+            c.className = isSelected 
+                ? "wizard-report-card cursor-pointer border-2 border-primary bg-primary/5 dark:bg-primary/10 rounded-xl p-3.5 transition-all flex items-center gap-3 shadow-md text-slate-800 dark:text-slate-100"
+                : "wizard-report-card cursor-pointer border border-slate-200 dark:border-slate-800 hover:border-primary/50 hover:bg-primary/5 dark:hover:bg-primary/5 rounded-xl p-3.5 transition-all flex items-center gap-3 text-slate-800 dark:text-slate-100";
+        });
+
+        goToWizardStep(2);
     }
 
     function submitReportForm() {
         updateReportPreview();
         closeReportForm();
-        const gallery = document.getElementById('gen-step-gallery');
+        
         const preview = document.getElementById('gen-step-preview');
-        if (gallery) gallery.classList.add('hidden');
-        if (preview) { preview.classList.remove('hidden'); preview.classList.add('flex'); }
-        // מפנים מקום מקסימלי לתצוגה — מסתירים את תיבת ההסבר בזמן התצוגה המקדימה
+        if (preview) { 
+            preview.classList.remove('hidden'); 
+            preview.classList.add('flex'); 
+        }
+
         const hb = document.getElementById('help-box-reports');
-        if (hb) { hb.dataset.prevHidden = hb.classList.contains('hidden') ? '1' : '0'; hb.classList.add('hidden'); }
+        if (hb) { 
+            hb.dataset.prevHidden = hb.classList.contains('hidden') ? '1' : '0'; 
+            hb.classList.add('hidden'); 
+        }
+
         const pt = document.getElementById('gen-preview-title');
         if (pt) pt.textContent = reportTypeTitle();
-        // עכשיו שהתצוגה גלויה ויש לה מידות — מתאימים לעמוד אחד
+
         requestAnimationFrame(applyPreviewFit);
         setTimeout(applyPreviewFit, 120);
     }
 
     function backToReportGallery() {
-        const gallery = document.getElementById('gen-step-gallery');
-        const preview = document.getElementById('gen-step-preview');
-        if (preview) { preview.classList.add('hidden'); preview.classList.remove('flex'); }
-        if (gallery) gallery.classList.remove('hidden');
-        // מחזירים את תיבת ההסבר אם לא בוטלה לצמיתות
-        const hb = document.getElementById('help-box-reports');
-        if (hb && hb.dataset.prevHidden === '0') hb.classList.remove('hidden');
         closeReportForm();
     }
 
-    // --- כיווץ/הרחבה של בורר סוג הדו"ח (שיפור מבנה מחולל הדוחות) ---
-    function collapseReportTypePicker(type) {
-        const cards = document.getElementById('rep-type-cards');
-        const summary = document.getElementById('rep-type-summary');
-        const toggle = document.getElementById('rep-type-toggle');
-        const nameEl = document.getElementById('rep-type-summary-name');
-        if (!cards || !summary || !toggle) return;
-        let title = '';
-        const card = document.getElementById('rep-card-' + type);
-        if (card) {
-            const t = card.querySelector('.font-extrabold');
-            if (t) title = t.textContent.trim();
-        }
-        if (nameEl) nameEl.textContent = title || 'דו"ח';
-        cards.classList.add('hidden');
-        summary.classList.remove('hidden'); summary.classList.add('flex');
-        toggle.classList.remove('hidden'); toggle.classList.add('flex');
-    }
-
-    function toggleReportTypePicker() {
-        const cards = document.getElementById('rep-type-cards');
-        const summary = document.getElementById('rep-type-summary');
-        const toggle = document.getElementById('rep-type-toggle');
-        if (!cards || !summary || !toggle) return;
-        const isCollapsed = cards.classList.contains('hidden');
-        if (isCollapsed) {
-            // הרחב — הצג שוב את כרטיסי הבחירה
-            cards.classList.remove('hidden');
-            summary.classList.add('hidden'); summary.classList.remove('flex');
-            toggle.classList.add('hidden'); toggle.classList.remove('flex');
-        } else {
-            // כווץ — הסתר את הכרטיסים והצג סיכום
-            cards.classList.add('hidden');
-            summary.classList.remove('hidden'); summary.classList.add('flex');
-            toggle.classList.remove('hidden'); toggle.classList.add('flex');
-        }
-    }
+    function collapseReportTypePicker(type) {}
+    function toggleReportTypePicker() {}
 
     function parseHebrewDate(dateStr) {
         if (!dateStr || dateStr === '—') return new Date(0);
