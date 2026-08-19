@@ -1,0 +1,319 @@
+@import url('fonts.css');
+
+/* ==========================================
+   Design Tokens & CSS Custom Properties
+   ========================================== */
+:root {
+    /* Fonts */
+    --font-sans: 'Assistant', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+
+    /* Light Theme (Premium Modern Slate / Linear style) */
+    --bg-app: #f1f5f9;            /* Cozy Slate-100 canvas */
+    --bg-sidebar: #ffffff;        /* Pure white sidebar for separation */
+    --bg-card: #ffffff;           /* Clean white cards */
+    --bg-panel: #f8fafc;          /* Soft slate-50 internal panels */
+    --bg-input: #ffffff;          /* White inputs */
+    --border-color: rgba(226, 232, 240, 0.8);  /* Crisp, thin borders */
+    --border-hover: rgba(203, 213, 225, 1);
+    
+    --text-primary: #0f172a;      /* Slate-900 */
+    --text-secondary: #475569;    /* Slate-600 */
+    --text-muted: #94a3b8;        /* Slate-400 */
+    
+    --accent: #3776AB;            /* Indigo primary */
+    --accent-hover: #2b5d87;
+    --accent-glow: rgba(55, 118, 171, 0.12);
+    
+    --shadow-card: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 8px -1px rgba(15, 23, 42, 0.02), 0 0 0 1px rgba(15, 23, 42, 0.01);
+    --radius-lg: 1.5rem;          /* 24px */
+    --radius-md: 0.875rem;        /* 14px */
+}
+
+html.dark {
+    /* Dark Theme (Ultra-Premium Midnight Space) */
+    --bg-app: #030712;            /* Deepest midnight space background */
+    --bg-sidebar: #070a13;        /* Sidebar slightly darker */
+    --bg-card: #0b0f19;           /* Beautiful dark slate card */
+    --bg-panel: #070a13;          /* Darker panels */
+    --bg-input: #0f172a;          /* Slate-850 input fields */
+    --border-color: rgba(255, 255, 255, 0.06);
+    --border-hover: rgba(255, 255, 255, 0.12);
+    
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-muted: #64748b;
+    
+    --accent: #38bdf8;
+    --accent-hover: #0ea5e9;
+    --accent-glow: rgba(56, 189, 248, 0.15);
+    
+    --shadow-card: 0 10px 25px -3px rgba(0, 0, 0, 0.35), 0 4px 10px -4px rgba(0, 0, 0, 0.2);
+}
+
+/* ==========================================
+   Global Base Styles
+   ========================================== */
+* {
+    font-family: var(--font-sans) !important;
+}
+
+body {
+    background-color: var(--bg-app) !important;
+    color: var(--text-primary) !important;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 999px;
+}
+.dark ::-webkit-scrollbar-thumb {
+    background: #334155;
+}
+
+/* Page transitions slide & fade */
+main, .tab-content, .animate-page-load {
+    animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==========================================
+   Tailwind Colors & Classes Overrides (Light & Dark)
+   ========================================== */
+
+/* 1. Backgrounds */
+.bg-white {
+    background-color: var(--bg-card) !important;
+}
+.bg-slate-50, .bg-gray-50, .bg-slate-50\/50, .bg-gray-50\/50 {
+    background-color: var(--bg-panel) !important;
+}
+aside, .bg-[#ffffff] {
+    background-color: var(--bg-sidebar) !important;
+}
+.bg-slate-100, .bg-gray-100, .bg-[#f1f5f9] {
+    background-color: var(--bg-app) !important;
+}
+
+/* Opacity Wildcards */
+html.dark [class*="bg-white/"] { background-color: rgba(11, 15, 25, 0.75) !important; }
+html.dark [class*="bg-slate-50/"] { background-color: rgba(7, 10, 19, 0.5) !important; }
+html.dark [class*="bg-gray-50/"] { background-color: rgba(7, 10, 19, 0.5) !important; }
+html.dark [class*="bg-slate-100/"] { background-color: rgba(15, 23, 42, 0.5) !important; }
+html.dark [class*="bg-gray-100/"] { background-color: rgba(15, 23, 42, 0.5) !important; }
+
+/* 2. Card Shapes, Shadows & Borders */
+.rounded-3xl, .rounded-\[2rem\] {
+    border-radius: var(--radius-lg) !important;
+    border-color: var(--border-color) !important;
+    box-shadow: var(--shadow-card) !important;
+}
+
+.border-slate-200, 
+.border-gray-200, 
+.border-slate-200\/60, 
+.border-gray-100,
+.border-slate-100 {
+    border-color: var(--border-color) !important;
+}
+
+/* Hover lift micro-effects */
+.hover-lift {
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease !important;
+}
+.hover-lift:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: var(--shadow-card), 0 10px 25px rgba(15, 23, 42, 0.05) !important;
+}
+html.dark .hover-lift:hover {
+    box-shadow: var(--shadow-card), 0 10px 30px rgba(0, 0, 0, 0.45) !important;
+}
+
+/* 3. Text Colors */
+.text-slate-900, .text-gray-900, .text-slate-800, .text-gray-800 {
+    color: var(--text-primary) !important;
+}
+.text-slate-600, .text-gray-600, .text-slate-700, .text-gray-700 {
+    color: var(--text-secondary) !important;
+}
+.text-slate-400, .text-gray-400, .text-slate-500, .text-gray-500 {
+    color: var(--text-muted) !important;
+}
+
+/* 4. Form inputs & selections overrides */
+input[type="text"],
+input[type="password"],
+input[type="number"],
+input[type="email"],
+input[type="tel"],
+textarea,
+select {
+    background-color: var(--bg-input) !important;
+    color: var(--text-primary) !important;
+    border: 1.5px solid var(--border-color) !important;
+    border-radius: var(--radius-md) !important;
+    padding: 0.75rem 1rem !important;
+    outline: none !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02) !important;
+    transition: all 0.2s ease !important;
+}
+
+input:hover, select:hover, textarea:hover {
+    border-color: var(--border-hover) !important;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 4px var(--accent-glow) !important;
+}
+
+/* Options dropdown inside select */
+select option {
+    background-color: var(--bg-card) !important;
+    color: var(--text-primary) !important;
+}
+
+/* 5. active buttons and active tiles */
+.tile-active {
+    border-color: var(--accent) !important;
+    background-color: var(--accent-glow) !important;
+    box-shadow: 0 0 0 2px var(--accent) !important;
+}
+
+/* Fluid tap interactions */
+button,
+a,
+.cursor-pointer,
+[onclick] {
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease, border-color 0.2s ease !important;
+}
+button:active,
+a:active,
+.cursor-pointer:active,
+[onclick]:active {
+    transform: scale(0.96) !important;
+}
+
+/* Button primary styling gradients */
+.bg-primary, 
+button.bg-primary, 
+button.bg-\[\#3776AB\],
+.bg-\[\#3776AB\] {
+    background: linear-gradient(135deg, #3776AB 0%, #255175 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+    box-shadow: 0 4px 12px rgba(55, 118, 171, 0.2) !important;
+}
+html.dark button.bg-primary,
+html.dark .bg-primary,
+html.dark button.bg-\[\#3776AB\],
+html.dark .bg-\[\#3776AB\] {
+    background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+    box-shadow: 0 4px 12px rgba(56, 189, 248, 0.2) !important;
+}
+
+/* Alert States */
+.bg-emerald-50, .bg-emerald-100 {
+    background-color: rgba(16, 185, 129, 0.06) !important;
+    color: #10b981 !important;
+    border: 1px solid rgba(16, 185, 129, 0.15) !important;
+}
+.bg-amber-50, .bg-amber-100 {
+    background-color: rgba(245, 158, 11, 0.06) !important;
+    color: #f59e0b !important;
+    border: 1px solid rgba(245, 158, 11, 0.15) !important;
+}
+.bg-rose-50, .bg-rose-100, .bg-red-50, .bg-red-100 {
+    background-color: rgba(239, 68, 68, 0.06) !important;
+    color: #ef4444 !important;
+    border: 1px solid rgba(239, 68, 68, 0.15) !important;
+}
+.bg-blue-50, .bg-blue-100 {
+    background-color: rgba(59, 130, 246, 0.06) !important;
+    color: #3b82f6 !important;
+    border: 1px solid rgba(59, 130, 246, 0.15) !important;
+}
+
+/* ==========================================
+   Header & Sidebar Glassmorphic effects
+   ========================================== */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.75) !important;
+    backdrop-filter: blur(20px) saturate(190%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+}
+html.dark .glass-panel {
+    background: rgba(11, 15, 25, 0.75) !important;
+    backdrop-filter: blur(20px) saturate(190%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+header.sticky,
+header.backdrop-blur-md {
+    background: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(20px) saturate(190%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+html.dark header.sticky,
+html.dark header.backdrop-blur-md {
+    background: rgba(3, 7, 18, 0.7) !important;
+    backdrop-filter: blur(20px) saturate(190%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+/* Sidebar Active Tab overrides */
+html.dark button.bg-white[id^="tab-btn-"] {
+    background-color: var(--bg-input) !important;
+    border-color: var(--border-color) !important;
+}
+
+/* ==========================================
+   AccessibilitySafeguards
+   ========================================== */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+        transform: none !important;
+    }
+}
+@media (prefers-reduced-transparency: reduce) {
+    header.sticky,
+    aside.w-64,
+    .glass-panel {
+        background: #ffffff !important;
+        backdrop-filter: none !important;
+    }
+    html.dark header.sticky,
+    html.dark aside.w-64,
+    html.dark .glass-panel {
+        background: #0b0f19 !important;
+        backdrop-filter: none !important;
+    }
+}

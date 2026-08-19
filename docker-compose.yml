@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  military-portal:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: military-portal-app
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/opt/app-root/src/data
+    restart: always

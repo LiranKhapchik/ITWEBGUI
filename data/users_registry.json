@@ -1,0 +1,21 @@
+{
+    "s9117951": {
+        "username": "s9117951",
+        "name": "מנהל מערכת",
+        "rank": "אע״צ",
+        "role": "מנהל תשתיות ו-SSO",
+        "phone": "518-3508",
+        "email": "s9117951@iaf.local",
+        "is_admin": true,
+        "service_type": "קבע",
+        "permissions": [
+            "roster",
+            "rooms",
+            "knowledge",
+            "tickets",
+            "inventory",
+            "reports",
+            "site_content"
+        ]
+    }
+}
