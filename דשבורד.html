@@ -1649,7 +1649,7 @@
                 </div>
                 <div>
                     <label class="block text-sm font-extrabold text-gray-700 mb-1.5">מספר אישי</label>
-                    <input type="text" id="member-personal-id" placeholder="7 ספרות בלבד" oninput="this.value = this.value.replace(/[^\d]/g, '').substring(0, 7);" class="w-full p-2.5 bg-slate-50 border border-gray-200 rounded-xl text-sm font-bold text-left" dir="ltr">
+                    <input type="text" id="member-personal-id" placeholder="7 ספרות בלבד" oninput="this.value = this.value.replace(/[^\d]/g, '').substring(0, 7); onPersonalIdInput(this.value);" class="w-full p-2.5 bg-slate-50 border border-gray-200 rounded-xl text-sm font-bold text-left" dir="ltr">
                 </div>
                 <div id="member-kave-wrapper" class="hidden flex items-end pb-3">
                     <label class="flex items-center gap-2 cursor-pointer">
@@ -1664,27 +1664,35 @@
                 <input type="text" id="member-profession" list="role-suggestions" placeholder="בחר או הזן תפקיד" class="w-full p-2.5 bg-slate-50 border border-gray-200 rounded-xl text-sm font-bold">
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-extrabold text-gray-700 mb-1.5">ספיר/טלפון</label>
-                    <input type="text" id="member-phone" placeholder="518-XXXX" oninput="this.value=formatMilitaryPhone(this.value)" class="w-full p-2.5 bg-slate-50 border border-gray-200 rounded-xl text-sm font-bold font-mono text-left" dir="ltr">
-                </div>
-                <div>
-                    <label class="block text-sm font-extrabold text-gray-700 mb-1.5">דוא"ל פנימי</label>
-                    <input type="text" id="member-email" class="w-full p-2.5 bg-slate-50 border border-gray-200 rounded-xl text-sm font-bold font-mono text-left" dir="ltr">
-                </div>
+            <div>
+                <label class="block text-sm font-extrabold text-gray-700 mb-1.5">ספיר/טלפון</label>
+                <input type="text" id="member-phone" placeholder="518-XXXX" oninput="this.value=formatMilitaryPhone(this.value)" class="w-full p-2.5 bg-slate-50 border border-gray-200 rounded-xl text-sm font-bold font-mono text-left" dir="ltr">
             </div>
 
             <!-- הצגה בקרוסלה באתר הראשי -->
-            <div class="border-t border-gray-100 pt-4 mt-2 bg-blue-50/50 p-4 rounded-xl border border-blue-100 dark:bg-slate-800/40 dark:border-slate-800">
-                <label class="flex items-center gap-3 cursor-pointer font-extrabold text-sm text-gray-800 dark:text-slate-200">
-                    <input type="checkbox" id="member-show-in-carousel" onchange="toggleMemberCarouselFields()" class="w-5 h-5 text-primary rounded border-gray-300 focus:ring-primary" checked>
-                    <span>הצג בקרוסלת צוות המחשוב באתר הראשי</span>
-                </label>
-                <p class="text-xs text-gray-500 dark:text-slate-400 mt-1 leading-normal">אם מסומן, יתבקש המידע הרלוונטי (תמונה, ציטוטים ותגיות) והחייל יופיע בקרוסלה.</p>
+            <div id="member-carousel-toggle-card" onclick="toggleMemberCarouselFromCard(event)" class="border-t border-gray-100 pt-4 mt-2 bg-blue-50/60 hover:bg-blue-100/60 dark:bg-slate-800/40 dark:hover:bg-slate-800/60 p-4 rounded-2xl border-2 border-blue-200 dark:border-slate-750 transition-all cursor-pointer select-none shadow-sm flex items-center justify-between gap-4">
+                <div class="flex-1">
+                    <div class="flex items-center gap-2">
+                        <ui-icon name="users" class="w-5 h-5 text-primary flex-shrink-0"></ui-icon>
+                        <span class="font-black text-sm text-gray-800 dark:text-slate-200">הצג בקרוסלת צוות המחשוב באתר הראשי</span>
+                    </div>
+                    <p class="text-xs text-gray-500 dark:text-slate-400 mt-1 leading-normal font-medium">אם מסומן, יתבקש המידע הרלוונטי (דוא״ל, תמונה, ציטוטים ותגיות) והחייל יופיע בקרוסלה.</p>
+                </div>
+                <div class="flex-shrink-0 flex items-center gap-2">
+                    <span id="member-carousel-status-text" class="text-xs font-black text-primary">מוצג</span>
+                    <div class="relative inline-flex items-center pointer-events-none">
+                        <input type="checkbox" id="member-show-in-carousel" onchange="toggleMemberCarouselFields()" class="sr-only peer" checked>
+                        <div class="w-12 h-6 bg-slate-300 rounded-full peer dark:bg-slate-700 peer-checked:bg-primary peer-checked:after:translate-x-6 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all after:shadow-sm"></div>
+                    </div>
+                </div>
             </div>
 
             <div id="member-carousel-fields" class="space-y-5">
+                <div>
+                    <label class="block text-sm font-extrabold text-gray-700 dark:text-slate-300 mb-1.5">דוא"ל פנימי (להצגה בקרוסלה)</label>
+                    <input type="text" id="member-email" placeholder="user@iaf.local" class="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl text-sm font-bold font-mono text-left" dir="ltr">
+                </div>
+
                 <div class="border-t border-gray-100 pt-4">
                     <label class="block text-sm font-extrabold text-gray-700 dark:text-slate-300 mb-1.5">תמונת פרופיל לקרוסלה (העלאה)</label>
                     <input type="file" id="member-photo-file" accept="image/*" onchange="handlePhotoUpload(event)" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer">
@@ -1723,12 +1731,24 @@
 
             <!-- הגדרות חשבון SSO והרשאות מערכת -->
             <div class="border-t-2 border-primary/20 pt-5 mt-4 space-y-4">
-                <div class="bg-indigo-50/60 dark:bg-indigo-950/30 p-4 rounded-xl border border-indigo-150 dark:border-indigo-900/50">
-                    <label class="flex items-center gap-3 cursor-pointer font-extrabold text-sm text-indigo-950 dark:text-indigo-200">
-                        <input type="checkbox" id="member-enable-sso" onchange="toggleMemberSsoFields()" class="w-5 h-5 text-primary rounded border-gray-300 focus:ring-primary">
-                        <span>פתח/עדכן חשבון משתמש במערכת (SSO והרשאות)</span>
-                    </label>
-                    <p class="text-xs text-indigo-700 dark:text-indigo-400 mt-1 leading-normal">הגדרת הרשאות מערכת התקפות לכל הפרויקט עבור חייל זה לפי ה-SSO שלו.</p>
+                <div id="member-sso-toggle-card" onclick="toggleMemberSsoFromCard(event)" class="bg-indigo-50/70 hover:bg-indigo-100/70 dark:bg-indigo-950/40 dark:hover:bg-indigo-900/50 p-4 rounded-2xl border-2 border-indigo-200 dark:border-indigo-800/60 transition-all cursor-pointer select-none shadow-sm flex items-center justify-between gap-4">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2">
+                            <ui-icon name="user-check" class="w-5 h-5 text-indigo-600 dark:text-indigo-400 flex-shrink-0"></ui-icon>
+                            <span class="font-black text-sm text-indigo-950 dark:text-indigo-200">פתח/עדכן חשבון משתמש במערכת (SSO והרשאות)</span>
+                        </div>
+                        <p class="text-xs text-indigo-700 dark:text-indigo-400 mt-1 leading-normal font-medium">
+                            הגדרת הרשאות מערכת התקפות לכל הפרויקט עבור חייל זה (עובד גם במחשב עצמאי / Stand-alone).
+                        </p>
+                    </div>
+                    <!-- Custom Toggle Switch -->
+                    <div class="flex-shrink-0 flex items-center gap-2">
+                        <span id="member-sso-status-text" class="text-xs font-black text-slate-500">כבוי</span>
+                        <div class="relative inline-flex items-center pointer-events-none">
+                            <input type="checkbox" id="member-enable-sso" onchange="toggleMemberSsoFields()" class="sr-only peer">
+                            <div class="w-12 h-6 bg-slate-300 rounded-full peer dark:bg-slate-700 peer-checked:bg-indigo-600 peer-checked:after:translate-x-6 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all after:shadow-sm"></div>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="member-sso-fields" class="hidden space-y-4 bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-gray-200 dark:border-slate-800">
@@ -6722,19 +6742,106 @@
         }
     }
 
+    function onPersonalIdInput(val) {
+        const clean = val.replace(/[^\d]/g, '').substring(0, 7);
+        const ssoUserInp = document.getElementById('member-sso-username');
+        if (ssoUserInp && (!ssoUserInp.value || ssoUserInp.value.startsWith('s'))) {
+            ssoUserInp.value = clean ? ('s' + clean) : '';
+        }
+    }
+
+    function toggleMemberCarouselFromCard(e) {
+        if (e && e.target && e.target.tagName === 'INPUT') return;
+        const cb = document.getElementById('member-show-in-carousel');
+        if (!cb) return;
+        cb.checked = !cb.checked;
+        toggleMemberCarouselFields();
+    }
+
     function toggleMemberCarouselFields() {
-        const isChecked = document.getElementById('member-show-in-carousel').checked;
+        const cb = document.getElementById('member-show-in-carousel');
+        const isChecked = cb ? cb.checked : false;
         const fields = document.getElementById('member-carousel-fields');
+        const statusText = document.getElementById('member-carousel-status-text');
+        const card = document.getElementById('member-carousel-toggle-card');
+
+        if (statusText) {
+            statusText.textContent = isChecked ? 'מוצג' : 'מוסתר';
+            statusText.className = isChecked ? 'text-xs font-black text-primary' : 'text-xs font-black text-slate-500';
+        }
+        if (card) {
+            if (isChecked) {
+                card.classList.add('ring-2', 'ring-primary/40', 'border-primary/50', 'bg-blue-100/60');
+            } else {
+                card.classList.remove('ring-2', 'ring-primary/40', 'border-primary/50', 'bg-blue-100/60');
+            }
+        }
         if (fields) fields.classList.toggle('hidden', !isChecked);
+    }
+
+    function toggleMemberSsoFromCard(e) {
+        if (e && e.target && e.target.tagName === 'INPUT') return;
+        const cb = document.getElementById('member-enable-sso');
+        if (!cb) return;
+        cb.checked = !cb.checked;
+        toggleMemberSsoFields();
     }
 
     function toggleMemberSsoFields() {
-        const isChecked = document.getElementById('member-enable-sso').checked;
+        const cb = document.getElementById('member-enable-sso');
+        const isChecked = cb ? cb.checked : false;
         const fields = document.getElementById('member-sso-fields');
-        if (fields) fields.classList.toggle('hidden', !isChecked);
+        const statusText = document.getElementById('member-sso-status-text');
+        const card = document.getElementById('member-sso-toggle-card');
+        
+        if (statusText) {
+            statusText.textContent = isChecked ? 'פעיל' : 'כבוי';
+            statusText.className = isChecked ? 'text-xs font-black text-indigo-600 dark:text-indigo-400' : 'text-xs font-black text-slate-500';
+        }
+        if (card) {
+            if (isChecked) {
+                card.classList.add('ring-2', 'ring-indigo-400', 'border-indigo-400', 'bg-indigo-100/70');
+            } else {
+                card.classList.remove('ring-2', 'ring-indigo-400', 'border-indigo-400', 'bg-indigo-100/70');
+            }
+        }
+
+        if (fields) {
+            fields.classList.toggle('hidden', !isChecked);
+            if (isChecked) {
+                const pid = (document.getElementById('member-personal-id') ? document.getElementById('member-personal-id').value : '').trim();
+                const uInput = document.getElementById('member-sso-username');
+                if (uInput && !uInput.value && pid) {
+                    uInput.value = 's' + pid;
+                }
+                setTimeout(() => {
+                    fields.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 50);
+            }
+        }
     }
 
     async function saveSsoUserFromTeam(userData) {
+        // Save to localStorage for standalone/offline capability
+        try {
+            let localUsers = [];
+            try {
+                localUsers = JSON.parse(localStorage.getItem('mch_users_registry') || '[]');
+            } catch(e) { localUsers = []; }
+            if (!Array.isArray(localUsers)) localUsers = [];
+            const existingIdx = localUsers.findIndex(u => u.username === userData.username);
+            if (existingIdx >= 0) {
+                localUsers[existingIdx] = userData;
+            } else {
+                localUsers.push(userData);
+            }
+            localStorage.setItem('mch_users_registry', JSON.stringify(localUsers));
+            if (Array.isArray(ssoUsersList)) {
+                const sIdx = ssoUsersList.findIndex(u => u.username === userData.username);
+                if (sIdx >= 0) ssoUsersList[sIdx] = userData; else ssoUsersList.push(userData);
+            }
+        } catch(e) {}
+
         try {
             const res = await fetch('api.php?file=users_registry', {
                 method: 'POST',
@@ -6743,16 +6850,11 @@
             });
             if (res.ok) {
                 if (typeof fetchSsoUsersList === 'function') await fetchSsoUsersList();
-                showSuccessAlert(`חשבון ה-SSO עבור ${userData.name} נשמר וההרשאות הופעלו בכל הפרויקט!`);
             }
         } catch (e) {
-            console.warn("Could not save SSO user to server:", e);
+            console.warn("Could not save SSO user to server (stand-alone/offline):", e);
         }
-
-        try {
-            if (!window.ssoUsersList || typeof window.ssoUsersList !== 'object') window.ssoUsersList = {};
-            window.ssoUsersList[userData.username] = userData;
-        } catch(e) {}
+        showSuccessAlert(`חשבון ה-SSO עבור ${userData.name} נשמר וההרשאות הופעלו בכל הפרויקט!`);
     }
 
     function openEditMemberDrawer(idx=null) {
@@ -6809,14 +6911,29 @@
 
         // Populate SSO fields
         const pid = (idx !== null ? (state.team[idx].personalId || '') : '').trim();
+        const memberName = (idx !== null ? (state.team[idx].name || '') : '').trim();
         let existingSso = null;
-        if (typeof ssoUsersList === 'object' && ssoUsersList) {
-            if (pid) {
-                existingSso = ssoUsersList['s' + pid] || Object.values(ssoUsersList).find(u => u.personalId === pid || u.username === 's' + pid);
+        
+        let allUsers = [];
+        if (Array.isArray(ssoUsersList)) {
+            allUsers = [...ssoUsersList];
+        } else if (typeof ssoUsersList === 'object' && ssoUsersList) {
+            allUsers = Object.values(ssoUsersList);
+        }
+        try {
+            const loc = JSON.parse(localStorage.getItem('mch_users_registry') || '[]');
+            if (Array.isArray(loc)) {
+                loc.forEach(u => {
+                    if (!allUsers.some(x => x.username === u.username)) allUsers.push(u);
+                });
             }
-            if (!existingSso && idx !== null && state.team[idx].name) {
-                existingSso = Object.values(ssoUsersList).find(u => u.name === state.team[idx].name);
-            }
+        } catch(e) {}
+
+        if (pid) {
+            existingSso = allUsers.find(u => u.username === ('s' + pid) || u.personalId === pid);
+        }
+        if (!existingSso && memberName) {
+            existingSso = allUsers.find(u => u.name === memberName);
         }
 
         const ssoEnableCb = document.getElementById('member-enable-sso');
@@ -6911,7 +7028,7 @@
             rank: rank, 
             profession: document.getElementById('member-profession').value,
             sapir: document.getElementById('member-phone').value, 
-            email: document.getElementById('member-email').value,
+            email: showInCarousel ? document.getElementById('member-email').value : '',
             personalId: personalId,
             isKave: isKave,
             showInCarousel: showInCarousel,
@@ -6938,7 +7055,7 @@
                 personalId: personalId,
                 service_type: isKave ? 'קבע' : (rank === 'rank-aatz' ? 'אע״צ' : 'חובה'),
                 phone: document.getElementById('member-phone').value,
-                email: document.getElementById('member-email').value || (ssoUsername + '@iaf.local'),
+                email: (showInCarousel && document.getElementById('member-email').value) ? document.getElementById('member-email').value : (ssoUsername + '@iaf.local'),
                 is_admin: ssoIsAdmin,
                 permissions: ssoPerms
             };
