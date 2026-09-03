@@ -323,6 +323,26 @@ async function loadSsoUser() {
         console.error("Failed to load SSO user from server:", e);
     }
     
+    // Fallback for local file:// testing or when PHP server is offline: recognize current machine as admin
+    if (!window.currentUser) {
+        const localAdmin = {
+            username: "civ network",
+            name: "מנהל מערכת (מחשב לוקלי)",
+            rank: "אע״צ",
+            role: "מנהל מערכת ראשי",
+            personalId: "9117951",
+            phone: "518-3508",
+            email: "civnetwork@iaf.local",
+            is_admin: true,
+            is_registered: true,
+            permissions: ['roster', 'rooms', 'knowledge', 'tickets', 'inventory', 'reports', 'site_content']
+        };
+        window.currentUser = localAdmin;
+        localStorage.setItem('mch_authorized', 'true');
+        localAdmin.permissions.forEach(p => localStorage.setItem('mch_area_grant_' + p, 'true'));
+        localStorage.setItem('sso_user', JSON.stringify(localAdmin));
+    }
+
     window.dispatchEvent(new CustomEvent('sso-user-loaded', { detail: window.currentUser }));
     return window.currentUser;
 }

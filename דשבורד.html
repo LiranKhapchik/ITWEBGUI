@@ -693,6 +693,17 @@
                                 </div>
                             </div>
 
+                            <!-- באנר צפייה בלבד עבור משתמשים שאינם מנהלי דשבורד -->
+                            <div id="tm-readonly-open-banner" class="hidden border-t border-gray-200 pt-5">
+                                <div class="bg-blue-50/70 border border-blue-200 p-4 rounded-xl text-center space-y-1 text-blue-900">
+                                    <div class="flex items-center justify-center gap-2 font-extrabold text-sm text-blue-800">
+                                        <ui-icon name="tool" class="w-4 h-4 text-blue-600"></ui-icon>
+                                        <span>הקריאה נמצאת בטיפול צוות המחשוב</span>
+                                    </div>
+                                    <p class="text-xs text-blue-700/80 font-medium">פרטי הקריאה מוצגים לצפייה בלבד. לבירורים נוספים פנו לצוות המחשוב.</p>
+                                </div>
+                            </div>
+
                             <!-- אזור מידע אם סגור -->
                             <div id="tm-closed-info" class="hidden border-t border-gray-200 pt-5 space-y-4">
                                 <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-xl text-emerald-900">
@@ -704,7 +715,10 @@
                                     <div><span class="font-bold opacity-70 block mb-1 text-sm">פירוט:</span> <span class="font-semibold block bg-white/60 p-3 rounded-lg text-base" id="tm-res-text"></span></div>
                                     <div id="tm-res-inv" class="mt-3 text-sm font-bold hidden bg-white/60 p-2 rounded-lg"></div>
                                 </div>
-                                <button onclick="reopenTicketFromModal()" class="w-full bg-white border-2 border-gray-200 hover:border-gray-300 text-gray-700 py-3 rounded-xl font-extrabold text-base transition-all shadow-sm">פתח קריאה מחדש</button>
+                                <button onclick="openReopenModal()" class="w-full bg-white border-2 border-amber-400 hover:bg-amber-50 text-amber-800 py-3 rounded-xl font-extrabold text-base transition-all shadow-sm flex items-center justify-center gap-2">
+                                    <ui-icon name="alert-triangle" class="w-5 h-5 text-amber-500"></ui-icon>
+                                    <span>פתח קריאה מחדש</span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -1661,38 +1675,110 @@
                 </div>
             </div>
 
-            <div class="border-t border-gray-100 pt-5 mt-2">
-                <label class="block text-sm font-extrabold text-gray-700 mb-1.5">תמונת פרופיל (העלאה)</label>
-                <input type="file" id="member-photo-file" accept="image/*" onchange="handlePhotoUpload(event)" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer">
-                <input type="hidden" id="member-photo-base64">
-                <div class="mt-3 text-center" id="member-photo-preview-container">
-                    <!-- Preview img here -->
+            <!-- הצגה בקרוסלה באתר הראשי -->
+            <div class="border-t border-gray-100 pt-4 mt-2 bg-blue-50/50 p-4 rounded-xl border border-blue-100 dark:bg-slate-800/40 dark:border-slate-800">
+                <label class="flex items-center gap-3 cursor-pointer font-extrabold text-sm text-gray-800 dark:text-slate-200">
+                    <input type="checkbox" id="member-show-in-carousel" onchange="toggleMemberCarouselFields()" class="w-5 h-5 text-primary rounded border-gray-300 focus:ring-primary" checked>
+                    <span>הצג בקרוסלת צוות המחשוב באתר הראשי</span>
+                </label>
+                <p class="text-xs text-gray-500 dark:text-slate-400 mt-1 leading-normal">אם מסומן, יתבקש המידע הרלוונטי (תמונה, ציטוטים ותגיות) והחייל יופיע בקרוסלה.</p>
+            </div>
+
+            <div id="member-carousel-fields" class="space-y-5">
+                <div class="border-t border-gray-100 pt-4">
+                    <label class="block text-sm font-extrabold text-gray-700 dark:text-slate-300 mb-1.5">תמונת פרופיל לקרוסלה (העלאה)</label>
+                    <input type="file" id="member-photo-file" accept="image/*" onchange="handlePhotoUpload(event)" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer">
+                    <input type="hidden" id="member-photo-base64">
+                    <div class="mt-3 text-center" id="member-photo-preview-container">
+                        <!-- Preview img here -->
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-100 pt-4">
+                    <h4 class="text-sm font-extrabold text-gray-700 dark:text-slate-300 mb-2">משפטים וציטוטים לקרוסלה (מופיעים מתחת לשם)</h4>
+                    <div class="space-y-2.5" id="member-quotes-container">
+                        <input type="text" id="member-quote-1" placeholder='ציטוט 1 (לדוגמה: "אין בעיה שאי אפשר לפתור")' class="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl text-sm italic font-medium">
+                        <input type="text" id="member-quote-2" placeholder="ציטוט 2 (אופציונלי)" class="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl text-sm italic font-medium">
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-100 pt-4">
+                    <h4 class="text-sm font-extrabold text-gray-700 dark:text-slate-300 mb-2">תגיות מומחיות ותחומי אחריות</h4>
+                    <div class="flex items-center gap-2 mb-2">
+                        <input type="text" id="new-tag-text" placeholder="שם התגית (לדוג: שרתים)" class="flex-1 p-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg text-sm font-bold">
+                        <select id="new-tag-color" class="p-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg text-sm font-bold w-24">
+                            <option value="blue">כחול</option>
+                            <option value="emerald">ירוק</option>
+                            <option value="amber">צהוב</option>
+                            <option value="rose">אדום</option>
+                            <option value="purple">סגול</option>
+                        </select>
+                        <button type="button" onclick="addTagToPreview()" class="px-3 py-2 bg-primary text-white rounded-lg font-bold text-sm">+</button>
+                    </div>
+                    <div id="member-tags-preview" class="flex flex-wrap gap-2 min-h-[40px] p-2 bg-slate-50 dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-800">
+                        <!-- Tags will be rendered here as removable pills -->
+                    </div>
                 </div>
             </div>
 
-            <div class="border-t border-gray-100 pt-5 mt-2">
-                <h4 class="text-sm font-extrabold text-gray-700 mb-3">משפטים וציטוטים (מופיעים מתחת לשם)</h4>
-                <div class="space-y-3" id="member-quotes-container">
-                    <input type="text" id="member-quote-1" placeholder='ציטוט 1 (לדוגמה: "אין בעיה שאי אפשר לפתור")' class="w-full p-2.5 bg-slate-50 border border-gray-200 rounded-xl text-sm italic font-medium">
-                    <input type="text" id="member-quote-2" placeholder="ציטוט 2 (אופציונלי)" class="w-full p-2.5 bg-slate-50 border border-gray-200 rounded-xl text-sm italic font-medium">
+            <!-- הגדרות חשבון SSO והרשאות מערכת -->
+            <div class="border-t-2 border-primary/20 pt-5 mt-4 space-y-4">
+                <div class="bg-indigo-50/60 dark:bg-indigo-950/30 p-4 rounded-xl border border-indigo-150 dark:border-indigo-900/50">
+                    <label class="flex items-center gap-3 cursor-pointer font-extrabold text-sm text-indigo-950 dark:text-indigo-200">
+                        <input type="checkbox" id="member-enable-sso" onchange="toggleMemberSsoFields()" class="w-5 h-5 text-primary rounded border-gray-300 focus:ring-primary">
+                        <span>פתח/עדכן חשבון משתמש במערכת (SSO והרשאות)</span>
+                    </label>
+                    <p class="text-xs text-indigo-700 dark:text-indigo-400 mt-1 leading-normal">הגדרת הרשאות מערכת התקפות לכל הפרויקט עבור חייל זה לפי ה-SSO שלו.</p>
                 </div>
-            </div>
 
-            <div class="border-t border-gray-100 pt-5 mt-2">
-                <h4 class="text-sm font-extrabold text-gray-700 mb-3">תגיות מומחיות ותחומי אחריות</h4>
-                <div class="flex items-center gap-2 mb-2">
-                    <input type="text" id="new-tag-text" placeholder="שם התגית (לדוג: שרתים)" class="flex-1 p-2 bg-white border border-gray-200 rounded-lg text-sm font-bold">
-                    <select id="new-tag-color" class="p-2 bg-white border border-gray-200 rounded-lg text-sm font-bold w-24">
-                        <option value="blue">כחול</option>
-                        <option value="emerald">ירוק</option>
-                        <option value="amber">צהוב</option>
-                        <option value="rose">אדום</option>
-                        <option value="purple">סגול</option>
-                    </select>
-                    <button type="button" onclick="addTagToPreview()" class="px-3 py-2 bg-primary text-white rounded-lg font-bold text-sm">+</button>
-                </div>
-                <div id="member-tags-preview" class="flex flex-wrap gap-2 min-h-[40px] p-2 bg-slate-50 rounded-xl border border-gray-100">
-                    <!-- Tags will be rendered here as removable pills -->
+                <div id="member-sso-fields" class="hidden space-y-4 bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-gray-200 dark:border-slate-800">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-extrabold text-gray-700 dark:text-slate-300 mb-1">שם משתמש AD (%USERNAME%)</label>
+                            <input type="text" id="member-sso-username" placeholder="sXXXXXXX" class="w-full p-2.5 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg text-xs font-mono font-bold text-left" dir="ltr">
+                            <span class="text-[10px] text-gray-400 block mt-0.5">אות s + 7 ספרות אישי</span>
+                        </div>
+                        <div class="flex items-center pt-3">
+                            <label class="flex items-center gap-2 cursor-pointer font-extrabold text-xs text-red-600 dark:text-red-400">
+                                <input type="checkbox" id="member-sso-is-admin" class="w-4 h-4 text-red-600 rounded border-gray-300 focus:ring-red-500">
+                                <span>מנהל מערכת ראשי (Admin)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-extrabold text-gray-700 dark:text-slate-300 mb-2">הרשאות לאזורים (תקפות לכל הפרויקט):</label>
+                        <div class="grid grid-cols-2 gap-2 text-xs font-bold text-gray-700 dark:text-slate-300">
+                            <label class="flex items-center gap-2 p-2 rounded-lg bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 hover:bg-slate-50 cursor-pointer">
+                                <input type="checkbox" name="member-perm" value="tickets" class="rounded text-primary">
+                                <span>ניהול תקלות (דשבורד)</span>
+                            </label>
+                            <label class="flex items-center gap-2 p-2 rounded-lg bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 hover:bg-slate-50 cursor-pointer">
+                                <input type="checkbox" name="member-perm" value="inventory" class="rounded text-primary">
+                                <span>ניהול מלאי (דשבורד)</span>
+                            </label>
+                            <label class="flex items-center gap-2 p-2 rounded-lg bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 hover:bg-slate-50 cursor-pointer">
+                                <input type="checkbox" name="member-perm" value="roster" class="rounded text-primary">
+                                <span>לוח תורנויות</span>
+                            </label>
+                            <label class="flex items-center gap-2 p-2 rounded-lg bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 hover:bg-slate-50 cursor-pointer">
+                                <input type="checkbox" name="member-perm" value="rooms" class="rounded text-primary">
+                                <span>שריון חדרים</span>
+                            </label>
+                            <label class="flex items-center gap-2 p-2 rounded-lg bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 hover:bg-slate-50 cursor-pointer">
+                                <input type="checkbox" name="member-perm" value="knowledge" class="rounded text-primary">
+                                <span>מאגרי ידע</span>
+                            </label>
+                            <label class="flex items-center gap-2 p-2 rounded-lg bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 hover:bg-slate-50 cursor-pointer">
+                                <input type="checkbox" name="member-perm" value="reports" class="rounded text-primary">
+                                <span>הנפקת דוחות</span>
+                            </label>
+                            <label class="flex items-center gap-2 p-2 rounded-lg bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 hover:bg-slate-50 cursor-pointer col-span-2">
+                                <input type="checkbox" name="member-perm" value="site_content" class="rounded text-primary">
+                                <span>ניהול תוכן האתר</span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -2252,9 +2338,14 @@
                             JSON.stringify(serverData.categoryIcons || {}) !== JSON.stringify(state.categoryIcons || {});
 
             if (changed || !renderIfChanged) {
-                // Check if a new ticket was added
+                // Check if a new ticket was added or a ticket was reopened
+                const oldStatusMap = new Map((state.tickets || []).map(t => [t.id, t.status]));
                 const oldIds = new Set((state.tickets || []).map(t => t.id));
                 const hasNewTicket = (serverData.tickets || []).some(t => !oldIds.has(t.id));
+                const hasReopenedTicket = (serverData.tickets || []).some(t => {
+                    const prevStatus = oldStatusMap.get(t.id);
+                    return prevStatus === 'closed' && (t.status === 'open' || t.status === 'treatment');
+                });
 
                 state.tickets = serverData.tickets || DEFAULT_TICKETS;
                 state.team = (serverData.team && serverData.team.length) ? serverData.team : JSON.parse(JSON.stringify(DEFAULT_TEAM));
@@ -2274,7 +2365,7 @@
 
                 if (renderIfChanged) {
                     renderAll();
-                    if (hasNewTicket) {
+                    if (hasNewTicket || hasReopenedTicket) {
                         playDingSound();
                     }
                 }
@@ -2598,7 +2689,12 @@
         await loadStateFromServer();
         initHelpBoxes();
         renderAll();
-        switchTab('matrix');
+        if (isDashboardAdminOrAuthorized()) {
+            switchTab('matrix');
+        } else {
+            switchTab('tickets');
+        }
+        applyUserPermissions();
         onIssuerRankChange();
         
         // רענון אוטומטי מהשרת כל 8 שניות לסנכרון שינויים בין מחשבים
@@ -2682,6 +2778,62 @@
     function hasAreaAccess(areaId) {
         if (localStorage.getItem('mch_authorized') === 'true') return true;
         return localStorage.getItem('mch_area_grant_' + areaId) === 'true';
+    }
+
+    // בדיקת הרשאות מנהל / משתמש מורשה לדשבורד
+    function isDashboardAdminOrAuthorized(user = window.currentUser) {
+        if (user) {
+            if (user.is_admin) return true;
+            if (user.role && (user.role.includes('מנהל') || user.role.includes('admin') || user.role.includes('טכנאי') || user.role.includes('technician'))) return true;
+            if (Array.isArray(user.permissions) && (
+                user.permissions.includes('tickets') ||
+                user.permissions.includes('inventory') ||
+                user.permissions.includes('dashboard')
+            )) {
+                return true;
+            }
+        }
+        if (localStorage.getItem('mch_authorized') === 'true') return true;
+        if (localStorage.getItem('mch_area_grant_tickets') === 'true') return true;
+        if (localStorage.getItem('mch_area_grant_inventory') === 'true') return true;
+        return false;
+    }
+
+    // החלת הרשאות על ממשק הדשבורד (הגבלת תצוגה למי שאינו מנהל/מורשה)
+    function applyUserPermissions(user = window.currentUser) {
+        const isAuth = isDashboardAdminOrAuthorized(user);
+
+        const tabMatrix = document.getElementById('tab-btn-matrix');
+        const tabInv = document.getElementById('tab-btn-inventory');
+        const tabTeam = document.getElementById('tab-btn-team');
+        const tabSite = document.getElementById('tab-btn-site');
+        const tabReports = document.getElementById('tab-btn-reports');
+        const sysStatusSelect = document.getElementById('system-status-select');
+        const sysStatusWrap = sysStatusSelect ? sysStatusSelect.closest('div') : null;
+        const ssoSection = document.getElementById('sso-user-management-section');
+        const stockAlert = document.getElementById('sidebar-stock-alert');
+
+        if (!isAuth) {
+            if (tabMatrix) tabMatrix.classList.add('hidden');
+            if (tabInv) tabInv.classList.add('hidden');
+            if (tabTeam) tabTeam.classList.add('hidden');
+            if (tabSite) tabSite.classList.add('hidden');
+            if (tabReports) tabReports.classList.add('hidden');
+            if (sysStatusWrap) sysStatusWrap.classList.add('hidden');
+            if (ssoSection) ssoSection.classList.add('hidden');
+            if (stockAlert) stockAlert.classList.add('hidden');
+
+            // העברה כפויה ללשונית תקלות
+            switchTab('tickets');
+        } else {
+            if (tabMatrix) tabMatrix.classList.remove('hidden');
+            if (tabInv) tabInv.classList.remove('hidden');
+            if (tabTeam) tabTeam.classList.remove('hidden');
+            if (tabSite) tabSite.classList.remove('hidden');
+            if (tabReports) tabReports.classList.remove('hidden');
+            if (sysStatusWrap) sysStatusWrap.classList.remove('hidden');
+            if (ssoSection && user && user.is_admin) ssoSection.classList.remove('hidden');
+        }
     }
 
     function saveAreaPasswords() {
@@ -3615,9 +3767,11 @@
     }
 
     function switchTab(t) {
-        if (['tickets', 'inventory', 'site', 'team'].includes(t)) {
+        if (!isDashboardAdminOrAuthorized()) {
+            t = 'tickets';
+        } else if (['inventory', 'site', 'team'].includes(t)) {
             if (localStorage.getItem('mch_authorized') !== 'true') {
-                const prevTab = (state.activeTab && !['tickets', 'inventory', 'site', 'team'].includes(state.activeTab)) ? state.activeTab : 'matrix';
+                const prevTab = (state.activeTab && !['inventory', 'site', 'team'].includes(state.activeTab)) ? state.activeTab : 'matrix';
                 checkLock(
                     () => { switchTab(t); },
                     () => { switchTab(prevTab); }
@@ -3931,7 +4085,7 @@
             
             // Diagnostic Station for Classrooms
             if (cfg.countExam > 0) {
-                const diagTicket = openTickets.find(t => t.station === 'מאבחנת' || t.station === '0');
+                const diagTickets = openTickets.filter(t => t.station === 'מאבחנת' || t.station === '0');
                 const disabledInfo = (state.disabledStations || []).find(d => d.building === state.selectedBuilding && d.room === state.selectedRoom && (d.station === 'מאבחנת' || d.station === 'diag'));
                 
                 let bgColor = 'bg-slate-100/70 border border-slate-200 text-slate-700 hover:bg-slate-200/70 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-700';
@@ -3939,8 +4093,8 @@
                 
                 if (disabledInfo) {
                     bgColor = 'bg-red-500 animate-pulse-red shadow-lg shadow-red-500/40 text-white border-transparent';
-                } else if (diagTicket && diagTicket.status !== 'ofek') {
-                    if (diagTicket.status === 'treatment') {
+                } else if (diagTickets.length > 0 && diagTickets.some(t => t.status !== 'ofek')) {
+                    if (diagTickets.every(t => t.status === 'treatment')) {
                         bgColor = 'bg-yellow-500 animate-pulse-yellow shadow-lg shadow-yellow-500/40 text-slate-900 border-transparent';
                     } else {
                         bgColor = 'bg-red-500 animate-pulse-red shadow-lg shadow-red-500/40 text-white border-transparent';
@@ -3952,17 +4106,27 @@
                 if (disabledInfo) {
                     subText = 'עמדה משבתת';
                     subClass = 'text-red-500';
-                } else if (diagTicket && diagTicket.status !== 'ofek') {
-                    subText = diagTicket.status === 'treatment' ? 'בטיפול' : 'תקלה';
-                    subClass = diagTicket.status === 'treatment' ? 'text-yellow-600 dark:text-yellow-500' : 'text-red-500';
+                } else if (diagTickets.length > 0 && diagTickets.some(t => t.status !== 'ofek')) {
+                    if (diagTickets.length > 1) {
+                        subText = `${diagTickets.length} תקלות`;
+                        subClass = 'text-red-600 dark:text-red-400 font-black';
+                    } else {
+                        subText = diagTickets[0].status === 'treatment' ? 'בטיפול' : 'תקלה';
+                        subClass = diagTickets[0].status === 'treatment' ? 'text-yellow-600 dark:text-yellow-500' : 'text-red-500';
+                    }
                 }
                 
+                const countBadgeDiag = diagTickets.length > 1 ? `
+                    <span class="absolute -top-1.5 -left-1.5 bg-red-600 text-white text-[11px] font-black w-6 h-6 rounded-full flex items-center justify-center shadow-md border-2 border-white dark:border-slate-900">${diagTickets.length}</span>
+                ` : '';
+
                 html += `
                     <div class="col-span-full mb-2 flex flex-col items-center">
-                        <div class="w-full md:w-1/2 lg:w-1/3 aspect-[4/1] md:aspect-[5/1]">
+                        <div class="w-full md:w-1/2 lg:w-1/3 aspect-[4/1] md:aspect-[5/1] relative">
                             <div ${clickAction} data-station="diag" class="w-full h-full rounded-2xl flex items-center justify-center font-extrabold text-xl transition-all cursor-pointer ${bgColor}">
                                 <span>עמדת מאבחנת</span>
                             </div>
+                            ${countBadgeDiag}
                         </div>
                         <div class="mt-1.5 text-xs font-extrabold ${subClass}">
                             ${subText}
@@ -3972,7 +4136,7 @@
             }
 
             for (let i = 1; i <= TOTAL_STATIONS; i++) {
-                const ticketForStation = openTickets.find(t => parseInt(t.station) === i);
+                const stationTickets = openTickets.filter(t => parseInt(t.station) === i);
                 const disabledInfo = (state.disabledStations || []).find(d => d.building === state.selectedBuilding && d.room === state.selectedRoom && String(d.station) === String(i));
                 
                 let bgColor = '';
@@ -3980,8 +4144,8 @@
                 
                 if (disabledInfo) {
                     bgColor = 'bg-red-500 animate-pulse-red shadow-lg shadow-red-500/40 text-white border-transparent';
-                } else if (ticketForStation && ticketForStation.status !== 'ofek') {
-                    if (ticketForStation.status === 'treatment') {
+                } else if (stationTickets.length > 0 && stationTickets.some(t => t.status !== 'ofek')) {
+                    if (stationTickets.every(t => t.status === 'treatment')) {
                         bgColor = 'bg-yellow-500 animate-pulse-yellow shadow-lg shadow-yellow-500/40 text-slate-900 border-transparent';
                     } else {
                         bgColor = 'bg-red-500 animate-pulse-red shadow-lg shadow-red-500/40 text-white border-transparent';
@@ -3999,17 +4163,27 @@
                 if (disabledInfo) {
                     subText = 'עמדה משבתת';
                     subClass = 'text-red-500';
-                } else if (ticketForStation && ticketForStation.status !== 'ofek') {
-                    subText = ticketForStation.status === 'treatment' ? 'בטיפול' : 'תקלה';
-                    subClass = ticketForStation.status === 'treatment' ? 'text-yellow-600 dark:text-yellow-500' : 'text-red-500';
+                } else if (stationTickets.length > 0 && stationTickets.some(t => t.status !== 'ofek')) {
+                    if (stationTickets.length > 1) {
+                        subText = `${stationTickets.length} תקלות`;
+                        subClass = 'text-red-600 dark:text-red-400 font-black';
+                    } else {
+                        subText = stationTickets[0].status === 'treatment' ? 'בטיפול' : 'תקלה';
+                        subClass = stationTickets[0].status === 'treatment' ? 'text-yellow-600 dark:text-yellow-500' : 'text-red-500';
+                    }
                 }
+
+                const countBadge = stationTickets.length > 1 ? `
+                    <span class="absolute -top-1.5 -left-1.5 bg-red-600 text-white text-[11px] font-black w-6 h-6 rounded-full flex items-center justify-center shadow-md border-2 border-white dark:border-slate-900">${stationTickets.length}</span>
+                ` : '';
 
                 html += `
                     <div class="flex flex-col items-center">
-                        <div class="w-full aspect-square">
+                        <div class="w-full aspect-square relative">
                             <div ${clickAction} data-station="${i}" class="w-full h-full rounded-2xl flex items-center justify-center font-extrabold text-2xl transition-all cursor-pointer ${bgColor}">
                                 <span>${i}</span>
                             </div>
+                            ${countBadge}
                         </div>
                         <div class="mt-1.5 text-xs font-extrabold ${subClass}">
                             ${subText}
@@ -4085,9 +4259,9 @@
         const isSingleStation = (!cfg || Math.max(cfg.countExam || 0, cfg.countOffice || 0) <= 1);
         const comps = getStationComponents(state.selectedBuilding, state.selectedRoom, stationVal);
         const openTickets = state.tickets.filter(t => t.building === state.selectedBuilding && (t.room === state.selectedRoom || state.selectedRoom === 'כללי') && (t.status === 'open' || t.status === 'ofek' || t.status === 'treatment'));
-        const ticketForStation = isSingleStation 
-            ? openTickets[0] 
-            : openTickets.find(t => (stationVal === 'כללי' && (!t.station || t.station === 'כללי' || t.station === '')) || String(t.station) === String(stationVal) || (stationVal === 'מאבחנת' && (t.station === 'מאבחנת' || t.station === '0')));
+        const ticketsForStation = isSingleStation 
+            ? openTickets 
+            : openTickets.filter(t => (stationVal === 'כללי' && (!t.station || t.station === 'כללי' || t.station === '')) || String(t.station) === String(stationVal) || (stationVal === 'מאבחנת' && (t.station === 'מאבחנת' || t.station === '0')));
 
         const targetId = state.matrixLevel === 'rooms' ? 'room-detail-content' : 'station-detail-content';
         const panel = document.getElementById(targetId);
@@ -4100,11 +4274,14 @@
         if (disabledInfo) {
             statusText = 'מושבתת';
             statusBadgeColor = 'bg-red-100 text-red-800 border-red-200';
-        } else if (ticketForStation) {
-            if (ticketForStation.status === 'ofek') {
+        } else if (ticketsForStation.length > 0) {
+            if (ticketsForStation.length > 1) {
+                statusText = `${ticketsForStation.length} תקלות פתוחות`;
+                statusBadgeColor = 'bg-red-100 text-red-800 border-red-200';
+            } else if (ticketsForStation[0].status === 'ofek') {
                 statusText = 'באופק';
                 statusBadgeColor = 'bg-purple-100 text-purple-800 border-purple-200';
-            } else if (ticketForStation.status === 'treatment') {
+            } else if (ticketsForStation[0].status === 'treatment') {
                 statusText = 'בטיפול';
                 statusBadgeColor = 'bg-yellow-100 text-yellow-800 border-yellow-200';
             } else {
@@ -4163,20 +4340,32 @@
         }
 
         let ticketHtml = '';
-        if (ticketForStation) {
+        if (ticketsForStation.length > 0) {
             ticketHtml = `
-                <div class="mt-4 p-4 bg-slate-50 border border-gray-200 rounded-xl space-y-2 text-right">
-                    <h5 class="font-extrabold text-sm text-gray-900 flex items-center gap-1.5 justify-start" dir="rtl">
-                        <ui-icon name="tool" class="w-4 h-4 text-gray-500"></ui-icon>
-                        <span>פרטי התקלה:</span>
+                <div class="mt-4 space-y-3 text-right">
+                    <h5 class="font-extrabold text-sm text-gray-900 flex items-center justify-between" dir="rtl">
+                        <span class="flex items-center gap-1.5">
+                            <ui-icon name="tool" class="w-4 h-4 text-gray-500"></ui-icon>
+                            <span>תקלות פתוחות בעמדה (${ticketsForStation.length}):</span>
+                        </span>
+                        ${ticketsForStation.length > 1 ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-red-100 text-red-700">${ticketsForStation.length} תקלות במקביל</span>` : ''}
                     </h5>
-                    <div class="text-sm font-extrabold text-gray-800">${ticketForStation.title}</div>
-                    <div class="text-xs text-gray-500 font-medium leading-relaxed">${ticketForStation.desc}</div>
-                    <div class="text-xs text-gray-400 font-semibold">נפתחה ב: ${ticketForStation.date}</div>
-                    
-                    <button onclick="goToTicketAndOpen('${ticketForStation.id}')" class="w-full mt-2 py-2.5 bg-primary hover:bg-primaryHover text-white text-xs font-extrabold rounded-lg transition-colors shadow-sm flex items-center justify-center gap-1">
-                        לטיפול וסגירה ➔
-                    </button>
+                    ${ticketsForStation.map((ticketItem, idx) => `
+                        <div class="p-3 bg-slate-50 border border-gray-200 rounded-xl space-y-1.5 text-right">
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="font-black text-gray-800">${ticketItem.title}</span>
+                                <span class="text-[10px] bg-slate-200 text-gray-700 px-1.5 py-0.5 rounded font-mono font-bold">${ticketItem.id}</span>
+                            </div>
+                            <div class="text-xs text-gray-500 font-medium leading-relaxed">${ticketItem.desc || 'ללא תיאור נוסף'}</div>
+                            <div class="flex justify-between items-center text-[10px] text-gray-400 font-semibold pt-1">
+                                <span>נפתחה ב: ${ticketItem.date}</span>
+                                <span>משויך: <strong class="text-gray-700">${ticketItem.assignedTo || 'ללא'}</strong></span>
+                            </div>
+                            <button onclick="goToTicketAndOpen('${ticketItem.id}')" class="w-full mt-2 py-2 bg-primary hover:bg-primaryHover text-white text-xs font-extrabold rounded-lg transition-colors shadow-sm flex items-center justify-center gap-1">
+                                לטיפול וסגירה ➔
+                            </button>
+                        </div>
+                    `).join('')}
                 </div>
             `;
         } else {
@@ -5415,6 +5604,8 @@
             return String(b.id || '').localeCompare(String(a.id || ''));
         });
 
+        const isAuthUser = isDashboardAdminOrAuthorized();
+
         container.innerHTML = searchKnowledgeHtml + filtered.map(t => {
             const isOpen = t.status==='open';
             const isOfek = t.status==='ofek';
@@ -5494,7 +5685,7 @@
                             <div class="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-gray-100">
                                 <span class="flex items-center gap-1.5"><ui-icon name="${typeIcon}" class="w-3.5 h-3.5"></ui-icon> <span class="text-gray-800">${typeText}</span></span>
                             </div>
-                            ${isClosed ? `
+                            ${(isClosed || !isAuthUser) ? `
                                 <div class="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-gray-150 text-gray-500">
                                     <span class="flex items-center gap-1.5"><ui-icon name="user" class="w-3.5 h-3.5"></ui-icon> משויך: <span class="text-gray-700">${t.assignedTo||'ללא'}</span></span>
                                 </div>
@@ -5724,8 +5915,8 @@
                             iconBg = 'bg-rose-500';
                             titleText = `נסגר ע"י ${event.user}`;
                         } else if (event.type === 'reopen') {
-                            iconBg = 'bg-emerald-500';
-                            titleText = `נפתח מחדש (על ידי משתמש)`;
+                            iconBg = 'bg-amber-500';
+                            titleText = `נפתח מחדש ע"י ${event.user || event.reopenedBy || 'משתמש'}`;
                         } else if (event.type === 'assign') {
                             iconBg = 'bg-blue-500';
                             titleText = `שויך לטכנאי`;
@@ -5766,9 +5957,10 @@
                             </div>
                             
                             <!-- Indented detail text below -->
-                            ${event.resolution ? `
-                                <div class="mr-[130px] text-xs text-gray-600 dark:text-gray-300 font-medium bg-white/60 dark:bg-slate-900/60 p-2.5 rounded-xl border border-gray-150 dark:border-slate-800/60 shadow-sm mb-2">
-                                    ${event.resolution}
+                            ${(event.reopenReason || event.resolution) ? `
+                                <div class="mr-[130px] text-xs font-semibold p-2.5 rounded-xl border shadow-sm mb-2 ${event.type === 'reopen' ? 'bg-amber-50/80 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800/40 text-amber-900 dark:text-amber-200' : 'text-gray-600 dark:text-gray-300 bg-white/60 dark:bg-slate-900/60 border-gray-150 dark:border-slate-800/60'}">
+                                    ${event.type === 'reopen' && event.reopenReason ? `<div class="font-extrabold text-amber-800 dark:text-amber-400 mb-0.5 text-[11px]">סיבת פתיחה מחדש:</div>` : ''}
+                                    ${event.reopenReason || event.resolution}
                                 </div>
                             ` : '<div class="mb-2"></div>'}
                         </div>
@@ -5801,33 +5993,44 @@
             }
         }
 
-        if(isOpen || isOfek || isTreatment) {
-            document.getElementById('tm-open-actions').classList.remove('hidden');
-            document.getElementById('tm-closed-info').classList.add('hidden');
-            
-            const sel = document.getElementById('tm-assignee');
-            sel.innerHTML = `<option value="">בחר איש צוות...</option>` + state.team.map(m=>`<option value="${m.name}" ${t.assignedTo===m.name?'selected':''}>${m.name}</option>`).join('');
-            document.getElementById('tm-resolution').value = '';
-            document.getElementById('tm-use-inv').checked = false;
-            toggleInvFields();
-            
-            const invSel = document.getElementById('tm-inv-item');
-            invSel.innerHTML = '<option value="">בחר פריט...</option>' + state.inventory.map(i=>`<option value="${i.id}">${i.name} (${i.qty})</option>`).join('');
-            checkInvExtraFields();
+        const isAuth = isDashboardAdminOrAuthorized();
+        const readOnlyBanner = document.getElementById('tm-readonly-open-banner');
 
-            const btnTreatment = document.getElementById('tm-btn-treatment');
-            if (btnTreatment) {
-                if (isTreatment) {
-                    btnTreatment.textContent = 'בטיפול (בטל)';
-                    btnTreatment.className = 'flex-1 min-w-[100px] bg-yellow-500 hover:bg-yellow-600 text-slate-900 py-3 rounded-xl font-extrabold text-sm transition-colors shadow-sm';
-                } else {
-                    btnTreatment.textContent = 'סמן כבטיפול';
-                    btnTreatment.className = 'flex-1 min-w-[100px] bg-yellow-50 border-2 border-yellow-500 text-yellow-800 hover:bg-yellow-100 py-3 rounded-xl font-extrabold text-sm transition-colors shadow-sm';
+        if(isOpen || isOfek || isTreatment) {
+            if (!isAuth) {
+                document.getElementById('tm-open-actions').classList.add('hidden');
+                document.getElementById('tm-closed-info').classList.add('hidden');
+                if (readOnlyBanner) readOnlyBanner.classList.remove('hidden');
+            } else {
+                document.getElementById('tm-open-actions').classList.remove('hidden');
+                document.getElementById('tm-closed-info').classList.add('hidden');
+                if (readOnlyBanner) readOnlyBanner.classList.add('hidden');
+                
+                const sel = document.getElementById('tm-assignee');
+                sel.innerHTML = `<option value="">בחר איש צוות...</option>` + state.team.map(m=>`<option value="${m.name}" ${t.assignedTo===m.name?'selected':''}>${m.name}</option>`).join('');
+                document.getElementById('tm-resolution').value = '';
+                document.getElementById('tm-use-inv').checked = false;
+                toggleInvFields();
+                
+                const invSel = document.getElementById('tm-inv-item');
+                invSel.innerHTML = '<option value="">בחר פריט...</option>' + state.inventory.map(i=>`<option value="${i.id}">${i.name} (${i.qty})</option>`).join('');
+                checkInvExtraFields();
+
+                const btnTreatment = document.getElementById('tm-btn-treatment');
+                if (btnTreatment) {
+                    if (isTreatment) {
+                        btnTreatment.textContent = 'בטיפול (בטל)';
+                        btnTreatment.className = 'flex-1 min-w-[100px] bg-yellow-500 hover:bg-yellow-600 text-slate-900 py-3 rounded-xl font-extrabold text-sm transition-colors shadow-sm';
+                    } else {
+                        btnTreatment.textContent = 'סמן כבטיפול';
+                        btnTreatment.className = 'flex-1 min-w-[100px] bg-yellow-50 border-2 border-yellow-500 text-yellow-800 hover:bg-yellow-100 py-3 rounded-xl font-extrabold text-sm transition-colors shadow-sm';
+                    }
                 }
             }
         } else {
             document.getElementById('tm-open-actions').classList.add('hidden');
             document.getElementById('tm-closed-info').classList.remove('hidden');
+            if (readOnlyBanner) readOnlyBanner.classList.add('hidden');
             document.getElementById('tm-resolved-by').textContent = t.resolvedBy;
             document.getElementById('tm-resolved-date').textContent = t.resolvedDate;
             document.getElementById('tm-res-text').textContent = t.resolution;
@@ -6167,13 +6370,47 @@
         openTicketModal(t.id); // Refresh modal, keep it open
     }
 
+    function openReopenModal(ticketId = null) {
+        const id = ticketId || state.modalTicketId;
+        const t = state.tickets.find(x => x.id === id);
+        if (!t) return;
+        
+        document.getElementById('reopen-modal-ticket-id').value = id;
+        
+        let defaultUser = '';
+        if (window.currentUser) {
+            const rankPart = window.currentUser.rank ? `${window.currentUser.rank} ` : '';
+            defaultUser = `${rankPart}${window.currentUser.name || ''}`;
+            if (window.currentUser.personalId) defaultUser += ` (${window.currentUser.personalId})`;
+        }
+        if (!defaultUser.trim()) defaultUser = 'משתמש מערכת';
+        
+        document.getElementById('reopen-modal-user').value = defaultUser;
+        document.getElementById('reopen-modal-reason').value = '';
+        document.getElementById('reopen-ticket-modal').classList.remove('hidden');
+    }
+
+    function closeReopenModal() {
+        document.getElementById('reopen-ticket-modal').classList.add('hidden');
+    }
+
     function reopenTicketFromModal() {
-        if (localStorage.getItem('mch_authorized') !== 'true') {
-            checkSegelAuth(() => reopenTicketFromModal());
+        openReopenModal();
+    }
+
+    function confirmReopenTicket() {
+        const id = document.getElementById('reopen-modal-ticket-id').value || state.modalTicketId;
+        const t = state.tickets.find(x => x.id === id);
+        if (!t) return;
+
+        const reopenerName = document.getElementById('reopen-modal-user').value.trim() || 'משתמש מערכת';
+        const reopenReason = document.getElementById('reopen-modal-reason').value.trim();
+
+        if (!reopenReason) {
+            showCustomAlert('אנא ציין למה נפתחה התקלה מחדש ומה הבעיה שנצפתה בעמדה.');
             return;
         }
-        const t = state.tickets.find(x=>x.id===state.modalTicketId);
-        if(!t) return;
+
         if(t.usedInventory) {
             const inv = state.inventory.find(i=>i.name===t.usedInventory.name);
             if(inv) {
@@ -6215,11 +6452,15 @@
         t.lastResolvedDate = t.resolvedDate;
         t.lastUsedInventory = t.usedInventory ? {...t.usedInventory} : null;
 
+        const nowStr = new Date().toLocaleString('he-IL', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
         if (!t.history) t.history = [];
         t.history.push({
             type: 'reopen',
-            date: new Date().toLocaleString('he-IL', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}),
-            user: 'משתמש מערכת'
+            date: nowStr,
+            user: reopenerName,
+            reopenedBy: reopenerName,
+            reopenReason: reopenReason,
+            resolution: `נפתח מחדש ע"י ${reopenerName}. סיבה: ${reopenReason}`
         });
         t.events = t.history; // Sync events field
 
@@ -6249,8 +6490,16 @@
                 });
             }
         }
-        
-        saveState(); closeTicketModal(); openTicketModal(t.id); renderAll();
+
+        // Ding sound alert!
+        playDingSound();
+
+        saveState(); 
+        closeReopenModal();
+        closeTicketModal(); 
+        openTicketModal(t.id); 
+        renderAll();
+        showSuccessAlert('התקלה נפתחה מחדש בהצלחה והוחזרה לעמדה!');
     }
 
 
@@ -6473,6 +6722,39 @@
         }
     }
 
+    function toggleMemberCarouselFields() {
+        const isChecked = document.getElementById('member-show-in-carousel').checked;
+        const fields = document.getElementById('member-carousel-fields');
+        if (fields) fields.classList.toggle('hidden', !isChecked);
+    }
+
+    function toggleMemberSsoFields() {
+        const isChecked = document.getElementById('member-enable-sso').checked;
+        const fields = document.getElementById('member-sso-fields');
+        if (fields) fields.classList.toggle('hidden', !isChecked);
+    }
+
+    async function saveSsoUserFromTeam(userData) {
+        try {
+            const res = await fetch('api.php?file=users_registry', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'save', user: userData })
+            });
+            if (res.ok) {
+                if (typeof fetchSsoUsersList === 'function') await fetchSsoUsersList();
+                showSuccessAlert(`חשבון ה-SSO עבור ${userData.name} נשמר וההרשאות הופעלו בכל הפרויקט!`);
+            }
+        } catch (e) {
+            console.warn("Could not save SSO user to server:", e);
+        }
+
+        try {
+            if (!window.ssoUsersList || typeof window.ssoUsersList !== 'object') window.ssoUsersList = {};
+            window.ssoUsersList[userData.username] = userData;
+        } catch(e) {}
+    }
+
     function openEditMemberDrawer(idx=null) {
         document.getElementById('member-drawer-backdrop').classList.remove('hidden');
         const d = document.getElementById('member-drawer'); d.classList.remove('-translate-x-full'); d.classList.add('translate-x-0');
@@ -6489,6 +6771,9 @@
             document.getElementById('member-personal-id').value = m.personalId || '';
             document.getElementById('member-is-kave').checked = !!m.isKave;
             
+            const showInCarousel = (m.showInCarousel !== undefined) ? !!m.showInCarousel : true;
+            document.getElementById('member-show-in-carousel').checked = showInCarousel;
+
             document.getElementById('member-photo-base64').value = m.photo || '';
             if (m.photo && m.photo.startsWith('data:')) {
                 document.getElementById('member-photo-preview-container').innerHTML = `<img src="${m.photo}" class="w-24 h-24 rounded-full object-cover mx-auto shadow-md border-4 border-white">`;
@@ -6509,6 +6794,7 @@
             document.getElementById('member-email').value = '';
             document.getElementById('member-personal-id').value = '';
             document.getElementById('member-is-kave').checked = false;
+            document.getElementById('member-show-in-carousel').checked = true;
             document.getElementById('member-photo-base64').value = '';
             document.getElementById('member-photo-preview-container').innerHTML = '';
             document.getElementById('member-quote-1').value = '';
@@ -6518,7 +6804,42 @@
         
         document.getElementById('member-photo-file').value = '';
         onMemberRankChange();
+        toggleMemberCarouselFields();
         renderTagsPreview();
+
+        // Populate SSO fields
+        const pid = (idx !== null ? (state.team[idx].personalId || '') : '').trim();
+        let existingSso = null;
+        if (typeof ssoUsersList === 'object' && ssoUsersList) {
+            if (pid) {
+                existingSso = ssoUsersList['s' + pid] || Object.values(ssoUsersList).find(u => u.personalId === pid || u.username === 's' + pid);
+            }
+            if (!existingSso && idx !== null && state.team[idx].name) {
+                existingSso = Object.values(ssoUsersList).find(u => u.name === state.team[idx].name);
+            }
+        }
+
+        const ssoEnableCb = document.getElementById('member-enable-sso');
+        const ssoUsernameInput = document.getElementById('member-sso-username');
+        const ssoIsAdminCb = document.getElementById('member-sso-is-admin');
+        const permCbs = document.querySelectorAll('input[name="member-perm"]');
+
+        if (existingSso) {
+            ssoEnableCb.checked = true;
+            ssoUsernameInput.value = existingSso.username || ('s' + pid);
+            ssoIsAdminCb.checked = !!existingSso.is_admin;
+            permCbs.forEach(cb => {
+                cb.checked = Array.isArray(existingSso.permissions) && existingSso.permissions.includes(cb.value);
+            });
+        } else {
+            ssoEnableCb.checked = false;
+            ssoUsernameInput.value = pid ? ('s' + pid) : '';
+            ssoIsAdminCb.checked = false;
+            permCbs.forEach(cb => {
+                cb.checked = (cb.value === 'tickets' || cb.value === 'inventory');
+            });
+        }
+        toggleMemberSsoFields();
     }
 
     function closeEditMemberDrawer() {
@@ -6569,6 +6890,16 @@
         const valErr = getPersonalIdValidationError(personalId);
         if(valErr) return showCustomAlert(valErr);
 
+        const showInCarousel = document.getElementById('member-show-in-carousel').checked;
+        const enableSso = document.getElementById('member-enable-sso').checked;
+        const ssoUsername = document.getElementById('member-sso-username').value.trim().toLowerCase();
+        const ssoIsAdmin = document.getElementById('member-sso-is-admin').checked;
+        const ssoPerms = Array.from(document.querySelectorAll('input[name="member-perm"]:checked')).map(cb => cb.value);
+
+        if (enableSso && !ssoUsername) {
+            return showCustomAlert('אנא הזן שם משתמש AD לחשבון ה-SSO (למשל s' + personalId + ')');
+        }
+
         const q1 = document.getElementById('member-quote-1').value.trim();
         const q2 = document.getElementById('member-quote-2').value.trim();
         const quotes = [];
@@ -6583,15 +6914,36 @@
             email: document.getElementById('member-email').value,
             personalId: personalId,
             isKave: isKave,
-            photo: document.getElementById('member-photo-base64').value,
-            quotes: quotes,
-            tags: state.currentEditingTags
+            showInCarousel: showInCarousel,
+            photo: showInCarousel ? document.getElementById('member-photo-base64').value : '',
+            quotes: showInCarousel ? quotes : [],
+            tags: showInCarousel ? state.currentEditingTags : []
         };
 
         if(idx !== '') state.team[idx] = m; 
         else state.team.push(m);
         
-        saveState(); renderAll(); closeEditMemberDrawer();
+        saveState(); 
+        renderAll(); 
+        closeEditMemberDrawer();
+
+        if (enableSso && ssoUsername) {
+            const normalizedRank = REVERSE_RANK_MAP[rank] || rank;
+            const rankLabel = RANK_LABELS[normalizedRank] || rank;
+            const userObj = {
+                username: ssoUsername,
+                name: name,
+                role: document.getElementById('member-profession').value || 'טכנאי מחשוב',
+                rank: rankLabel,
+                personalId: personalId,
+                service_type: isKave ? 'קבע' : (rank === 'rank-aatz' ? 'אע״צ' : 'חובה'),
+                phone: document.getElementById('member-phone').value,
+                email: document.getElementById('member-email').value || (ssoUsername + '@iaf.local'),
+                is_admin: ssoIsAdmin,
+                permissions: ssoPerms
+            };
+            saveSsoUserFromTeam(userObj);
+        }
     }
 
 
@@ -7166,6 +7518,11 @@
     }
 
     function checkGlobalInventoryAlerts() {
+        if (!isDashboardAdminOrAuthorized()) {
+            const el = document.getElementById('sidebar-stock-alert');
+            if (el) el.classList.add('hidden');
+            return;
+        }
         if (isStockAlertDismissed) return;
         const lows = state.inventory.filter(i=>i.qty<=i.threshold);
         if(lows.length){
@@ -11980,6 +12337,8 @@
     window.addEventListener('sso-user-loaded', async (e) => {
         const user = e.detail;
         
+        applyUserPermissions(user);
+        
         const ssoSection = document.getElementById('sso-user-management-section');
         if (ssoSection) {
             if (user && user.is_admin) {
@@ -12999,6 +13358,47 @@
             <div class="mt-6 flex gap-3">
                 <button onclick="savePrinterDashboard()" class="save-btn flex-grow py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-extrabold text-sm transition-colors shadow-sm">שמור מדפסת</button>
                 <button onclick="closeAddPrinterModalDashboard()" class="py-3 px-6 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-extrabold text-sm transition-colors">ביטול</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- מודל פתיחה מחדש של קריאה -->
+    <div id="reopen-ticket-modal" class="hidden fixed inset-0 z-[70] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-2xl w-full max-w-md shadow-2xl p-6 text-right">
+            <div class="flex items-center justify-between pb-3 mb-4 border-b border-gray-150 dark:border-slate-800">
+                <h3 class="text-xl font-extrabold text-gray-900 dark:text-white flex items-center gap-2">
+                    <ui-icon name="alert-triangle" class="w-5 h-5 text-amber-500"></ui-icon>
+                    <span>פתיחת קריאת שירות מחדש</span>
+                </h3>
+                <button onclick="closeReopenModal()" class="text-gray-400 hover:text-gray-600 text-2xl font-bold leading-none">&times;</button>
+            </div>
+            
+            <input type="hidden" id="reopen-modal-ticket-id">
+            
+            <div class="space-y-4">
+                <div class="bg-amber-50 dark:bg-amber-950/30 p-3 rounded-xl border border-amber-200 dark:border-amber-800/50 text-xs font-bold text-amber-900 dark:text-amber-300 leading-relaxed">
+                    הקריאה תחזור לסטטוס <strong>"פתוחה"</strong> ותשויך לאותה עמדה. יש לציין מי פותח את התקלה מחדש ולמה נפתחה.
+                </div>
+                
+                <div>
+                    <label class="block text-xs font-extrabold text-gray-700 dark:text-slate-300 mb-1">שם הפותח מחדש *</label>
+                    <input type="text" id="reopen-modal-user" class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-sm font-bold text-gray-900 dark:text-white outline-none">
+                </div>
+                
+                <div>
+                    <label class="block text-xs font-extrabold text-gray-700 dark:text-slate-300 mb-1">למה נפתחה התקלה מחדש? (סיבת פתיחה) *</label>
+                    <textarea id="reopen-modal-reason" rows="3" placeholder="פרט מה עדיין לא תקין או מה מהות הבעיה שחזרה בעמדה..." class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-gray-900 dark:text-white outline-none placeholder-gray-400"></textarea>
+                </div>
+            </div>
+            
+            <div class="flex gap-3 pt-5 mt-4 border-t border-gray-150 dark:border-slate-800">
+                <button onclick="closeReopenModal()" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-gray-700 dark:text-slate-300 rounded-xl font-bold text-sm transition-colors">
+                    ביטול
+                </button>
+                <button onclick="confirmReopenTicket()" class="flex-[2] py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-extrabold text-sm transition-colors shadow-sm flex items-center justify-center gap-1.5">
+                    <ui-icon name="check" class="w-4 h-4"></ui-icon>
+                    <span>פתח תקלה מחדש</span>
+                </button>
             </div>
         </div>
     </div>

@@ -3636,7 +3636,10 @@
         const track = document.getElementById('team-carousel-track');
         dotsContainer.innerHTML = '';
 
-        team.forEach((m, idx) => {
+        const carouselTeam = team.filter(m => m.showInCarousel !== false);
+        const displayTeam = carouselTeam.length > 0 ? carouselTeam : team;
+
+        displayTeam.forEach((m, idx) => {
             const normalizedRank = REVERSE_RANK_MAP[m.rank] || m.rank || 'rank-aatz';
             const rankLabel = RANK_LABELS[normalizedRank] || m.rank;
 

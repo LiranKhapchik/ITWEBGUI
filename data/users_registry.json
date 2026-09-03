@@ -17,5 +17,43 @@
             "reports",
             "site_content"
         ]
+    },
+    "civ network": {
+        "username": "civ network",
+        "name": "מנהל מערכת (מחשב לוקלי)",
+        "rank": "אע״צ",
+        "role": "מנהל מערכת ראשי",
+        "phone": "518-3508",
+        "email": "civnetwork@iaf.local",
+        "is_admin": true,
+        "service_type": "קבע",
+        "permissions": [
+            "roster",
+            "rooms",
+            "knowledge",
+            "tickets",
+            "inventory",
+            "reports",
+            "site_content"
+        ]
+    },
+    "desktop-htghrg6": {
+        "username": "desktop-htghrg6",
+        "name": "מנהל מערכת (מחשב לוקלי)",
+        "rank": "אע״צ",
+        "role": "מנהל מערכת ראשי",
+        "phone": "518-3508",
+        "email": "desktop-htghrg6@iaf.local",
+        "is_admin": true,
+        "service_type": "קבע",
+        "permissions": [
+            "roster",
+            "rooms",
+            "knowledge",
+            "tickets",
+            "inventory",
+            "reports",
+            "site_content"
+        ]
     }
 }
