@@ -54,39 +54,47 @@ html.dark {
    Global Base Styles
    ========================================== */
 html {
-    font-size: 14px;
+    font-size: clamp(14.5px, 1vw, 16px);
 }
 
-/* Native 75% zoom feel for laptop screens (1366x768 / screens <= 1440px) */
-@media (max-width: 1440px), (max-height: 850px) {
+/* Fluid Proportional Scaling for Containers & Layout Components */
+.max-w-7xl {
+    max-width: min(94vw, 80rem) !important;
+}
+
+.max-w-6xl {
+    max-width: min(94vw, 72rem) !important;
+}
+
+.max-w-5xl {
+    max-width: min(94vw, 64rem) !important;
+}
+
+/* Fluid spacing & comfortable font sizes for laptop viewports */
+@media (max-width: 1440px) {
     html {
-        font-size: 12.5px !important;
+        font-size: 14.5px !important; /* Comfortable readable base font */
     }
     
-    /* Compact paddings and margins for tight vertical viewports */
     main {
-        padding-top: 1rem !important;
-        padding-bottom: 1rem !important;
+        padding-top: 1.25rem !important;
+        padding-bottom: 1.25rem !important;
     }
     
     .p-6 {
-        padding: 1rem !important;
-    }
-    
-    .p-8 {
         padding: 1.25rem !important;
     }
     
+    .p-8 {
+        padding: 1.5rem !important;
+    }
+    
     .gap-8 {
-        gap: 1.25rem !important;
+        gap: 1.5rem !important;
     }
 
     .space-y-8 > :not([hidden]) ~ :not([hidden]) {
-        margin-top: 1rem !important;
-    }
-
-    .mb-5, .mb-6 {
-        margin-bottom: 0.85rem !important;
+        margin-top: 1.25rem !important;
     }
 
     input[type="text"],
@@ -96,14 +104,21 @@ html {
     input[type="tel"],
     textarea,
     select {
-        padding: 0.5rem 0.75rem !important;
+        padding: 0.6rem 0.85rem !important;
     }
 }
 
-@media (min-width: 1600px) {
-    html {
-        font-size: 15.5px !important;
-    }
+/* Ensure minimum readable font sizes across all components */
+.text-xs {
+    font-size: 0.825rem !important; /* ~12px - 13px */
+}
+
+.text-sm {
+    font-size: 0.925rem !important; /* ~13.5px - 14.5px */
+}
+
+.text-base {
+    font-size: 1.025rem !important; /* ~15px - 16px */
 }
 
 * {
