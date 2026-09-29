@@ -1,0 +1,87 @@
+apiVersion: v1
+kind: List
+items:
+  # 1. דיסק קשיח קבוע לשמירת קובצי הנתונים (JSON)
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: military-portal-data-pvc
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+
+  # 2. פריסת האפליקציה (Deployment)
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: military-portal
+      labels:
+        app: military-portal
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: military-portal
+      template:
+        metadata:
+          labels:
+            app: military-portal
+        spec:
+          containers:
+            - name: military-portal
+              # כאן יש להזין את הקישור ל-Registry הסגור שלכם בו נמצא ה-Image
+              image: image-registry.openshift-image-registry.svc:5000/my-project/military-portal:latest
+              ports:
+                - containerPort: 8080
+              # הגדרת הרשאות משאבים
+              resources:
+                limits:
+                  cpu: "1"
+                  memory: 1Gi
+                requests:
+                  cpu: "200m"
+                  memory: 512Mi
+              # מיפוי הדיסק הקבוע לתיקיית הנתונים data
+              volumeMounts:
+                - name: data-volume
+                  mountPath: /opt/app-root/src/data
+          volumes:
+            - name: data-volume
+              persistentVolumeClaim:
+                claimName: military-portal-data-pvc
+
+  # 3. שירות פנימי (Service) לחשיפת הפורט
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      name: military-portal
+      labels:
+        app: military-portal
+    spec:
+      ports:
+        - port: 8080
+          targetPort: 8080
+          protocol: TCP
+      selector:
+        app: military-portal
+
+  # 4. יצירת כתובת רשת (Route) נגישה מחוץ לקלאסטר למחשבים ברשת
+  - apiVersion: route.openshift.io/v1
+    kind: Route
+    metadata:
+      name: military-portal
+      labels:
+        app: military-portal
+    spec:
+      to:
+        kind: Service
+        name: military-portal
+        weight: 100
+      port:
+        targetPort: 8080
+      tls:
+        termination: edge
+        insecureEdgeTerminationPolicy: Redirect

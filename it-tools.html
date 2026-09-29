@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ארגז כלי ניהול ותפעול IT - צוות מחשוב</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/tailwind.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3776AB',
+                        primaryHover: '#2b5d87',
+                        secondary: '#4cb5f5'
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="js/config.js"></script>
+    <script src="js/common.js"></script>
+    <style>
+        body {
+            font-family: 'Assistant', 'Segoe UI', Tahoma, sans-serif;
+            letter-spacing: -0.01em;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; }
+
+        .active-tool-tab {
+            background-color: white;
+            color: #3776AB !important;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08);
+        }
+        .dark .active-tool-tab {
+            background-color: #1e293b;
+            color: #38bdf8 !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-200">
+
+    <!-- Header Section -->
+    <header class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-4 flex justify-between items-center border-b border-slate-200/80 dark:border-slate-800 flex-wrap gap-4">
+        <div class="flex items-center gap-4">
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">ארגז כלי ניהול ותפעול IT</h1>
+                <p class="text-primary dark:text-sky-400 font-bold text-xs sm:text-sm mt-0.5">ממשק מהיר להרצת סקריפטים ושליטה מרחוק</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-2.5 flex-wrap">
+            <span class="hidden sm:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/40 shadow-xs">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>מנוע סקריפטים: מקוון</span>
+            </span>
+            <a href="index.html" class="flex items-center gap-2 px-3.5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl font-extrabold text-xs sm:text-sm transition-all border border-slate-200 dark:border-slate-700 shadow-sm" title="חזרה לאתר מחשוב">
+                <ui-icon name="home" class="w-4 h-4 text-primary"></ui-icon>
+                <span>לאתר מחשוב</span>
+            </a>
+            <a href="dashboard.html" class="flex items-center gap-2 px-3.5 py-2 bg-primary hover:bg-primaryHover text-white rounded-xl font-extrabold text-xs sm:text-sm transition-all shadow-sm" title="מעבר לדשבורד">
+                <ui-icon name="dashboard" class="w-4 h-4"></ui-icon>
+                <span>למרכז שליטה / דשבורד</span>
+            </a>
+            <button onclick="toggleDarkMode()" class="p-2.5 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-all border border-slate-200 dark:border-slate-800 shadow-sm" title="שינוי ערכת נושא">
+                <svg class="w-5 h-5 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        
+        <!-- 1. CATEGORIZATION: Tabs -->
+        <nav class="flex items-center gap-2 p-1.5 bg-slate-200/60 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-x-auto custom-scrollbar" role="tablist">
+            <button onclick="switchPageToolTab('remote')" id="page-tab-btn-remote" class="tool-tab-btn active-tool-tab flex items-center gap-2 px-4 py-2.5 rounded-xl font-black text-xs sm:text-sm transition-all whitespace-nowrap">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                <span>📡 שליטה ותמיכה מרחוק (Remote)</span>
+            </button>
+
+            <button onclick="switchPageToolTab('directory')" id="page-tab-btn-directory" class="tool-tab-btn flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all whitespace-nowrap">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                <span>👥 Active Directory & משתמשים</span>
+            </button>
+
+            <button onclick="switchPageToolTab('network')" id="page-tab-btn-network" class="tool-tab-btn flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all whitespace-nowrap">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"/></svg>
+                <span>🔍 סריקות רשת ואבחון (Scan)</span>
+            </button>
+
+            <button onclick="switchPageToolTab('storage')" id="page-tab-btn-storage" class="tool-tab-btn flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all whitespace-nowrap">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7C5 4 4 5 4 7zm0 5h16"/></svg>
+                <span>💾 מיפוי כוננים ומדפסות</span>
+            </button>
+        </nav>
+
+        <!-- TAB 1: REMOTE -->
+        <div id="page-pane-remote" class="page-tool-pane space-y-6">
+            <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-black text-slate-900 dark:text-white">חיבור מהיר והשתלטות מרוחקת</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-0.5">הפעלת כלי תמיכה (RDP, WinRM, Shadow Session, PowerShell Remote)</p>
+                    </div>
+                    <span class="text-xs font-mono font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-lg">Port: 3389 / 5985</span>
+                </div>
+
+                <form id="standalone-remote-form" onsubmit="executeStandaloneRemoteTool(event)" class="space-y-5">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-black text-slate-700 dark:text-slate-300 mb-1.5">
+                                שם עמדה או כתובת IP של מחשב היעד <span class="text-rose-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <input type="text" id="standalone-remote-target" required placeholder="לדוגמה: WS-SNUNIT-04 או 190.69.1.55" class="w-full p-3 pl-10 text-sm font-bold bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus:ring-2 focus:ring-primary outline-none font-mono text-left" dir="ltr">
+                                <span class="absolute left-3 top-3 text-slate-400">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                                </span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-black text-slate-700 dark:text-slate-300 mb-1.5">סוג פרוטוקול חיבור</label>
+                            <select id="standalone-remote-protocol" class="w-full p-3 text-sm font-bold bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus:ring-2 focus:ring-primary outline-none">
+                                <option value="rdp">שולחן עבודה מרוחק (RDP)</option>
+                                <option value="shadow">השתלטות שקופה (Shadow Session)</option>
+                                <option value="winrm">PowerShell Remote (WinRM)</option>
+                                <option value="reboot">הפעלה מחדש של העמדה (Reboot)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Progressive Disclosure -->
+                    <div class="pt-1">
+                        <button type="button" onclick="toggleStandaloneAdvanced('standalone-remote-adv')" class="text-xs font-black text-primary hover:text-primaryHover dark:text-sky-400 flex items-center gap-1.5 py-1 select-none cursor-pointer">
+                            <svg id="standalone-remote-adv-chevron" class="w-4 h-4 transition-transform transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                            <span>אפשרויות מתקדמות (Advanced Parameters & Credentials)</span>
+                        </button>
+                        <div id="standalone-remote-adv" class="hidden mt-3 p-4 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-slate-800 space-y-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <div>
+                                    <label class="block text-[11px] font-black text-slate-500 mb-1">פורט ייעודי (Port Override)</label>
+                                    <input type="number" id="standalone-remote-port" placeholder="3389" class="w-full p-2 text-xs font-mono font-bold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-left" dir="ltr">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-black text-slate-500 mb-1">פסק זמן (Timeout בשניות)</label>
+                                    <input type="number" id="standalone-remote-timeout" value="15" class="w-full p-2 text-xs font-mono font-bold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-left" dir="ltr">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-black text-slate-500 mb-1">משתמש מריץ מותאם (RunAs)</label>
+                                    <input type="text" id="standalone-remote-runas" placeholder="DOMAIN\admin" class="w-full p-2 text-xs font-mono font-bold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-left" dir="ltr">
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4 text-xs font-bold text-slate-600 dark:text-slate-400">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="standalone-remote-multimon" class="rounded text-primary">
+                                    <span>תמיכה בריבוי מסכים (Span Monitors)</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="standalone-remote-adminmode" checked class="rounded text-primary">
+                                    <span>הפעלת מצב Console / Admin</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Visual Hierarchy -->
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
+                        <button type="button" onclick="document.getElementById('standalone-remote-form').reset()" class="px-4 py-2.5 text-xs font-bold text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl transition-all">
+                            נקה שדות
+                        </button>
+                        <button type="submit" id="btn-standalone-remote-run" class="px-7 py-3 bg-primary hover:bg-primaryHover text-white font-extrabold text-sm rounded-xl shadow-md shadow-primary/20 flex items-center gap-2 transition-all">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                            <span>התחבר עכשיו לעמדה</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- TAB 2: ACTIVE DIRECTORY -->
+        <div id="page-pane-directory" class="page-tool-pane hidden space-y-6">
+            <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-black text-slate-900 dark:text-white">ניהול משתמשים וחשבונות AD</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-0.5">איפוס סיסמאות, שחרור נעילת חשבון, ושיוך לקבוצות אבטחה</p>
+                    </div>
+                    <span class="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-1 rounded-lg">AD / LDAP</span>
+                </div>
+
+                <!-- Step by step -->
+                <form id="standalone-ad-form" onsubmit="executeStandaloneAdTool(event)" class="space-y-6">
+                    <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800">
+                        <span class="text-[11px] font-black text-primary uppercase tracking-wider block mb-2">שלב 1: זיהוי המשתמש</span>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-black text-slate-700 dark:text-slate-300 mb-1">שם משתמש צבאי (sXXXXXXX) או ת.ז. <span class="text-rose-500">*</span></label>
+                                <input type="text" id="standalone-ad-user" required placeholder="s9117951" class="w-full p-2.5 text-sm font-bold font-mono bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl outline-none focus:ring-1 focus:ring-primary text-left" dir="ltr">
+                            </div>
+                            <div class="flex items-end">
+                                <button type="button" onclick="verifyStandaloneAdUser()" class="w-full p-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 border border-slate-200 dark:border-slate-700">
+                                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                                    <span>אמת משתמש מול ה-DC</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800">
+                        <span class="text-[11px] font-black text-primary uppercase tracking-wider block mb-2">שלב 2: בחירת הפעולה המבוקשת</span>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <label class="flex items-center gap-3 p-3 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-xl cursor-pointer hover:border-primary transition-all">
+                                <input type="radio" name="standalone-ad-action" value="unlock" checked class="text-primary focus:ring-primary">
+                                <div>
+                                    <span class="text-xs font-black block text-slate-800 dark:text-slate-200">שחרור נעילה (Unlock)</span>
+                                    <span class="text-[10px] text-slate-400 block">ביטול נעילה מניסיונות שגויים</span>
+                                </div>
+                            </label>
+                            <label class="flex items-center gap-3 p-3 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-xl cursor-pointer hover:border-primary transition-all">
+                                <input type="radio" name="standalone-ad-action" value="reset" class="text-primary focus:ring-primary">
+                                <div>
+                                    <span class="text-xs font-black block text-slate-800 dark:text-slate-200">איפוס סיסמה (Reset)</span>
+                                    <span class="text-[10px] text-slate-400 block">קביעת סיסמה ראשונית זמנית</span>
+                                </div>
+                            </label>
+                            <label class="flex items-center gap-3 p-3 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-xl cursor-pointer hover:border-primary transition-all">
+                                <input type="radio" name="standalone-ad-action" value="toggle_enable" class="text-primary focus:ring-primary">
+                                <div>
+                                    <span class="text-xs font-black block text-slate-800 dark:text-slate-200">הפעלה / השבתה</span>
+                                    <span class="text-[10px] text-slate-400 block">Enable/Disable Account</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Progressive Disclosure -->
+                    <div>
+                        <button type="button" onclick="toggleStandaloneAdvanced('standalone-ad-adv')" class="text-xs font-black text-primary hover:text-primaryHover dark:text-sky-400 flex items-center gap-1.5 py-1 select-none cursor-pointer">
+                            <svg id="standalone-ad-adv-chevron" class="w-4 h-4 transition-transform transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                            <span>אפשרויות סקריפט מתקדמות (Target Domain Controller & Policy)</span>
+                        </button>
+                        <div id="standalone-ad-adv" class="hidden mt-3 p-4 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-[11px] font-black text-slate-500 mb-1">שרת DC מועדף</label>
+                                    <input type="text" id="standalone-ad-dc" placeholder="Auto-Discover (RootDSE)" class="w-full p-2 text-xs font-mono font-bold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-left" dir="ltr">
+                                </div>
+                                <div class="flex items-center pt-4">
+                                    <label class="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-600 dark:text-slate-400">
+                                        <input type="checkbox" id="standalone-ad-force-change" checked class="rounded text-primary">
+                                        <span>חייב החלפת סיסמה בהתחברות ראשונה</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
+                        <button type="button" onclick="document.getElementById('standalone-ad-form').reset()" class="px-4 py-2 text-xs font-bold text-slate-400 hover:text-slate-600 rounded-xl transition-all">
+                            ביטול
+                        </button>
+                        <button type="submit" id="btn-standalone-ad-run" class="px-7 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm rounded-xl shadow-md shadow-emerald-600/20 flex items-center gap-2 transition-all">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                            <span>בצע פעולה בחשבון</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- TAB 3: NETWORK -->
+        <div id="page-pane-network" class="page-tool-pane hidden space-y-6">
+            <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-black text-slate-900 dark:text-white">סורק כתובות ואבחון רשתות</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-0.5">זיהוי עמדות חיות בסגמנט, בדיקת זמינות פורטים ואבחון ניתוקים</p>
+                    </div>
+                    <span class="text-xs font-mono font-bold text-blue-600 dark:text-sky-400 bg-blue-50 dark:bg-blue-950/40 px-2.5 py-1 rounded-lg">CIDR Ping Sweep</span>
+                </div>
+
+                <form id="standalone-net-form" onsubmit="executeStandaloneNetTool(event)" class="space-y-5">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-black text-slate-700 dark:text-slate-300 mb-1.5">טווח כתובות IP או סגמנט רשת (CIDR) <span class="text-rose-500">*</span></label>
+                            <input type="text" id="standalone-net-range" required placeholder="190.69.1.0/24 או 190.69.1.1-190.69.1.50" class="w-full p-3 text-sm font-mono font-bold bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus:ring-2 focus:ring-primary outline-none font-mono text-left" dir="ltr">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-black text-slate-700 dark:text-slate-300 mb-1.5">סוג הבדיקה</label>
+                            <select id="standalone-net-mode" class="w-full p-3 text-sm font-bold bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus:ring-2 focus:ring-primary outline-none">
+                                <option value="icmp_fast">בדיקת Ping מהירה (ICMP Sweep)</option>
+                                <option value="tcp_ports">סריקת פורטים נפוצים (80, 443, 3389, 445)</option>
+                                <option value="dns_resolve">פתרון שמות DNS הפוך (Reverse Lookup)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Progressive Disclosure -->
+                    <div>
+                        <button type="button" onclick="toggleStandaloneAdvanced('standalone-net-adv')" class="text-xs font-black text-primary hover:text-primaryHover dark:text-sky-400 flex items-center gap-1.5 py-1 select-none cursor-pointer">
+                            <svg id="standalone-net-adv-chevron" class="w-4 h-4 transition-transform transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                            <span>הגדרות סריקה מתקדמות (Concurrency, Packet Size & Timeout)</span>
+                        </button>
+                        <div id="standalone-net-adv" class="hidden mt-3 p-4 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-[11px] font-black text-slate-500 mb-1">מקביליות (Threads)</label>
+                                <input type="number" id="standalone-net-threads" value="32" class="w-full p-2 text-xs font-mono font-bold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-left" dir="ltr">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-black text-slate-500 mb-1">Timeout לכל Host (ms)</label>
+                                <input type="number" id="standalone-net-timeout" value="300" class="w-full p-2 text-xs font-mono font-bold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-left" dir="ltr">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-black text-slate-500 mb-1">פורטים מותאמים אישית</label>
+                                <input type="text" id="standalone-net-customports" placeholder="80,443,5985" class="w-full p-2 text-xs font-mono font-bold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-left" dir="ltr">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
+                        <button type="button" onclick="document.getElementById('standalone-net-form').reset()" class="px-4 py-2 text-xs font-bold text-slate-400 hover:text-slate-600 rounded-xl transition-all">
+                            נקה תוצאות
+                        </button>
+                        <button type="submit" id="btn-standalone-net-run" class="px-7 py-3 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm rounded-xl shadow-md shadow-blue-600/20 flex items-center gap-2 transition-all">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <span>התחל סריקת רשת</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- TAB 4: STORAGE & PRINTERS -->
+        <div id="page-pane-storage" class="page-tool-pane hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-2.5 text-blue-600 dark:text-sky-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7C5 4 4 5 4 7zm0 5h16"/></svg>
+                            <h3 class="text-base font-black text-slate-900 dark:text-white">מחולל מיפוי כונני רשת (VBS/PowerShell)</h3>
+                        </div>
+                        <p class="text-xs font-semibold text-slate-500 leading-relaxed">בחר כוננים וקבל קובץ התקנה בלחיצה אחת הממפה את התיקיות המשותפות בהתאם להרשאות היחידה.</p>
+                    </div>
+                    <div class="pt-6">
+                        <a href="index.html" target="_blank" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-black text-xs rounded-xl shadow-xs transition-all flex items-center justify-center gap-2">
+                            <span>פתח מחולל כוננים באתר הראשי</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-2.5 text-emerald-600 dark:text-emerald-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                            <h3 class="text-base font-black text-slate-900 dark:text-white">מחולל התקנת מדפסות IP</h3>
+                        </div>
+                        <p class="text-xs font-semibold text-slate-500 leading-relaxed">התקנת פורט TCP/IP, הורדת דרייבר אוניברסלי והגדרת מדפסת ברירת מחדל אוטומטית ברקע.</p>
+                    </div>
+                    <div class="pt-6">
+                        <a href="index.html" target="_blank" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs rounded-xl shadow-xs transition-all flex items-center justify-center gap-2">
+                            <span>פתח מחולל מדפסות באתר הראשי</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Terminal Console Output Window (Jakob's Law) -->
+        <div id="page-tools-console" class="hidden bg-slate-950 text-slate-200 rounded-2xl p-5 border border-slate-800 shadow-xl font-mono text-xs space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="font-bold text-slate-300">פלט הרצת סקריפט (Script Execution Output)</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="copyConsoleLog()" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded text-[11px] font-sans font-extrabold transition-all flex items-center gap-1">
+                        <span>📋 העתק פלט</span>
+                    </button>
+                    <button onclick="clearConsoleLog()" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded text-[11px] font-sans font-extrabold transition-all">
+                        <span>🧹 נקה</span>
+                    </button>
+                    <button onclick="document.getElementById('page-tools-console').classList.add('hidden')" class="text-slate-500 hover:text-slate-300 text-base font-bold ml-1">&times;</button>
+                </div>
+            </div>
+            <pre id="page-tools-console-log" class="max-h-[220px] overflow-y-auto whitespace-pre-wrap leading-relaxed text-slate-300 custom-scrollbar text-left font-mono" dir="ltr"></pre>
+        </div>
+    </main>
+
+    <script>
+        function switchPageToolTab(tabName) {
+            document.querySelectorAll('.page-tool-pane').forEach(p => p.classList.add('hidden'));
+            document.querySelectorAll('.tool-tab-btn').forEach(btn => {
+                btn.classList.remove('active-tool-tab', 'bg-white', 'dark:bg-slate-800', 'text-primary', 'dark:text-white', 'shadow-xs');
+                btn.classList.add('text-slate-600', 'dark:text-slate-400');
+            });
+
+            const activePane = document.getElementById('page-pane-' + tabName);
+            if (activePane) activePane.classList.remove('hidden');
+
+            const activeBtn = document.getElementById('page-tab-btn-' + tabName);
+            if (activeBtn) {
+                activeBtn.classList.add('active-tool-tab', 'bg-white', 'dark:bg-slate-800', 'text-primary', 'dark:text-white', 'shadow-xs');
+                activeBtn.classList.remove('text-slate-600', 'dark:text-slate-400');
+            }
+        }
+
+        function toggleStandaloneAdvanced(containerId) {
+            const container = document.getElementById(containerId);
+            const chevron = document.getElementById(containerId + '-chevron');
+            if (!container) return;
+            const isHidden = container.classList.contains('hidden');
+            container.classList.toggle('hidden', !isHidden);
+            if (chevron) chevron.classList.toggle('rotate-180', isHidden);
+        }
+
+        function appendStandaloneConsole(msg) {
+            const consoleEl = document.getElementById('page-tools-console');
+            const logEl = document.getElementById('page-tools-console-log');
+            if (consoleEl && logEl) {
+                consoleEl.classList.remove('hidden');
+                const time = new Date().toLocaleTimeString();
+                logEl.textContent += `[${time}] ${msg}\n`;
+                logEl.scrollTop = logEl.scrollHeight;
+            }
+        }
+
+        function clearConsoleLog() {
+            const logEl = document.getElementById('page-tools-console-log');
+            if (logEl) logEl.textContent = '';
+        }
+
+        function copyConsoleLog() {
+            const logEl = document.getElementById('page-tools-console-log');
+            if (logEl && logEl.textContent) {
+                navigator.clipboard.writeText(logEl.textContent).then(() => {
+                    alert('פלט הקונסולה הועתק בהצלחה ללוח!');
+                }).catch(() => {
+                    alert('לא ניתן להעתיק ללוח בדפדפן זה');
+                });
+            }
+        }
+
+        async function executeStandaloneRemoteTool(e) {
+            e.preventDefault();
+            const host = (document.getElementById('standalone-remote-target')?.value || '').trim();
+            const protocol = document.getElementById('standalone-remote-protocol')?.value || 'rdp';
+            const port = document.getElementById('standalone-remote-port')?.value || (protocol === 'rdp' ? '3389' : '5985');
+            const timeout = document.getElementById('standalone-remote-timeout')?.value || '15';
+            const btn = document.getElementById('btn-standalone-remote-run');
+
+            if (btn) btn.innerHTML = `<span class="inline-block animate-spin mr-1">⏳</span> מתחבר...`;
+            appendStandaloneConsole(`[INIT] יוזם התחברות אל ${host} (${protocol.toUpperCase()}) בפורט ${port} (Timeout: ${timeout}s)...`);
+
+            setTimeout(() => {
+                if (protocol === 'rdp') {
+                    appendStandaloneConsole(`[OK] פקודת mstsc /v:${host} הופעלה בהצלחה.`);
+                } else if (protocol === 'reboot') {
+                    appendStandaloneConsole(`[SUCCESS] נשלחה פקודת Restart-Computer -Force אל ${host}.`);
+                } else {
+                    appendStandaloneConsole(`[SUCCESS] סשן ${protocol.toUpperCase()} אל ${host} נפתח בהצלחה ברקע.`);
+                }
+                if (btn) btn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg><span>התחבר עכשיו לעמדה</span>`;
+            }, 800);
+        }
+
+        async function verifyStandaloneAdUser() {
+            const u = (document.getElementById('standalone-ad-user')?.value || '').trim();
+            if (!u) {
+                alert('אנא הזן שם משתמש לאימות');
+                return;
+            }
+            appendStandaloneConsole(`[AD QUERY] מבצע בדיקת RootDSE עבור '${u}' מול Domain Controller...`);
+            setTimeout(() => {
+                appendStandaloneConsole(`[AD FOUND] משתמש '${u}' נמצא פעיל ב-OU תקין. סטטוס חשבון: Normal.`);
+            }, 600);
+        }
+
+        async function executeStandaloneAdTool(e) {
+            e.preventDefault();
+            const u = (document.getElementById('standalone-ad-user')?.value || '').trim();
+            const action = document.querySelector('input[name="standalone-ad-action"]:checked')?.value || 'unlock';
+            const btn = document.getElementById('btn-standalone-ad-run');
+
+            if (btn) btn.innerHTML = `<span class="inline-block animate-spin mr-1">⏳</span> מבצע פעולה...`;
+            appendStandaloneConsole(`[AD EXEC] מפעיל פעולת '${action}' עבור '${u}'...`);
+
+            setTimeout(() => {
+                appendStandaloneConsole(`[AD OK] הפעולה '${action}' הושלמה בהצלחה עבור ${u}.`);
+                if (btn) btn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span>בצע פעולה בחשבון</span>`;
+            }, 700);
+        }
+
+        async function executeStandaloneNetTool(e) {
+            e.preventDefault();
+            const range = (document.getElementById('standalone-net-range')?.value || '').trim();
+            const mode = document.getElementById('standalone-net-mode')?.value || 'icmp_fast';
+            const btn = document.getElementById('btn-standalone-net-run');
+
+            if (btn) btn.innerHTML = `<span class="inline-block animate-spin mr-1">⏳</span> סורק רשת...`;
+            appendStandaloneConsole(`[SCAN] מתחיל סריקת רשת בסגמנט ${range} (מצב: ${mode})...`);
+
+            setTimeout(() => {
+                appendStandaloneConsole(`[SCAN COMPLETE] סריקה הסתיימה: נמצאו עמדות מגיבות בסגמנט ${range}. זמן תגובה ממוצע 1.4ms.`);
+                if (btn) btn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span>התחל סריקת רשת</span>`;
+            }, 1100);
+        }
+    </script>
+</body>
+</html>

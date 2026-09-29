@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מערכת שיריון חדרים ומשימות גפיות</title>
+    <link rel="stylesheet" href="css/style.css?v=3.0">
+    <script src="js/tailwind.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3776AB',
+                        primaryHover: '#2b5d87',
+                        secondary: '#4cb5f5'
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="js/config.js"></script>
+    <script src="js/common.js"></script>
+    
+    <style>
+        html { font-size: 18px; }
+
+        body { 
+            font-family: 'Assistant', 'Segoe UI', Tahoma, sans-serif; 
+            background-color: #fafbfc; 
+            letter-spacing: -0.01em; 
+            color: #111827;
+        }
+
+        h1, h2, h3, .font-extrabold {
+            font-weight: 800 !important;
+            letter-spacing: -0.025em;
+        }
+        
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+        select, input[type="text"], input[type="date"], input[type="time"] {
+            width: 100%;
+            padding: 0.65rem 0.85rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            font-family: inherit;
+            background-color: #ffffff;
+            color: #111827;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+        
+        .dark select, .dark input[type="text"], .dark input[type="date"], .dark input[type="time"] {
+            background-color: #0f172a;
+            border-color: #334155;
+            color: #f8fafc;
+        }
+
+        select:focus, input[type="text"]:focus, input[type="date"]:focus, input[type="time"]:focus {
+            outline: none;
+            border-color: #3776AB;
+            box-shadow: 0 0 0 3px rgba(55, 118, 171, 0.15);
+        }
+
+        .spinner { 
+            width: 1.25rem; height: 1.25rem; 
+            border: 2px solid rgba(255,255,255,0.3); 
+            border-top-color: #fff; 
+            border-radius: 50%; 
+            animation: spin 0.8s linear infinite; 
+        }
+        
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .cal-day { transition: all 0.2s ease; cursor: pointer; }
+        .cal-day:hover:not(.empty) { background-color: rgba(55, 118, 171, 0.1); }
+        .cal-day.selected { background-color: #3776AB !important; color: white !important; font-weight: bold; }
+        .cal-day.today { border: 2px solid #3776AB; color: #3776AB; font-weight: bold; }
+
+        .print-table { width: 100%; border-collapse: collapse; margin-top: 20px; color: #000; table-layout: auto; }
+        .print-table th, .print-table td { border: 1px solid #000; padding: 10px 8px; text-align: right; font-size: 12px; font-family: 'Assistant', sans-serif; white-space: normal !important; word-wrap: break-word !important; word-break: break-word !important; }
+        .print-table th { background-color: #f1f5f9; font-weight: bold; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+        #print-area { display: none; }
+        @media print {
+            @page { margin: 0; size: auto; }
+            html, body {
+                height: auto !important;
+                width: auto !important;
+                overflow: visible !important;
+                display: block !important;
+                position: relative !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                background: white !important;
+            }
+            body > *:not(#print-area) { display: none !important; }
+            #print-area {
+                display: block !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                overflow: visible !important;
+                font-family: 'Assistant', sans-serif;
+                color: #000 !important;
+                padding: 1.5cm !important;
+                box-sizing: border-box !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            #print-area tr { page-break-inside: avoid !important; break-inside: avoid !important; }
+            #print-area img {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                display: inline-block !important;
+                max-width: 100% !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col p-4 lg:p-6 justify-start items-center dark:bg-[#080c14]">
+
+    <header class="w-full max-w-6xl flex justify-between items-center mb-6 px-2 sm:px-4 flex-wrap gap-4">
+        <div class="flex items-center gap-4">
+            <div>
+                <h1 class="text-2.5xl lg:text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white">ניהול שריון חדרים ומשימות גפיות</h1>
+                <p class="text-primary dark:text-[#38bdf8] font-bold mt-0.5 text-xs sm:text-sm">צוות מחשוב</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-2.5">
+            <a href="index.html" class="flex items-center gap-2 px-3.5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl font-extrabold text-xs sm:text-sm transition-all border border-slate-200 dark:border-slate-700 shadow-sm">
+                <ui-icon name="home" class="w-4 h-4 text-primary"></ui-icon>
+                <span>לאתר מחשוב</span>
+            </a>
+            <a href="dashboard.html" class="flex items-center gap-2 px-3.5 py-2 bg-primary hover:bg-primaryHover text-white rounded-xl font-extrabold text-xs sm:text-sm transition-all shadow-sm">
+                <ui-icon name="dashboard" class="w-4 h-4"></ui-icon>
+                <span>למרכז שליטה / דשבורד</span>
+            </a>
+            <button onclick="openPrintReportModal()" class="flex items-center gap-2 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-extrabold text-xs sm:text-sm transition-all shadow-sm">
+                <ui-icon name="printer" class="w-4 h-4"></ui-icon>
+                <span>הדפסת דוח משימות/שריונים</span>
+            </button>
+            <button onclick="toggleDarkMode()" class="flex items-center gap-2 px-3 py-2 bg-slate-800 dark:bg-slate-700 text-white rounded-xl font-bold transition-all hover:bg-slate-900 dark:hover:bg-slate-600 shadow-sm text-xs sm:text-sm" title="מצב חשוך/מואר">
+                <ui-icon name="moon" class="w-4 h-4"></ui-icon>
+                <span class="dark:hidden">מצב חשוך</span>
+                <span class="hidden dark:inline">מצב מואר</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <section class="lg:col-span-5 bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-gray-100 dark:border-slate-800 overflow-hidden relative p-6">
+            
+            <!-- מקרא צבעים ממוקם מעל יצירת שיריון חדש -->
+            <div class="mb-5 p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-gray-150 dark:border-slate-700 flex items-center justify-around text-xs font-black">
+                <span class="flex items-center gap-1.5 text-rose-700 dark:text-rose-400">
+                    <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                    <span>שריון חדר תפוס</span>
+                </span>
+                <span class="flex items-center gap-1.5 text-indigo-700 dark:text-indigo-400">
+                    <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+                    <span>משימה גפית</span>
+                </span>
+            </div>
+
+            <div class="flex items-center gap-3 mb-5">
+                <div class="bg-primary text-white p-2 rounded-xl shadow-xs">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                </div>
+                <h2 class="text-xl font-extrabold text-gray-900 dark:text-white">יצירת שיריון / משימה חדשה</h2>
+            </div>
+
+            <div id="booking-form">
+                <form onsubmit="submitBooking(event)" class="space-y-4">
+                    
+                    <div>
+                        <label class="block text-xs font-black text-gray-700 dark:text-slate-300 mb-1"><span class="text-red-500">*</span> סוג רישום</label>
+                        <select id="entry-type" onchange="toggleEntryTypeFields()" class="font-extrabold">
+                            <option value="room_booking">שיריון חדר / כיתה</option>
+                            <option value="dept_mission">משימה גפית</option>
+                        </select>
+                    </div>
+
+                    <div id="mission-fields-wrap" class="space-y-4 hidden bg-indigo-50/50 dark:bg-indigo-950/20 p-3.5 rounded-2xl border border-indigo-100 dark:border-indigo-900/30">
+                        <div>
+                            <label class="block text-xs font-black text-indigo-900 dark:text-indigo-300 mb-1"><span class="text-red-500">*</span> שיוך משימה</label>
+                            <select id="assigned-type" class="font-bold">
+                                <option value="soldier">חייל / ת</option>
+                                <option value="team">צוות / צוות משנה</option>
+                                <option value="department">גף</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-black text-indigo-900 dark:text-indigo-300 mb-1"><span class="text-red-500">*</span> שם המבצע / הגף</label>
+                            <input type="text" id="assigned-name" placeholder="לדוגמה: יובל / צוות תוכנה / גף מחשוב">
+                        </div>
+                    </div>
+
+                    <div id="room-fields-wrap" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-black text-gray-700 dark:text-slate-300 mb-1"><span id="bld-req-star" class="text-red-500">*</span> מבנה <span id="bld-opt-hint" class="text-[10px] font-bold text-gray-400 hidden">(אופציונלי למשימה)</span></label>
+                            <select id="building" onchange="updateRooms()">
+                                <option value="">-- בחר מבנה --</option>
+                                <option value="snunit">סנונית</option>
+                                <option value="lavie">לביא</option>
+                                <option value="ofroni">עפרוני</option>
+                                <option value="yerpa">ירפ"א</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-black text-gray-700 dark:text-slate-300 mb-1"><span id="room-req-star" class="text-red-500">*</span> חדר / כיתה <span id="room-opt-hint" class="text-[10px] font-bold text-gray-400 hidden">(אופציונלי למשימה)</span></label>
+                            <select id="room" disabled>
+                                <option value="">-- תחילה בחר מבנה --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <hr class="border-t border-gray-150 dark:border-slate-800">
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-black text-gray-700 dark:text-slate-300 mb-1"><span class="text-red-500">*</span> תאריך</label>
+                            <input type="date" id="date" required onchange="onDateChange()">
+                        </div>
+                        <div class="flex items-end pb-0.5">
+                            <label class="relative flex items-center gap-2 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 border border-gray-200 dark:border-slate-700 rounded-xl p-2.5 w-full cursor-pointer select-none transition-colors">
+                                <input type="checkbox" id="all-day" onchange="toggleAllDay(this)" class="w-4 h-4 text-primary border-gray-300 rounded">
+                                <span class="text-xs font-black text-gray-700 dark:text-slate-200">שיריון/משימה יום שלם</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="time-inputs-wrap">
+                        <div>
+                            <label class="block text-xs font-black text-gray-700 dark:text-slate-300 mb-1"><span class="text-red-500">*</span> שעת התחלה</label>
+                            <input type="time" id="start-time" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-black text-gray-700 dark:text-slate-300 mb-1"><span class="text-red-500">*</span> שעת סיום</label>
+                            <input type="time" id="end-time" required>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-black text-gray-700 dark:text-slate-300 mb-1"><span class="text-red-500">*</span> שם המזמין / מטרת הרישום</label>
+                        <input type="text" id="purpose" placeholder="לדוגמה: ישיבת גף / כיול כיתה / בדיקת ציוד" required>
+                    </div>
+
+                    <div id="error-msg" class="hidden p-3 bg-rose-50 border border-rose-200 text-rose-600 rounded-xl text-xs font-bold flex items-center gap-2">
+                        <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span id="error-text">אנא ודא ששעת הסיום מאוחרת משעת ההתחלה.</span>
+                    </div>
+
+                    <button type="submit" id="submit-btn" class="w-full py-3 rounded-xl bg-primary hover:bg-primaryHover text-white font-extrabold shadow-sm transition-all flex items-center justify-center gap-2">
+                        שמור רישום
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <section class="lg:col-span-7 bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-gray-100 dark:border-slate-800 overflow-hidden p-6 flex flex-col">
+            
+            <div class="flex justify-between items-center mb-5">
+                <div class="flex items-center gap-3">
+                    <div class="bg-primary/10 text-primary p-2 rounded-xl">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    </div>
+                    <h2 id="calendar-month-year" class="text-xl font-extrabold text-gray-900 dark:text-white">מאי 2026</h2>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="changeMonth(-1)" class="p-2 text-gray-600 dark:text-slate-300 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all border border-gray-200 dark:border-slate-700">
+                        <svg class="w-4 h-4 transform rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </button>
+                    <button onclick="changeMonth(1)" class="p-2 text-gray-600 dark:text-slate-300 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all border border-gray-200 dark:border-slate-700">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-7 gap-1 text-center font-black text-xs text-gray-400 dark:text-slate-500 mb-2 uppercase tracking-wider">
+                <div>א</div><div>ב</div><div>ג</div><div>ד</div><div>ה</div><div>ו</div><div>ש</div>
+            </div>
+
+            <div id="calendar-grid" class="grid grid-cols-7 gap-1.5 text-center text-sm font-semibold text-gray-700 dark:text-slate-200">
+            </div>
+
+            <div class="mt-6 pt-5 border-t border-gray-100 dark:border-slate-800 flex-1">
+                <h3 id="selected-day-title" class="text-base font-extrabold text-gray-900 dark:text-white mb-3">שריונים ומשימות ליום נבחר</h3>
+                <div id="day-bookings-list" class="space-y-2.5 max-h-[260px] overflow-y-auto pr-1">
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Print Report Modal -->
+    <div id="print-report-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[9999] flex items-center justify-center hidden" dir="rtl">
+        <div class="bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-2xl p-6 w-full max-w-xl mx-4 text-right">
+            <div class="flex items-center justify-between border-b pb-3 mb-4 border-slate-100 dark:border-slate-800">
+                <h3 class="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+                    <ui-icon name="printer" class="w-5 h-5 text-emerald-600"></ui-icon>
+                    <span>הנפקת דוח משימות ושריונים</span>
+                </h3>
+                <button onclick="closePrintReportModal()" class="text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
+            </div>
+            <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-black text-slate-600 dark:text-slate-300 mb-1">טווח תאריכים</label>
+                        <select id="report-range-type" onchange="toggleReportCustomDates()" class="font-bold">
+                            <option value="today">יומי (היום)</option>
+                            <option value="week">שבועי (7 ימים קרובים)</option>
+                            <option value="month">חודשי (החודש הנוכחי)</option>
+                            <option value="custom">טווח מותאם אישית</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-black text-slate-600 dark:text-slate-300 mb-1">סנן לפי סוג</label>
+                        <select id="report-type-filter" class="font-bold">
+                            <option value="all">הכל (שריונים + משימות)</option>
+                            <option value="room_booking">שיריון חדרים בלבד</option>
+                            <option value="dept_mission">משימות גפיות בלבד</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="report-custom-dates" class="grid grid-cols-2 gap-3 hidden">
+                    <div>
+                        <label class="block text-xs font-black text-slate-600 dark:text-slate-300 mb-1">מתאריך</label>
+                        <input type="date" id="report-start-date">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-black text-slate-600 dark:text-slate-300 mb-1">עד תאריך</label>
+                        <input type="date" id="report-end-date">
+                    </div>
+                </div>
+            </div>
+            <div class="mt-6 flex justify-end gap-3 border-t pt-4 border-slate-100 dark:border-slate-800">
+                <button onclick="generateAndPrintReport()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-extrabold text-sm transition-colors shadow-sm inline-flex items-center gap-1.5">
+                    <ui-icon name="printer" class="w-4 h-4"></ui-icon>
+                    <span>הנפק והדפס דוח</span>
+                </button>
+                <button onclick="closePrintReportModal()" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl font-extrabold text-sm transition-colors">ביטול</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="print-area"></div>
+
+    <script>
+        const APP_ID = 'rooms_booking';
+        const API_URL = `${CONFIG.API_URL}?file=${APP_ID}`;
+        
+        let BUILDING_LABELS = { snunit:'סנונית', lavie:'לביא', ofroni:'עפרוני', yerpa:'ירפ"א' };
+        let locationsData = {
+            snunit: ["רימון", "חדר מאבחנות", "פסיכולוגים 1", "פסיכולוגים 2", "פסיכולוגים 3", "פסיכולוגים 4", "משרד ס. מ\"ג", "משרד מאיה"],
+            lavie: ["כיתת לביא"],
+            ofroni: ["כיתה ימנית", "כיתה שמאלית", "חדר תעונ\"ה"],
+            yerpa: ["משרד מ\"ג", "משרד מ\"ג ענף", "משרד דנה"]
+        };
+        let roomsConfig = null;
+
+        async function loadRoomsConfig() {
+            try {
+                const response = await fetch(CONFIG.API_URL + '?file=sync_store&key=rooms_config');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data && data.value) {
+                        roomsConfig = JSON.parse(data.value);
+                        BUILDING_LABELS = {};
+                        locationsData = {};
+                        for (const [key, bld] of Object.entries(roomsConfig.buildings)) {
+                            BUILDING_LABELS[key] = bld.label;
+                        }
+                        for (const [key, rms] of Object.entries(roomsConfig.rooms)) {
+                            locationsData[key] = (rms || []).map(r => r.name);
+                        }
+                        rebuildBuildingSelect();
+                    }
+                }
+            } catch (error) {
+                console.error('שגיאה בטעינת תצורת חדרים:', error);
+            }
+        }
+
+        function rebuildBuildingSelect() {
+            const bSelect = document.getElementById('building');
+            if (!bSelect) return;
+            const currentVal = bSelect.value;
+            let html = '<option value="">-- בחר מבנה --</option>';
+            for (const [key, label] of Object.entries(BUILDING_LABELS)) {
+                html += `<option value="${key}">${label}</option>`;
+            }
+            bSelect.innerHTML = html;
+            if (currentVal && bSelect.querySelector(`option[value="${currentVal}"]`)) {
+                bSelect.value = currentVal;
+            }
+        }
+
+        let bookings = [];
+        let currentCalendarDate = new Date();
+        let selectedDateStr = new Date().toISOString().split('T')[0];
+
+        async function loadFromServer() {
+            try {
+                const response = await fetch(API_URL);
+                if (response.ok) {
+                    const serverData = await response.json();
+                    if (Array.isArray(serverData)) return serverData;
+                }
+            } catch (error) {}
+            try {
+                const localData = localStorage.getItem('mch_rooms_booking');
+                if (localData) {
+                    const parsed = JSON.parse(localData);
+                    if (Array.isArray(parsed)) return parsed;
+                }
+            } catch (e) {}
+            return [];
+        }
+
+        async function saveToServer(dataObject) {
+            try { localStorage.setItem('mch_rooms_booking', JSON.stringify(dataObject)); } catch (e) {}
+            try {
+                await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dataObject)
+                });
+            } catch (error) {}
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadRoomsConfig();
+            const dateInput = document.getElementById('date');
+            const todayStr = new Date().toISOString().split('T')[0];
+            dateInput.min = todayStr;
+            dateInput.value = todayStr;
+            
+            bookings = await loadFromServer();
+            renderCalendar();
+            renderDayBookings(selectedDateStr);
+
+            window.addEventListener('sso-user-loaded', (e) => {
+                const user = e.detail;
+                if (user) {
+                    const purposeInput = document.getElementById('purpose');
+                    if (purposeInput && !purposeInput.value) {
+                        const rankStr = user.rank ? user.rank + ' ' : '';
+                        purposeInput.value = rankStr + user.name + ' - ';
+                    }
+                }
+                renderDayBookings(selectedDateStr);
+            });
+        });
+
+        function toggleEntryTypeFields() {
+            const type = document.getElementById('entry-type').value;
+            const missionWrap = document.getElementById('mission-fields-wrap');
+            const building = document.getElementById('building');
+            const room = document.getElementById('room');
+            const bldStar = document.getElementById('bld-req-star');
+            const roomStar = document.getElementById('room-req-star');
+            const bldHint = document.getElementById('bld-opt-hint');
+            const roomHint = document.getElementById('room-opt-hint');
+            
+            if (type === 'dept_mission') {
+                missionWrap.classList.remove('hidden');
+                building.required = false;
+                room.required = false;
+                if (bldStar) bldStar.classList.add('hidden');
+                if (roomStar) roomStar.classList.add('hidden');
+                if (bldHint) bldHint.classList.remove('hidden');
+                if (roomHint) roomHint.classList.remove('hidden');
+            } else {
+                missionWrap.classList.add('hidden');
+                building.required = true;
+                room.required = true;
+                if (bldStar) bldStar.classList.remove('hidden');
+                if (roomStar) roomStar.classList.remove('hidden');
+                if (bldHint) bldHint.classList.add('hidden');
+                if (roomHint) roomHint.classList.add('hidden');
+            }
+        }
+
+        function updateRooms() {
+            const buildingSelect = document.getElementById('building');
+            const roomSelect = document.getElementById('room');
+            const selectedBuilding = buildingSelect.value;
+
+            roomSelect.innerHTML = '<option value="">-- בחר חדר --</option>';
+
+            if (selectedBuilding && locationsData[selectedBuilding]) {
+                roomSelect.disabled = false;
+                locationsData[selectedBuilding].forEach(room => {
+                    const option = document.createElement('option');
+                    option.value = room;
+                    option.textContent = room;
+                    roomSelect.appendChild(option);
+                });
+            } else {
+                roomSelect.disabled = true;
+                roomSelect.innerHTML = '<option value="">-- תחילה בחר מבנה --</option>';
+            }
+        }
+
+        function toggleAllDay(checkbox) {
+            const startInput = document.getElementById('start-time');
+            const endInput = document.getElementById('end-time');
+            const timeWrap = document.getElementById('time-inputs-wrap');
+
+            if (checkbox.checked) {
+                startInput.value = "08:00";
+                endInput.value = "18:00";
+                startInput.disabled = true;
+                endInput.disabled = true;
+                timeWrap.style.opacity = "0.5";
+            } else {
+                startInput.value = "";
+                endInput.value = "";
+                startInput.disabled = false;
+                endInput.disabled = false;
+                timeWrap.style.opacity = "1";
+            }
+        }
+
+        function onDateChange() {
+            const dateVal = document.getElementById('date').value;
+            if(dateVal) {
+                selectedDateStr = dateVal;
+                const d = new Date(dateVal);
+                currentCalendarDate = new Date(d.getFullYear(), d.getMonth(), 1);
+                renderCalendar();
+                renderDayBookings(selectedDateStr);
+            }
+        }
+
+        function submitBooking(event) {
+            event.preventDefault();
+            
+            if (!hasAreaAccess('rooms')) {
+                alert('אין לך הרשאות לביצוע פעולה זו.');
+                return;
+            }
+
+            const entryType = document.getElementById('entry-type').value;
+            const building = document.getElementById('building').value;
+            const room = document.getElementById('room').value;
+            const assignedType = document.getElementById('assigned-type').value;
+            const assignedName = document.getElementById('assigned-name').value.trim();
+            const date = document.getElementById('date').value;
+            const startTime = document.getElementById('start-time').value;
+            const endTime = document.getElementById('end-time').value;
+            const purpose = document.getElementById('purpose').value;
+            const isAllDay = document.getElementById('all-day').checked;
+            const errorMsg = document.getElementById('error-msg');
+            const submitBtn = document.getElementById('submit-btn');
+
+            if (!isAllDay && startTime >= endTime) {
+                errorMsg.classList.remove('hidden');
+                document.getElementById('error-text').textContent = 'אנא ודא ששעת הסיום מאוחרת משעת ההתחלה.';
+                return;
+            }
+
+            if (entryType === 'room_booking' || (building && room)) {
+                const hasConflict = bookings.some(b => 
+                    b.building === building && 
+                    b.room === room &&
+                    b.date === date && 
+                    ((startTime >= b.startTime && startTime < b.endTime) || (endTime > b.startTime && endTime <= b.endTime) || (startTime <= b.startTime && endTime >= b.endTime))
+                );
+
+                if (hasConflict && entryType === 'room_booking') {
+                    errorMsg.classList.remove('hidden');
+                    document.getElementById('error-text').textContent = 'שגיאה: קיים כבר שריון לחדר זה בטווח השעות המבוקש.';
+                    return;
+                }
+            }
+
+            errorMsg.classList.add('hidden');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<div class="spinner"></div> מבצע רישום...';
+
+            setTimeout(async () => {
+                const newId = Date.now();
+                bookings.push({ 
+                    id: newId, 
+                    entryType,
+                    building: building || '', 
+                    room: room || '', 
+                    assignedTo: { type: assignedType, name: assignedName },
+                    date, 
+                    startTime, 
+                    endTime, 
+                    purpose, 
+                    isAllDay 
+                });
+                
+                await saveToServer(bookings);
+                
+                document.getElementById('purpose').value = '';
+                document.getElementById('assigned-name').value = '';
+                document.getElementById('all-day').checked = false;
+                toggleAllDay(document.getElementById('all-day'));
+                
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'שמור רישום';
+                
+                selectedDateStr = date;
+                renderCalendar();
+                renderDayBookings(selectedDateStr);
+                
+                alert(entryType === 'dept_mission' ? 'המשימה הגפית נרשמה בהצלחה!' : 'החדר שוריין בהצלחה והתווסף ללוח השנה!');
+            }, 500);
+        }
+
+        const MONTH_NAMES = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"];
+        
+        function changeMonth(direction) {
+            currentCalendarDate.setMonth(currentCalendarDate.getMonth() + direction);
+            renderCalendar();
+        }
+
+        function renderCalendar() {
+            const year = currentCalendarDate.getFullYear();
+            const month = currentCalendarDate.getMonth();
+            
+            document.getElementById('calendar-month-year').textContent = `${MONTH_NAMES[month]} ${year}`;
+            
+            const grid = document.getElementById('calendar-grid');
+            grid.innerHTML = '';
+            
+            const firstDayIndex = new Date(year, month, 1).getDay();
+            const totalDays = new Date(year, month + 1, 0).getDate();
+            
+            for (let i = 0; i < firstDayIndex; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = 'cal-day empty h-10';
+                grid.appendChild(emptyCell);
+            }
+            
+            for (let day = 1; day <= totalDays; day++) {
+                const dayCell = document.createElement('div');
+                const currentStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+                
+                dayCell.className = `cal-day h-10 flex flex-col items-center justify-center rounded-xl font-bold relative bg-slate-50/70 dark:bg-slate-800/40 border border-gray-100 dark:border-slate-800 text-gray-800 dark:text-slate-200`;
+                dayCell.textContent = day;
+                
+                const today = new Date();
+                if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) { 
+                    dayCell.classList.add('today'); 
+                }
+                if (currentStr === selectedDateStr) { 
+                    dayCell.classList.add('selected'); 
+                }
+                
+                const dayBookings = bookings.filter(b => b.date === currentStr);
+                const hasMission = dayBookings.some(b => b.entryType === 'dept_mission');
+                const hasRoom = dayBookings.some(b => b.entryType !== 'dept_mission');
+
+                if (dayBookings.length > 0) {
+                    const dot = document.createElement('span');
+                    const colorClass = currentStr === selectedDateStr ? 'bg-white' : (hasRoom ? 'bg-rose-500' : 'bg-indigo-500');
+                    dot.className = `w-1.5 h-1.5 rounded-full ${colorClass} absolute bottom-1`;
+                    dayCell.appendChild(dot);
+                }
+                
+                dayCell.onclick = () => {
+                    selectedDateStr = currentStr;
+                    document.getElementById('date').value = currentStr;
+                    renderCalendar();
+                    renderDayBookings(currentStr);
+                };
+                
+                grid.appendChild(dayCell);
+            }
+        }
+
+        function renderDayBookings(dateStr) {
+            const listContainer = document.getElementById('day-bookings-list');
+            listContainer.innerHTML = '';
+            
+            const [y, m, d] = dateStr.split('-');
+            document.getElementById('selected-day-title').textContent = `שריונים ומשימות ליום ${parseInt(d)} ב${MONTH_NAMES[parseInt(m)-1]} ${y}`;
+            
+            const dayBookings = bookings.filter(b => b.date === dateStr);
+            
+            if (dayBookings.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="text-center py-6 text-gray-400 font-bold text-xs border-2 border-dashed border-gray-100 dark:border-slate-800 rounded-2xl">
+                        אין שריונים או משימות רשומים ליום זה.
+                    </div>`;
+                return;
+            }
+            
+            dayBookings.sort((a,b) => a.startTime.localeCompare(b.startTime));
+            
+            dayBookings.forEach(b => {
+                const item = document.createElement('div');
+                const isMission = b.entryType === 'dept_mission';
+                item.className = `flex flex-col sm:flex-row sm:items-center justify-between p-3 border rounded-xl transition-all ${isMission ? 'bg-indigo-50/50 dark:bg-indigo-950/20 border-indigo-200 dark:border-indigo-900/40' : (b.isAllDay ? 'bg-amber-50/40 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900/40' : 'bg-slate-50/60 dark:bg-slate-800/40 border-gray-100 dark:border-slate-800')}`;
+                
+                const timeBadge = b.isAllDay 
+                    ? `<span class="px-2 py-0.5 rounded-lg bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 text-[10px] font-black">יום שלם (08:00-18:00)</span>`
+                    : `<span class="px-2 py-0.5 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-primary dark:text-[#38bdf8] text-[10px] font-bold font-mono" dir="ltr">${b.startTime} - ${b.endTime}</span>`;
+                
+                const typeBadge = isMission ? `<span class="px-2 py-0.5 rounded-lg bg-indigo-100 dark:bg-indigo-900/40 text-indigo-800 dark:text-indigo-300 text-[10px] font-black">משימה גפית</span>` : '';
+                const assignText = (b.assignedTo && b.assignedTo.name) ? ` | משוייך: ${b.assignedTo.name}` : '';
+                const locationText = (b.building && b.room) ? ` | חדר: ${BUILDING_LABELS[b.building] || b.building} - ${b.room}` : (b.building ? ` | מבנה: ${BUILDING_LABELS[b.building] || b.building}` : '');
+
+                item.innerHTML = `
+                    <div class="flex flex-col gap-1">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            ${typeBadge}
+                            <span class="text-xs sm:text-sm font-extrabold text-gray-900 dark:text-white">${isMission ? 'משימה' : `${BUILDING_LABELS[b.building] || ''} | ${b.room || ''}`}</span>
+                            ${timeBadge}
+                        </div>
+                        <span class="text-xs font-bold text-gray-500 dark:text-slate-400">${b.purpose}${assignText}${locationText}</span>
+                    </div>
+                    ${hasAreaAccess('rooms') ? `
+                    <button onclick="deleteBooking(${b.id})" class="text-xs font-bold text-red-500 hover:text-red-700 bg-red-50 dark:bg-red-950/30 hover:bg-red-100 border border-red-200 dark:border-red-900/30 px-2 py-1 rounded-lg mt-2 sm:mt-0 transition-colors self-end sm:self-center">
+                        ביטול
+                    </button>
+                    ` : ''}
+                `;
+                listContainer.appendChild(item);
+            });
+        }
+
+        async function deleteBooking(id) {
+            if (!hasAreaAccess('rooms')) {
+                alert('אין לך הרשאות לביטול.');
+                return;
+            }
+            if(confirm('האם אתה בטוח שברצונך למחוק רישום זה?')) {
+                bookings = bookings.filter(b => b.id !== id);
+                await saveToServer(bookings);
+                renderCalendar();
+                renderDayBookings(selectedDateStr);
+            }
+        }
+
+        function openPrintReportModal() {
+            document.getElementById('print-report-modal').classList.remove('hidden');
+        }
+
+        function closePrintReportModal() {
+            document.getElementById('print-report-modal').classList.add('hidden');
+        }
+
+        function toggleReportCustomDates() {
+            const range = document.getElementById('report-range-type').value;
+            document.getElementById('report-custom-dates').classList.toggle('hidden', range !== 'custom');
+        }
+
+        async function generateAndPrintReport() {
+            const range = document.getElementById('report-range-type').value;
+            const filterType = document.getElementById('report-type-filter').value;
+            const today = new Date();
+            let start = new Date(today);
+            let end = new Date(today);
+
+            if (range === 'today') {
+                start = new Date(today); end = new Date(today);
+            } else if (range === 'week') {
+                end.setDate(today.getDate() + 7);
+            } else if (range === 'month') {
+                start = new Date(today.getFullYear(), today.getMonth(), 1);
+                end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+            } else if (range === 'custom') {
+                const s = document.getElementById('report-start-date').value;
+                const e = document.getElementById('report-end-date').value;
+                if (s) start = new Date(s);
+                if (e) end = new Date(e);
+            }
+
+            const startStr = start.toISOString().split('T')[0];
+            const endStr = end.toISOString().split('T')[0];
+
+            let reportBookings = bookings.filter(b => b.date >= startStr && b.date <= endStr);
+            if (filterType !== 'all') {
+                reportBookings = reportBookings.filter(b => (b.entryType || 'room_booking') === filterType);
+            }
+            reportBookings.sort((a,b) => (a.date.localeCompare(b.date)) || (a.startTime.localeCompare(b.startTime)));
+
+            const printArea = document.getElementById('print-area');
+            const todayHeb = new Date().toLocaleDateString('he-IL');
+            const timeHeb = new Date().toLocaleTimeString('he-IL', {hour:'2-digit', minute:'2-digit'});
+
+            const filterLabel = filterType === 'all' ? 'כל הרישומים (משימות ושריונים)' : (filterType === 'dept_mission' ? 'משימות גפיות בלבד' : 'שריוני חדרים בלבד');
+            const stampHtml = `<div style="color: #16a34a; border: 3px solid #16a34a; padding: 4px 16px; font-weight: 900; font-size: 20px; border-radius: 4px; letter-spacing: 3px; transform: rotate(-8deg); margin-bottom: 12px; display: inline-block; font-family: 'Assistant', sans-serif; align-self: flex-start; margin-left: 5px;">בלמ"ס</div>`;
+
+            printArea.innerHTML = `
+                <div class="print-container" style="font-family:'Assistant',sans-serif; direction:rtl; color:#000; background:#fff;">
+                    
+                    <!-- Header with Emblems, Title & References (Dashboard Format) -->
+                    <div dir="rtl" style="font-family: 'Assistant', sans-serif; display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; border-bottom: 2px solid #000; padding-bottom: 15px; width: 100%;">
+                        
+                        <!-- Right Side: Emblems & Recipient -->
+                        <div style="width: 35%; display: flex; flex-direction: column; align-items: flex-start; gap: 8px;">
+                            <div style="display: flex; gap: 12px; align-items: center;">
+                                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 75px;">
+                                    <img src="images/IAF_New_Logo_2018.png" alt="חיל האוויר" style="width: 65px; height: 65px; object-fit: contain; -webkit-print-color-adjust: exact; print-color-adjust: exact;">
+                                    <span style="font-size: 9.5px; font-weight: bold; color: #475569; margin-top: 5px; text-align: center; font-family: 'Assistant', sans-serif; white-space: nowrap;">חיל האוויר</span>
+                                </div>
+                                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 75px;">
+                                    <img src="images/IAF_Headquarters.png" alt="חותם מיון חה&quot;א" style="width: 65px; height: 65px; object-fit: contain; -webkit-print-color-adjust: exact; print-color-adjust: exact;">
+                                    <span style="font-size: 9.5px; font-weight: bold; color: #475569; margin-top: 5px; text-align: center; font-family: 'Assistant', sans-serif; white-space: nowrap;">חותם מיון חה"א</span>
+                                </div>
+                            </div>
+                            <div style="font-size: 12px; font-weight: bold; color: #0f172a; line-height: 1.45;">
+                                לכבוד: <span style="font-weight: 900;">לכל מאן דבעי</span>
+                                <br>
+                                ובפרט: <span style="font-weight: 900;">רשימת תפוצה - סגל מיון ומחשוב</span>
+                            </div>
+                        </div>
+
+                        <!-- Center: Document Title & Dates -->
+                        <div style="width: 35%; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; margin-top: 5px;">
+                            <h1 style="font-size: 18px; font-weight: 900; margin: 0; color: #0f172a; border-bottom: 2px solid #0f172a; padding-bottom: 3px; display: inline-block;">דוח ריכוז משימות ושריוני חדרים</h1>
+                            <div style="font-size: 12px; font-weight: bold; margin-top: 8px; color: #334155;">תאריך הנפקה: ${todayHeb} (${timeHeb})</div>
+                            <div style="font-size: 11px; font-weight: bold; color: #64748b; margin-top: 2px;">טווח: ${startStr} עד ${endStr} | סינון: ${filterLabel}</div>
+                        </div>
+
+                        <!-- Left Side: Stamp & References -->
+                        <div style="width: 35%; font-size: 12px; line-height: 1.45; text-align: left; color: #0f172a; font-family: 'Assistant', sans-serif; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start;">
+                            ${stampHtml}
+                            <div style="text-align: left; width: 100%; direction: rtl;">
+                                <div style="font-weight: bold; text-decoration: underline; margin-bottom: 4px;">סימוכין:</div>
+                                <div>חיל האוויר</div>
+                                <div>ממח"א 111</div>
+                                <div>מחלקת חות"ם</div>
+                                <div>ענף מיון חיילי</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Report Table -->
+                    <table class="print-table" style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr>
+                                <th style="width: 5%;">#</th>
+                                <th style="width: 12%;">תאריך</th>
+                                <th style="width: 13%;">סוג רישום</th>
+                                <th style="width: 18%;">גורם מבצע / משוייך</th>
+                                <th style="width: 18%;">מבנה וחדר</th>
+                                <th style="width: 14%;">שעות</th>
+                                <th style="width: 20%;">תיאור / מטרת הרישום</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${reportBookings.length === 0 ? `
+                                <tr><td colspan="7" style="padding:16px; text-align:center; font-weight:bold; color:#000;">לא נמצאו שריונים או משימות בטווח התאריכים הנבחר.</td></tr>
+                            ` : reportBookings.map((b, idx) => {
+                                const roomStr = (b.building && b.room) ? `${BUILDING_LABELS[b.building] || b.building} - ${b.room}` : (b.building ? (BUILDING_LABELS[b.building] || b.building) : '—');
+                                const assignedStr = (b.assignedTo && b.assignedTo.name) ? b.assignedTo.name : (b.entryType === 'dept_mission' ? 'גפי' : '—');
+                                const typeStr = b.entryType === 'dept_mission' ? 'משימה גפית' : 'שריון חדר';
+                                return `
+                                <tr>
+                                    <td style="text-align:center; font-weight:bold;">${idx + 1}</td>
+                                    <td style="font-weight:bold;">${b.date}</td>
+                                    <td style="font-weight:bold;">${typeStr}</td>
+                                    <td>${assignedStr}</td>
+                                    <td>${roomStr}</td>
+                                    <td style="font-weight:bold;" dir="ltr">${b.isAllDay ? 'יום שלם (08:00-18:00)' : `${b.startTime} - ${b.endTime}`}</td>
+                                    <td>${b.purpose || '—'}</td>
+                                </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+
+                    <!-- Signature Block (Dashboard Format) -->
+                    <div style="margin-top: 40px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-family: 'Assistant', sans-serif; padding-top: 15px; border-top: 1px dashed #cbd5e1; width: 100%;">
+                        <div style="display: flex; gap: 4px; align-items: flex-start; line-height: 1.5;">
+                            <strong>חתימת המנפיק:</strong>
+                            <div>
+                                <div>צוות מחשוב ואינטגרציה</div>
+                                <div>תפקיד: מנהל שריון חדרים ומשימות</div>
+                            </div>
+                        </div>
+                        <div style="text-align: left;">
+                            חתימת קצין ממונה / מפקד: ___________________
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            closePrintReportModal();
+
+            // Wait for images to load into DOM memory before invoking browser print dialog
+            const imgs = Array.from(printArea.querySelectorAll('img'));
+            await Promise.all(imgs.map(img => {
+                if (img.complete) return Promise.resolve();
+                return new Promise(res => {
+                    img.onload = res;
+                    img.onerror = res;
+                });
+            }));
+
+            setTimeout(() => {
+                window.print();
+            }, 100);
+        }
+    </script>
+</body>
+</html>

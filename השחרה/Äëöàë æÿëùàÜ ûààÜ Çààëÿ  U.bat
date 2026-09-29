@@ -1,0 +1,1 @@
+net use u: \\file0112b\miun_scan$

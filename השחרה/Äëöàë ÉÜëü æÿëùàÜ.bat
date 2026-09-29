@@ -1,0 +1,1 @@
+net use Z: \\180.112.100.30\sharing
