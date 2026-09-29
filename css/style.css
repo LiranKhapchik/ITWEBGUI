@@ -36,12 +36,12 @@ html.dark {
     --bg-card: #0b0f19;           /* Beautiful dark slate card */
     --bg-panel: #070a13;          /* Darker panels */
     --bg-input: #0f172a;          /* Slate-850 input fields */
-    --border-color: rgba(255, 255, 255, 0.06);
-    --border-hover: rgba(255, 255, 255, 0.12);
+    --border-color: rgba(255, 255, 255, 0.08);
+    --border-hover: rgba(255, 255, 255, 0.16);
     
     --text-primary: #f8fafc;
-    --text-secondary: #cbd5e1;
-    --text-muted: #64748b;
+    --text-secondary: #e2e8f0;    /* Bright Slate-200 for secondary text */
+    --text-muted: #94a3b8;        /* Crisp Slate-400 for high-contrast muted text */
     
     --accent: #38bdf8;
     --accent-hover: #0ea5e9;
@@ -209,6 +209,40 @@ html.dark .hover-lift:hover {
 }
 .text-slate-400, .text-gray-400, .text-slate-500, .text-gray-500 {
     color: var(--text-muted) !important;
+}
+
+/* High-contrast Dark Mode rules for Sub-titles & Sub-texts inside Buttons, Tiles and Interactive Elements */
+html.dark button .text-slate-400,
+html.dark button .text-slate-500,
+html.dark button .text-slate-600,
+html.dark button .text-gray-400,
+html.dark button .text-gray-500,
+html.dark button .text-gray-600,
+html.dark a .text-slate-400,
+html.dark a .text-slate-500,
+html.dark a .text-slate-600,
+html.dark a .text-gray-400,
+html.dark a .text-gray-500,
+html.dark a .text-gray-600,
+html.dark [onclick] .text-slate-400,
+html.dark [onclick] .text-slate-500,
+html.dark [onclick] .text-slate-600,
+html.dark [onclick] .text-gray-400,
+html.dark [onclick] .text-gray-500,
+html.dark [onclick] .text-gray-600,
+html.dark .tile-active span,
+html.dark .cursor-pointer span,
+html.dark .cursor-pointer p {
+    color: #cbd5e1 !important; /* Bright, high-contrast Slate-300 */
+}
+
+html.dark button:hover .text-slate-400,
+html.dark button:hover .text-slate-500,
+html.dark [onclick]:hover .text-slate-400,
+html.dark [onclick]:hover .text-slate-500,
+html.dark a:hover .text-slate-400,
+html.dark a:hover .text-slate-500 {
+    color: #ffffff !important; /* Pure white on hover */
 }
 
 /* 4. Form inputs & selections overrides */
